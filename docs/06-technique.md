@@ -8,3 +8,20 @@ Critère principal : le client fait du vibe coding. L'app doit rester simple à 
 | Base de données | **Supabase**, compte existant du client | Records du jour et de la semaine en V1 ; profils, historique et Ladder en V2. L'interface de Supabase permet de supprimer un record à la main (modération choisie). Un projet dédié « arena18-darts » sera créé dans le compte. |
 | Voix de synthèse | **Pas de voix en V1** | Le client préfère ne rien proposer plutôt qu'une voix de qualité médiocre, et ne veut pas payer pour l'instant. La voix pro (service payant, phrases générées une fois puis réutilisées) reste une **option future, par exemple pour une offre VIP payante**. L'architecture prévoit dès la V1 un emplacement « annonce » sur chaque événement (180, bust, victoire, à toi…) pour la brancher plus tard sans rien refaire. |
 | Effets sonores | **Oui, sobres** | Un son discret à chaque fléchette saisie, des sons plus marqués pour les célébrations (180, victoire, bust, record). Fichiers courts libres de droits (licence CC0) ou sons synthétisés directement dans le navigateur (Web Audio) : gratuits, légers, sans service externe. Bouton muet toujours accessible ; le choix est mémorisé sur le téléphone. |
+| Outil de développement | **Claude Code**, directement dans ce dépôt GitHub | Déjà utilisé par le client. |
+
+## La pile proposée
+
+Base connue du client (Next.js sur Vercel), plus quelques outils nouveaux, choisis parce qu'ils lui ouvrent des portes.
+
+| Brique | Outil | Rôle | Nouveau pour le client ? |
+|---|---|---|---|
+| Framework | **Next.js** (React) + **TypeScript** | L'app elle-même. TypeScript signale les erreurs avant la mise en ligne : précieux quand c'est une IA qui écrit le code. | Next.js : non. TypeScript : peut-être. |
+| Styles | **Tailwind CSS** + les jetons du design « 18° » (couleurs, angle, typos) | Les règles de la direction deviennent des classes réutilisables. | Peut-être |
+| Animations | **Motion** (ex-Framer Motion) | Glissements à 18°, chiffres qui défilent, lignes du classement qui échangent leur place. | Oui |
+| Personnages animés (V2) | **Rive** | Animer les personnages 3D du client (lancer, 180, bust, victoire) avec des fichiers très légers qui réagissent au jeu. | Oui |
+| Moteur de jeu | **TypeScript pur**, séparé de l'interface, testé avec **Vitest** | Chaque jeu est un module (règles → moteur → interface). Les tests automatiques vérifient les règles à chaque modification : on peut ajouter un ARENA18 ORIGINAL sans casser le 501. | Oui |
+| Hors ligne / installable | **PWA** (Serwist) | L'app s'ouvre même si la 5G faiblit, la partie en cours est gardée sur le téléphone, et elle peut s'installer sur l'écran d'accueil. | Oui |
+| Données | **Supabase** | Records partagés (V1), profils et Ladder (V2). | Non |
+| Hébergement | **Vercel** | Mise en ligne automatique depuis GitHub. | Non |
+| Capture du podium | **html-to-image** + partage natif du téléphone (Web Share) | Génère l'image story du podium et ouvre WhatsApp / Instagram. | Oui |
