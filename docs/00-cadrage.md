@@ -119,3 +119,4 @@ Bonne nouvelle : la charte va déjà dans le sens du brief (fond sombre, pas d'e
 | Ordre de création | **Joueurs puis jeu** | Les prénoms d'abord ; la liste des jeux affiche ensuite la durée estimée selon le nombre de joueurs. |
 | Saisie des prénoms | **Clavier, un par un** | Champ prénom + Entrée pour passer au suivant. Les prénoms déjà utilisés sur ce téléphone sont proposés en une tape. |
 | Qui commence | **Au bull**, comme la tradition | Écran « Lancer au bull » avant la partie : chacun lance une fléchette vers le centre, on tape le prénom du plus proche. Il commence, les autres suivent l'ordre de saisie. Moment idéal pour le personnage et la voix (« Au bull ! »). |
+| Après le podium | **Revanche et Partager**, à égalité | Deux grandes actions côte à côte : « Revanche » (mêmes joueurs, même jeu, le perdant commence) et « Partager » (image story du podium). « Autre jeu » et les stats détaillées viennent en dessous. |
