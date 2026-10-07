@@ -25,3 +25,9 @@ Base connue du client (Next.js sur Vercel), plus quelques outils nouveaux, chois
 | Données | **Supabase** | Records partagés (V1), profils et Ladder (V2). | Non |
 | Hébergement | **Vercel** | Mise en ligne automatique depuis GitHub. | Non |
 | Capture du podium | **html-to-image** + partage natif du téléphone (Web Share) | Génère l'image story du podium et ouvre WhatsApp / Instagram. | Oui |
+
+## QR code
+
+| Sujet | Décision | Conséquence |
+|---|---|---|
+| Nombre de QR codes | **Un seul QR** pour toutes les cibles | L'app ne sait pas sur quelle cible on joue : aucune mention « Cible 1 / 2 » à l'écran ni sur l'image partagée. Records et stats sont globaux à Arena18. |
