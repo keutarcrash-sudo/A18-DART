@@ -25,3 +25,4 @@ Chaque jeu est un module du moteur (voir `02-principes-ux.md`, section « Moteur
 | Sujet | Décision |
 |---|---|
 | Attribution des numéros | **Lancer main faible**, comme la tradition : chacun lance une fléchette de sa main faible, le numéro touché devient le sien. Relance si le numéro est déjà pris ou si la fléchette sort. L'écran affiche « Main faible ! » et un pavé 1-20 pour saisir le numéro obtenu. |
+| Devenir tueur | **Règle classique** : toucher le double de son propre numéro. Ensuite, chaque double touché sur le numéro d'un adversaire lui enlève une vie. |
