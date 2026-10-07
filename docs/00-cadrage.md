@@ -107,3 +107,4 @@ Bonne nouvelle : la charte va déjà dans le sens du brief (fond sombre, pas d'e
 | Records partagés | **Dès la V1**, sans compte, avec le prénom | Petit serveur dès la V1 (Supabase). Records du jour et de la semaine affichés à l'accueil. Seules les parties saisies fléchette par fléchette comptent. |
 | Modération des records | **Filtre automatique seul** (mots grossiers, scores impossibles). Si besoin, suppression manuelle directement dans la base de données | Pas d'écran staff ni de validation au bar en V1. Les records s'affichent tout de suite. |
 | Langues | **Français + anglais** | Langue choisie selon le téléphone, modifiable. Tous les textes, commentaires et annonces vocales existent dans les deux langues dès la V1. |
+| Équipes | **Dès la V1** | Répartition des joueurs en 2 équipes ou plus ; l'équipe partage un score, les joueurs lancent à tour de rôle. |
