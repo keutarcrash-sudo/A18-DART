@@ -1,4 +1,4 @@
-# Arena18 Darts
+# A18 Darts
 
 Web app de fléchettes d'Arena18, ouverte par QR code à côté des cibles.
 

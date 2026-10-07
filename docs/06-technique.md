@@ -31,3 +31,9 @@ Base connue du client (Next.js sur Vercel), plus quelques outils nouveaux, chois
 | Sujet | Décision | Conséquence |
 |---|---|---|
 | Nombre de QR codes | **Un seul QR** pour toutes les cibles | L'app ne sait pas sur quelle cible on joue : aucune mention « Cible 1 / 2 » à l'écran ni sur l'image partagée. Records et stats sont globaux à Arena18. |
+
+## Nom
+
+| Sujet | Décision |
+|---|---|
+| Nom de l'app | **A18 Darts** (court, reprend le logo, tient sous une icône de téléphone). Adresse web à définir, par exemple `darts.arena18.fr` ou l'adresse Vercel par défaut au départ. |
