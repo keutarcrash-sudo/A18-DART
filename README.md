@@ -25,4 +25,4 @@ benchmark → principes UX → directions créatives → choix → architecture 
 
 `docs/direction-18.html` est une maquette de travail cliquable : vue Saisie (pavé « numéro d'abord »), vue Tableau (course vers zéro) et podium au format story. Ce n'est pas encore l'app.
 
-`docs/parcours.html` est la maquette cliquable du parcours complet : accueil, joueurs, choix du jeu avec durées, réglages, bull, partie (saisie et tableau), célébrations, podium, revanche, story. Seuls 301 et 501 y sont jouables.
+`docs/parcours.html` est la maquette cliquable du parcours complet : accueil, joueurs, choix du jeu avec durées, réglages, bull, partie (saisie et tableau), célébrations, podium, revanche, story. Les 5 jeux de la V1 y sont jouables (301/501, Cricket, Tour de l’horloge, Killer, Plus gros score).
