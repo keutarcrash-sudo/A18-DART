@@ -98,3 +98,5 @@ Bonne nouvelle : la charte va déjà dans le sens du brief (fond sombre, pas d'e
 | Ton des commentaires | Chambrer gentiment | Taquin mais toujours bienveillant. |
 | Jeux joués aujourd'hui | 301 / 501 | L'écran X01 est conçu en premier ; les autres jeux s'en dérivent. |
 | Règle de fin | Réglée dans les options avant la partie, jamais modifiée par l'app en cours de jeu | Fin « pile à zéro » par défaut, « Double Out » en option. L'app ne propose pas de changer la règle en cours de partie. |
+| Coups de cœur visuels | Typo géante italique, inclinaisons, personnages 3D | L'énergie « gaming » est souhaitée, exprimée avec les moyens Arena18 (angle de 18°, chiffres sur mesure, noir/cyan). |
+| Personnages 3D | Oui, générés par le client lui-même, plus tard | L'app prévoit dès le départ des **emplacements de personnage** pour chaque moment clé (lancer, 180, bust, victoire, podium, chambrage). Règles : un seul personnage propre à Arena18, style fixé par une fiche, poses qui servent le jeu. |
