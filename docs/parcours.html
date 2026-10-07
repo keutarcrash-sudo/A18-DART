@@ -172,9 +172,6 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--cyan);outline-o
 .mult.show{opacity:1;pointer-events:auto;transform:none}
 .mult .k{font-family:var(--f-text);font-weight:900;font-style:italic;font-size:15px;color:var(--noir);position:relative;overflow:hidden}
 .mult .dbl{background:var(--cyan)} .mult .tpl{background:var(--chartreuse)}
-.mult .timer{position:absolute;left:0;bottom:0;height:3px;background:rgba(0,0,0,.45);width:100%}
-.mult.show .timer{animation:timer 1.5s linear forwards}
-@keyframes timer{to{width:0}}
 .go{appearance:none;border:0;height:56px;background:var(--blanc);color:var(--noir);font-weight:900;font-style:italic;text-transform:uppercase;font-size:17px;cursor:pointer;clip-path:polygon(0 0,100% 0,calc(100% - 18px) 100%,0 100%)}
 .go:disabled{background:var(--case);color:var(--gris-2);cursor:default}
 
@@ -333,7 +330,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--cyan);outline-o
       <div class="after" id="after"></div>
       <div class="darts"><div class="dart" id="d0"><span>—</span></div><div class="dart" id="d1"><span>—</span></div><div class="dart" id="d2"><span>—</span></div><div class="total" id="tot">0</div></div>
       <div class="pad" id="pad">
-        <div class="mult" id="mult"><button class="k dbl" id="bD" type="button">DOUBLE<span class="timer"></span></button><button class="k tpl" id="bT" type="button">TRIPLE<span class="timer"></span></button></div>
+        <div class="mult" id="mult"><button class="k dbl" id="bD" type="button">DOUBLE</button><button class="k tpl" id="bT" type="button">TRIPLE</button></div>
         <div class="row" id="r1"></div><div class="row" id="r2"></div><div class="row" id="r3"></div><div class="row" id="r4"></div>
         <div class="row x"><button class="k" type="button" data-v="25">25</button><button class="k" type="button" data-v="50">BULL</button><button class="k" type="button" data-v="0">RATÉ</button><button class="k undo" type="button" id="undo">ANNULER</button></div>
         <button class="go" id="go" type="button" disabled>Valider la volée</button>
@@ -419,7 +416,7 @@ const NOTES={
   games:"<b>La durée estimée dépend du nombre de joueurs.</b> Elle passe en cyan quand le jeu tient dans 10 à 30 minutes. Killer demande 3 joueurs minimum. Dans cette maquette, seuls 301 et 501 sont jouables.",
   options:"<b>La règle de fin se choisit ici, avant la partie</b>, et ne change plus ensuite. Chaque option est expliquée en une phrase, pour les joueurs qui ne connaissent pas les règles.",
   bull:"<b>La tradition des pubs.</b> Une tape sur le plus proche du centre, il commence. La voix l'annonce. Le cadre en pointillé attend ton personnage.",
-  game:"<b>Tape un numéro : c'est un simple.</b> Double / Triple restent 1,5 s sous le pouce. « Tableau » simule le téléphone posé sur la table. Essaie les raccourcis démo pour voir les 3 niveaux de célébration.",
+  game:"<b>Tape un numéro : c'est un simple.</b> Double / Triple restent sous le pouce jusqu’à la fléchette suivante, sans chrono. « Tableau » simule le téléphone posé sur la table. Essaie les raccourcis démo pour voir les 3 niveaux de célébration.",
   podium:"<b>Revanche et Partager, à égalité.</b> La revanche relance tout de suite, et le dernier commence. La meilleure volée de la partie est en chartreuse.",
   story:"<b>L'image à partager</b>, aux couleurs d'Arena18, en format story. Dans l'app, les boutons ouvriront le partage du téléphone."
 };
@@ -598,7 +595,7 @@ function renderTable(){
 // pavé
 for(let r=0;r<4;r++)for(let c=1;c<=5;c++){const v=r*5+c,b=document.createElement('button');b.className='k';b.type='button';b.dataset.v=v;b.textContent=v;$('r'+(r+1)).appendChild(b);}
 let multT=null;
-function showMult(v){if(v===0||v===25||v===50){hideMult();return;}$('bD').firstChild.textContent='DOUBLE '+v;$('bT').firstChild.textContent='TRIPLE '+v;const m=$('mult');m.classList.remove('show');void m.offsetWidth;m.classList.add('show');clearTimeout(multT);multT=setTimeout(hideMult,1500);}
+function showMult(v){if(v===0||v===25||v===50){hideMult();return;}$('bD').firstChild.textContent='DOUBLE '+v;$('bT').firstChild.textContent='TRIPLE '+v;const m=$('mult');m.classList.remove('show');void m.offsetWidth;m.classList.add('show');}
 function hideMult(){$('mult').classList.remove('show');clearTimeout(multT);}
 function popDart(i){const el=$('d'+i);el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');}
 function add(v){if(S.busy||S.darts.length>=3)return;S.darts.push({v,m:1});renderDarts();popDart(S.darts.length-1);showMult(v);autoEnd();}

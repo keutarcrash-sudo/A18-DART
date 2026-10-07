@@ -85,9 +85,6 @@ h1 .deg{color:var(--cyan)}
 .mult.show{opacity:1;pointer-events:auto;transform:none}
 .mult .k{font-family:var(--f-text);font-weight:900;font-style:italic;font-size:15px;color:var(--noir);position:relative;overflow:hidden}
 .mult .k.dbl{background:var(--cyan)} .mult .k.tpl{background:var(--chartreuse)}
-.mult .timer{position:absolute;left:0;bottom:0;height:3px;background:rgba(0,0,0,.45);width:100%}
-.mult.show .timer{animation:timer 1.5s linear forwards}
-@keyframes timer{to{width:0}}
 .go{appearance:none;border:0;height:56px;background:var(--blanc);color:var(--noir);font-family:var(--f-text);font-weight:900;font-style:italic;text-transform:uppercase;font-size:17px;letter-spacing:.02em;cursor:pointer;clip-path:polygon(0 0,100% 0,calc(100% - 18px) 100%,0 100%)}
 .go:disabled{background:#232323;color:var(--gris-2);cursor:default}
 
@@ -160,7 +157,7 @@ h1 .deg{color:var(--cyan)}
   <div class="eyebrow">Arena18 Darts · Direction créative</div>
   <h1>Dix-huit<span class="deg">°</span></h1>
   <p class="lead">Un secteur de cible fait exactement <b>18°</b>. Cet angle devient la seule inclinaison de toute l'app. Le score est le héros : il est écrit avec les chiffres Arena18 et déborde de son bandeau. Le prénom est en géant, comme au dos d'un maillot. Le cyan indique le joueur actif et le Double, le chartreuse le Triple et les records. Le personnage 3D a sa place réservée aux moments clés.</p>
-  <div class="howto"><span>Les écrans sont cliquables</span><span>Tape un numéro = simple</span><span>Double / Triple apparaissent 1,5 s</span><span>La vue Tableau suit la partie</span></div>
+  <div class="howto"><span>Les écrans sont cliquables</span><span>Tape un numéro = simple</span><span>Double / Triple restent affichés</span><span>La vue Tableau suit la partie</span></div>
 
   <div class="boards">
     <!-- VUE SAISIE -->
@@ -187,8 +184,8 @@ h1 .deg{color:var(--cyan)}
           </div>
           <div class="pad" id="pad">
             <div class="mult" id="mult">
-              <button class="k dbl" id="bD" type="button">DOUBLE 20<span class="timer"></span></button>
-              <button class="k tpl" id="bT" type="button">TRIPLE 20<span class="timer"></span></button>
+              <button class="k dbl" id="bD" type="button">DOUBLE 20</button>
+              <button class="k tpl" id="bT" type="button">TRIPLE 20</button>
             </div>
             <div class="row" id="nums"></div>
             <div class="row x">
@@ -205,7 +202,7 @@ h1 .deg{color:var(--cyan)}
       </div>
       <div class="cap">
         <h2><i>01</i> Vue Saisie · téléphone en main</h2>
-        <p>Le prénom en géant, le score dans le bandeau cyan incliné à 18°. En haut, la mini-piste montre qui mène. Tape un numéro : c'est un simple. Double et Triple restent sous le pouce pendant 1,5 s.</p>
+        <p>Le prénom en géant, le score dans le bandeau cyan incliné à 18°. En haut, la mini-piste montre qui mène. Tape un numéro : c'est un simple. Double et Triple restent sous le pouce jusqu’à la fléchette suivante.</p>
       </div>
     </div>
 
@@ -342,7 +339,7 @@ h1 .deg{color:var(--cyan)}
     if(v===0||v===25||v===50){hideMult();return;}
     $('bD').firstChild.textContent='DOUBLE '+v;$('bT').firstChild.textContent='TRIPLE '+v;
     const m=$('mult');m.classList.remove('show');void m.offsetWidth;m.classList.add('show');
-    clearTimeout(multTimer);multTimer=setTimeout(hideMult,1500);
+    
   }
   function hideMult(){$('mult').classList.remove('show');clearTimeout(multTimer);}
   function setMult(m){

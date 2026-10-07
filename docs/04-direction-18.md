@@ -29,7 +29,7 @@ Planche visuelle cliquable : `docs/direction-18.html`.
 | Prénom géant + score dans un bandeau cyan incliné | Classement de la course vers zéro, en géant |
 | Les 3 fléchettes de la volée | Rang en grand italique, prénom, reste |
 | Mini-piste de course en haut (qui mène) | Barre de progression inclinée par joueur |
-| Pavé « numéro d'abord » : une tape = simple ; Double / Triple apparaissent sous le pouce pendant 1,5 s | Bandeau « À toi : Guillaume » en haut |
+| Pavé « numéro d'abord » : une tape = simple ; Double / Triple apparaissent sous le pouce et y restent jusqu'à la fléchette suivante | Bandeau « À toi : Guillaume » en haut |
 
 Bascule automatique selon la position du téléphone, plus un bouton pour forcer la vue.
 
@@ -37,12 +37,11 @@ Bascule automatique selon la position du téléphone, plus un bouton pour forcer
 
 - 20 touches (1 à 20) en 4 rangées de 5, puis une rangée : `25` · `BULL` · `RATÉ` · `ANNULER`.
 - Taper un numéro enregistre un **simple** tout de suite.
-- Pendant 1,5 s, la dernière rangée est remplacée par deux grandes touches : `DOUBLE 20` (cyan) et `TRIPLE 20` (chartreuse). Une tape les active ; sinon elles disparaissent seules.
+- La dernière rangée est alors remplacée par deux grandes touches : `DOUBLE 20` (cyan) et `TRIPLE 20` (chartreuse). **Pas de chrono** : elles restent affichées jusqu'à la fléchette suivante, une annulation ou la validation. Une tape transforme le simple en double ou en triple. *(Décision après test client : 1,5 s ne laissait pas assez de temps.)*
 - La 3e fléchette saisie fait apparaître « Valider la volée ». En cas de victoire ou de bust, la volée se termine d'elle-même.
 
 ## Ce qui reste à valider sur la planche
 
 - La lisibilité du score à 2 m (taille, contraste du noir sur cyan).
-- La durée de 1,5 s pour Double / Triple : trop courte ou trop longue ?
 - La vue Tableau à 6 joueurs ou plus (lignes plus serrées, ou défilement ?).
 - Le dessin des chiffres sur mesure (à faire dessiner par un typographe, ou à dessiner nous-mêmes en SVG).
