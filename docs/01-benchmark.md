@@ -111,3 +111,20 @@ Le benchmark actuel ne contient que des apps numériques. Pour éviter l'esthét
 - **l'ardoise du marqueur** dans les pubs anglais (la tradition de barrer le score précédent) ;
 - pages résultats de la presse sportive (tableaux, classements, titres) ;
 - signalétique sportive (numéros de maillots, marquages au sol).
+
+---
+
+## Coups de cœur du client (`coup-de-coeur-6` à `10`)
+
+Ces images disent ce que le client **aime ressentir**. On en garde les mécanismes, pas le style.
+
+| Ce qu'on voit | Ce que ça produit | Traduction Arena18 |
+|---|---|---|
+| Titres énormes, condensés, en italique (« LEADERBOARDS », « WELCOME! », « JAMES ») | Énergie, vitesse, ton sportif | Le prénom du joueur actif en très grand, comme un nom au dos d'un maillot. |
+| Onglets et cartes **inclinés** (« All time / This month / Today », carte du 1er de travers) | Mouvement, rupture de la grille | L'angle de 18° : les éléments inclinés le sont toujours exactement de 18°. |
+| Personnages qui **sortent du cadre** de leur carte | Profondeur, vie, effet « ça déborde » | Les chiffres du score peuvent déborder de leur bloc. On n'a pas besoin de personnage, le chiffre est le héros. |
+| Podium à 3 marches, grands numéros de rang en italique | On comprend le classement en 1 seconde | Le podium en fin de partie, et l'écran de résultats construit autour des grands numéros. |
+| Gros chiffres colorés au milieu de petits textes (12467, 1.500, 22 / 14) | Le chiffre attire l'œil en premier | Confirmé : le chiffre est l'élément graphique principal. |
+| Couleurs vives, ambiance ludique | Fun, accessible, pas intimidant | Cohérent avec l'objectif n°1 (le fun). À faire avec le cyan Arena et des aplats, pas avec des dégradés ni des lueurs. |
+
+**La tension à résoudre** : ces images utilisent justement les codes que le brief interdit (personnages 3D, dégradés violets, néon). Ce qui plaît, c'est l'**énergie** : typographie géante, inclinaisons, éléments qui débordent, podium. On garde l'énergie et on l'exprime avec les moyens d'Arena18 : chiffres sur mesure, angle de 18°, noir et cyan en aplat.
