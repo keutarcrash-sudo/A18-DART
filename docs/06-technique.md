@@ -10,7 +10,7 @@ Critère principal : le client fait du vibe coding. L'app doit rester simple à 
 | Effets sonores | **Oui, sobres** | Un son discret à chaque fléchette saisie, des sons plus marqués pour les célébrations (180, victoire, bust, record). Fichiers courts libres de droits (licence CC0) ou sons synthétisés directement dans le navigateur (Web Audio) : gratuits, légers, sans service externe. Bouton muet toujours accessible ; le choix est mémorisé sur le téléphone. |
 | Outil de développement | **Claude Code**, directement dans ce dépôt GitHub | Déjà utilisé par le client. |
 
-## La pile proposée
+## La pile retenue (validée par le client)
 
 Base connue du client (Next.js sur Vercel), plus quelques outils nouveaux, choisis parce qu'ils lui ouvrent des portes.
 
