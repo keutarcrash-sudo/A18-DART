@@ -59,3 +59,26 @@ Classées par urgence. Les premières bloquent l'étape suivante.
 10. Système de rating (Elo, Glicko, ou propriétaire) — à concevoir pour que le volume de parties ne suffise pas à dominer le classement.
 11. Écran public / Arena TV — prévoir que l'état d'une partie puisse être diffusé en temps réel (Supabase Realtime le permet).
 12. Format des ARENA18 ORIGINALS — définir un « contrat » commun à tous les jeux (voir `02-principes-ux.md`, section moteur).
+
+## Réponses validées (échanges du 07.10)
+
+| Sujet | Réponse | Conséquence |
+|---|---|---|
+| Cibles | Traditionnelles (sisal, pointes acier) | Tout le score est saisi à la main : la saisie doit être la meilleure du marché. |
+| Écran près des cibles | Aucun | Le téléphone est le seul affichage. |
+| Réseau | 5G, les clients jouent sur leur propre téléphone | Pas de dépendance au Wi-Fi du lieu ; garder l'app légère. |
+| Saisie sur une cible dessinée | Testée ailleurs, pas pratique | Idée de « roue » abandonnée. |
+| Qui saisit | Un seul téléphone par partie | Pas de synchronisation multi-appareils en V1. |
+| Comment le téléphone circule | Ça dépend des groupes (en main, passé de main en main, posé) | L'écran de jeu doit marcher de près (saisie rapide) et de loin (posé sur une table). |
+| Identité Arena18 | Charte existante, l'app peut avoir sa propre personnalité | Voir ci-dessous. |
+
+### Ce que la charte Arena18 apporte
+
+- **Logo « A18 »** : un A blanc en contour et un « 18 » cyan, dessinés dans un style à empattements carrés, comme les numéros de maillot universitaires. Le 18 du logo est déjà un chiffre de sport.
+- **Couleurs** : noir Arena `#171717`, blanc, cyan Arena `#0CC0DF` (signature, présente partout), cyan profond `#0097B2`, chartreuse historique `#C7D530` (à ne pas faire dominer).
+- **Typo** : Montserrat exclusivement pour la communication.
+- **Ton** : tutoiement, chaleureux, simple, « comme un pote ». Tagline : **« À vous de jouer »**.
+- **Lieu** : club house brut et chaleureux (murs en OSB, tonneaux, cornhole, bières locales). Lumière tamisée dès 18 h. Le son monte au fil de la soirée.
+- **Interdits** : emojis et cliparts, fonds colorés, textes colorés autres que blanc ou cyan.
+
+Bonne nouvelle : la charte va déjà dans le sens du brief (fond sombre, pas d'emoji, contraste fort). Point de vigilance : un cyan vif sur noir peut vite tourner au « néon ». Il faut l'utiliser en aplat, sans lueur.
