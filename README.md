@@ -18,7 +18,7 @@ benchmark → principes UX → directions créatives → choix → architecture 
 | 2 bis. Règles des jeux | [docs/05-jeux.md](docs/05-jeux.md) | validées |
 | 3. Directions créatives (4 pistes, archive) | [docs/03-directions-creatives.md](docs/03-directions-creatives.md) | remplacé par l'étape 3 bis |
 | 3 bis. Direction retenue « 18° » | [docs/04-direction-18.md](docs/04-direction-18.md) + planche cliquable [docs/direction-18.html](docs/direction-18.html) | **validée** |
-| 3 ter. Chiffres A18 sur mesure (3 variantes) | [docs/chiffres.html](docs/chiffres.html) + polices dans [docs/chiffres/](docs/chiffres/) | **choix à faire** |
+| 3 ter. Chiffres A18 sur mesure | [docs/chiffres.html](docs/chiffres.html) + polices dans [docs/chiffres/](docs/chiffres/) | **retenue : Élan gras** |
 | 4. Choix techniques | [docs/06-technique.md](docs/06-technique.md) | validés |
 | 5. Design system | — | à faire |
 | 6. Maquette du parcours complet | [docs/parcours.html](docs/parcours.html) | **à valider** |
