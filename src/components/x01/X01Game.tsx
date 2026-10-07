@@ -4,8 +4,9 @@
  * L'interface ne connaît pas les règles : elle affiche l'état du moteur et joue ses événements.
  */
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Celebration, type CeleSpec, Wink } from "@/components/Celebration";
 import { type Dart, type Mult, dartLabel } from "@/engine/types";
 import {
@@ -18,15 +19,17 @@ import {
   volleyScore,
 } from "@/engine/x01";
 import { useFlatPhone, useWakeLock } from "@/lib/device";
-import { type SavedX01, clearPartie, useX01Partie } from "@/lib/partie";
+import { clearPartie, useX01Partie } from "@/lib/partie";
 import { isMuted, setMuted, sounds } from "@/lib/sound";
 import { Pad } from "./Pad";
 import { Tableau } from "./Tableau";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const noopSubscribe = () => () => {};
 
-export function X01Game({ fallback }: { fallback: () => SavedX01 }) {
-  const { state, push, setLastMult, undo, restart } = useX01Partie(fallback);
+export function X01Game() {
+  const router = useRouter();
+  const { loaded, state, push, setLastMult, undo, restart } = useX01Partie();
   const [busy, setBusy] = useState(false);
   const [animScore, setAnimScore] = useState<number | null>(null);
   const [minus, setMinus] = useState<{ id: number; text: string } | null>(null);
@@ -34,20 +37,24 @@ export function X01Game({ fallback }: { fallback: () => SavedX01 }) {
   const [wink, setWink] = useState<string | null>(null);
   const [multFor, setMultFor] = useState<number | null>(null);
   const [view, setView] = useState<"saisie" | "tableau">("saisie");
-  const [muted, setMutedState] = useState(false);
+  const [mutedChoice, setMutedState] = useState<boolean | null>(null);
+  const mutedStored = useSyncExternalStore(noopSubscribe, isMuted, () => false);
+  const muted = mutedChoice ?? mutedStored;
   const celeDone = useRef<(() => void) | null>(null);
   const winkTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { flat, askPermission } = useFlatPhone();
 
   useWakeLock(true);
-  // eslint-disable-next-line react-hooks/set-state-in-effect -- préférence lue une fois sur le téléphone
-  useEffect(() => setMutedState(isMuted()), []);
-
-  // Téléphone posé à plat → vue Tableau ; repris en main → vue Saisie. Le bouton reste prioritaire jusqu'au prochain changement.
+  // Pas de partie en cours : on part créer la partie.
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- suit le capteur d'orientation
+    if (loaded && !state) router.replace("/nouvelle");
+  }, [loaded, state, router]);
+  // Téléphone posé à plat → vue Tableau ; repris en main → vue Saisie. Le bouton reste prioritaire jusqu'au prochain changement.
+  const [prevFlat, setPrevFlat] = useState(flat);
+  if (flat !== prevFlat) {
+    setPrevFlat(flat);
     if (flat !== null) setView(flat ? "tableau" : "saisie");
-  }, [flat]);
+  }
 
   const celebrate = useCallback(
     (spec: CeleSpec) =>
@@ -134,10 +141,10 @@ export function X01Game({ fallback }: { fallback: () => SavedX01 }) {
 
   // Une partie déjà terminée qu'on recharge ne rejoue pas sa célébration.
   const handled = useRef<X01State | null>(null);
-  const loaded = useRef(false);
+  const firstSeen = useRef(false);
   useEffect(() => {
-    if (!state || loaded.current) return;
-    loaded.current = true;
+    if (!state || firstSeen.current) return;
+    firstSeen.current = true;
     if (state.status === "match") handled.current = state;
   }, [state]);
 
@@ -444,12 +451,12 @@ function FinDePartie({ state, onRevanche, onQuit }: { state: X01State; onRevanch
           Revanche
         </button>
         <Link
-          href="/"
+          href="/nouvelle"
           onClick={onQuit}
-          className="btn-18 grid h-14 place-items-center bg-blanc text-base font-black uppercase italic text-noir"
+          className="btn-18 grid h-14 place-items-center bg-blanc text-[15px] font-black uppercase italic text-noir"
           style={{ "--h": "56px" } as React.CSSProperties}
         >
-          Accueil
+          Nouvelle partie
         </Link>
       </div>
     </div>

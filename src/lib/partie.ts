@@ -29,14 +29,16 @@ export function clearPartie(): void {
   removeKey(KEY);
 }
 
-export function useX01Partie(fallback: () => SavedX01) {
+export function useX01Partie() {
   const [partie, setPartie] = useState<SavedX01 | null>(null);
+  const [loaded, setLoaded] = useState(false);
 
   // Lecture au montage seulement (le stockage n'existe pas côté serveur).
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- lecture unique du stockage du téléphone
-    setPartie(loadPartie() ?? fallback());
-  }, [fallback]);
+    setPartie(loadPartie());
+    setLoaded(true);
+  }, []);
 
   useEffect(() => {
     if (partie) savePartie(partie);
@@ -64,5 +66,5 @@ export function useX01Partie(fallback: () => SavedX01) {
     [],
   );
 
-  return { partie, state, push, setLastMult, undo, restart };
+  return { loaded, partie, state, push, setLastMult, undo, restart };
 }
