@@ -108,3 +108,4 @@ Bonne nouvelle : la charte va déjà dans le sens du brief (fond sombre, pas d'e
 | Modération des records | **Filtre automatique seul** (mots grossiers, scores impossibles). Si besoin, suppression manuelle directement dans la base de données | Pas d'écran staff ni de validation au bar en V1. Les records s'affichent tout de suite. |
 | Langues | **Français + anglais** | Langue choisie selon le téléphone, modifiable. Tous les textes, commentaires et annonces vocales existent dans les deux langues dès la V1. |
 | Équipes | **Dès la V1**, formées par le groupe | Le groupe place lui-même chaque prénom dans une équipe (pas de tirage au sort) ; l'équipe partage un score, les joueurs lancent à tour de rôle. |
+| Jeux V1 | 301 / 501 (+ 701), **Cricket**, **Tour de l'horloge**, **Killer**, **Plus gros score** | 5 familles de jeux dès la V1 : le moteur de jeu modulaire est indispensable dès le départ. |
