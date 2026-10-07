@@ -19,8 +19,10 @@ benchmark → principes UX → directions créatives → choix → architecture 
 | 3 bis. Direction retenue « 18° » | [docs/04-direction-18.md](docs/04-direction-18.md) + planche cliquable [docs/direction-18.html](docs/direction-18.html) | **validée** |
 | 4. Architecture | — | à faire |
 | 5. Design system | — | à faire |
-| 6. Maquettes haute fidélité | — | — |
+| 6. Maquette du parcours complet | [docs/parcours.html](docs/parcours.html) | **à valider** |
 | 7. Prototype | — | — |
 | 8. Développement | — | — |
 
 `docs/direction-18.html` est une maquette de travail cliquable : vue Saisie (pavé « numéro d'abord »), vue Tableau (course vers zéro) et podium au format story. Ce n'est pas encore l'app.
+
+`docs/parcours.html` est la maquette cliquable du parcours complet : accueil, joueurs, choix du jeu avec durées, réglages, bull, partie (saisie et tableau), célébrations, podium, revanche, story. Seuls 301 et 501 y sont jouables.
