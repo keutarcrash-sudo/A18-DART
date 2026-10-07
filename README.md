@@ -12,14 +12,15 @@ benchmark → principes UX → directions créatives → choix → architecture 
 
 | Étape | Document | Statut |
 |---|---|---|
-| 0. Cadrage du brief et décisions ouvertes | [docs/00-cadrage.md](docs/00-cadrage.md) | fait, décisions à valider |
+| 0. Cadrage du brief et réponses du client | [docs/00-cadrage.md](docs/00-cadrage.md) | fait |
 | 1. Benchmark | [docs/01-benchmark.md](docs/01-benchmark.md) | fait |
 | 2. Principes UX et parcours | [docs/02-principes-ux.md](docs/02-principes-ux.md) | fait, à valider |
-| 3. Directions créatives (4 pistes) | [docs/03-directions-creatives.md](docs/03-directions-creatives.md) + [docs/directions.html](docs/directions.html) | fait, **choix à faire** |
+| 3. Directions créatives (4 pistes, archive) | [docs/03-directions-creatives.md](docs/03-directions-creatives.md) | remplacé par l'étape 3 bis |
+| 3 bis. Direction retenue « 18° » | [docs/04-direction-18.md](docs/04-direction-18.md) + planche cliquable [docs/direction-18.html](docs/direction-18.html) | **à valider** |
 | 4. Architecture | — | après le choix |
 | 5. Design system | — | après le choix |
 | 6. Maquettes haute fidélité | — | — |
 | 7. Prototype | — | — |
 | 8. Développement | — | — |
 
-`docs/directions.html` est une page visuelle : elle montre l'écran de jeu dans chacune des 4 directions, avec l'animation de soustraction et deux interrupteurs de test (« sans couleur », « sans animation »).
+`docs/direction-18.html` est une maquette de travail cliquable : vue Saisie (pavé « numéro d'abord »), vue Tableau (course vers zéro) et podium au format story. Ce n'est pas encore l'app.
