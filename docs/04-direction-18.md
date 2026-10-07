@@ -10,7 +10,7 @@ Planche visuelle cliquable : `docs/direction-18.html`.
 
 ## Les 6 règles
 
-1. **Un seul angle : 18°.** Tout ce qui est incliné (bandeaux, onglets, cases de fléchettes, transitions) l'est exactement de 18°. Rien d'autre n'est penché. C'est la signature d'Arena18 : visible sans couleur, sans logo, sans personnage.
+1. **Un seul angle : 18°.** Tout ce qui est incliné (bandeaux, onglets, cases de fléchettes, transitions) l'est exactement de 18°. Rien d'autre n'est penché. Les grands boutons d'action sont des **parallélogrammes inclinés à 18° des deux côtés** : le décalage vaut hauteur × 0,325 (tan 18°), par exemple 19 px pour un bouton de 58 px. *(Décision après test client.)* C'est la signature d'Arena18 : visible sans couleur, sans logo, sans personnage.
 2. **Le chiffre est le héros.** Les scores utilisent des chiffres Arena18 dessinés sur mesure, dans l'esprit du « 18 » du logo (empattements carrés, style numéro de maillot). Ils débordent de leur bandeau, comme les personnages débordent des cartes dans les références. *Sur la planche, une police proche sert de remplaçant en attendant le dessin.*
 3. **Le prénom en géant.** Le joueur actif est écrit en Montserrat Black italique, en capitales, très grand, comme le nom au dos d'un maillot.
 4. **Couleur = sens, jamais décor.** Toutes les couleurs sont en aplat, sans dégradé ni lueur.

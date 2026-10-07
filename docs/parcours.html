@@ -53,7 +53,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--cyan);outline-o
 .mini{appearance:none;background:transparent;border:1.5px solid #3a3a3a;color:#cfcfcf;font-weight:700;font-size:9px;letter-spacing:.14em;text-transform:uppercase;height:26px;padding:0 10px;cursor:pointer}
 .title{font-weight:900;font-style:italic;text-transform:uppercase;font-size:40px;line-height:.95;letter-spacing:-.02em;margin:16px 0 0}
 .lede{font-size:13px;line-height:1.55;color:#bdbdbd;margin:8px 0 0}
-.cta{appearance:none;border:0;height:58px;width:100%;background:var(--blanc);color:var(--noir);font-weight:900;font-style:italic;text-transform:uppercase;font-size:17px;cursor:pointer;clip-path:polygon(0 0,100% 0,calc(100% - 19px) 100%,0 100%);flex:none}
+.cta{appearance:none;border:0;height:58px;width:100%;background:var(--blanc);color:var(--noir);font-weight:900;font-style:italic;text-transform:uppercase;font-size:17px;cursor:pointer;clip-path:polygon(19px 0,100% 0,calc(100% - 19px) 100%,0 100%);flex:none}
 .cta.cy{background:var(--cyan)}
 .cta:disabled{background:var(--case);color:var(--gris-2);cursor:default}
 .spacer{flex:1 0 16px}
@@ -172,7 +172,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--cyan);outline-o
 .mult.show{opacity:1;pointer-events:auto;transform:none}
 .mult .k{font-family:var(--f-text);font-weight:900;font-style:italic;font-size:15px;color:var(--noir);position:relative;overflow:hidden}
 .mult .dbl{background:var(--cyan)} .mult .tpl{background:var(--chartreuse)}
-.go{appearance:none;border:0;height:56px;background:var(--blanc);color:var(--noir);font-weight:900;font-style:italic;text-transform:uppercase;font-size:17px;cursor:pointer;clip-path:polygon(0 0,100% 0,calc(100% - 18px) 100%,0 100%)}
+.go{appearance:none;border:0;height:56px;background:var(--blanc);color:var(--noir);font-weight:900;font-style:italic;text-transform:uppercase;font-size:17px;cursor:pointer;clip-path:polygon(18px 0,100% 0,calc(100% - 18px) 100%,0 100%)}
 .go:disabled{background:var(--case);color:var(--gris-2);cursor:default}
 
 /* Partie : tableau */
@@ -304,9 +304,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--cyan);outline-o
 .kp.me .sg i.f{background:var(--cyan)}
 .kp .sg i.b{background:#3d3d3d}
 .hitbtns{display:grid;gap:6px;margin-top:auto;padding-top:12px;flex:none}
-.hit{appearance:none;border:0;height:96px;background:var(--cyan);color:var(--noir);font-weight:900;font-style:italic;text-transform:uppercase;font-size:30px;letter-spacing:-.01em;cursor:pointer;clip-path:polygon(0 0,100% 0,calc(100% - 28px) 100%,0 100%);touch-action:manipulation}
+.hit{appearance:none;border:0;height:96px;background:var(--cyan);color:var(--noir);font-weight:900;font-style:italic;text-transform:uppercase;font-size:30px;letter-spacing:-.01em;cursor:pointer;clip-path:polygon(31px 0,100% 0,calc(100% - 31px) 100%,0 100%);touch-action:manipulation}
 .hit:active{background:var(--blanc)}
-.hit.miss{height:60px;background:var(--blanc);font-size:20px;clip-path:polygon(0 0,100% 0,calc(100% - 18px) 100%,0 100%)}
+.hit.miss{height:60px;background:var(--blanc);font-size:20px;clip-path:polygon(20px 0,100% 0,calc(100% - 20px) 100%,0 100%)}
 .hit.miss:active{background:#bdbdbd}
 .hit3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .hit3 .hit{height:96px;font-size:15px;clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%)}
@@ -545,7 +545,7 @@ const kind=()=>!S.game?'x01':S.game.x01?'x01':S.game.id;
 const playScreen=()=>({x01:'game',high:'game',cricket:'cricket',clock:'clock',killer:'killer'})[kind()];
 const NOTES={
   home:"<b>Un seul geste possible : JOUER.</b> Le bloc cyan est incliné à 18°. Les records du jour sont en dessous : fais défiler. Si une partie est en cours, le bouton devient « Reprendre ».",
-  players:"<b>Prénoms au clavier, un par un.</b> Entrée passe au suivant. Les prénoms déjà joués sur ce téléphone sont proposés en une tape. Active « Jouer en équipes », puis touche A/B pour changer un joueur d'équipe.",
+  players:"<b>Prénoms au clavier, un par un.</b> Entrée passe au suivant. « Récents sur ce téléphone » propose en une tape les prénoms déjà tapés ici, pour qu'un groupe qui revient n'ait rien à retaper. Active « Jouer en équipes », puis touche A/B pour changer un joueur d'équipe.",
   games:"<b>La durée estimée dépend du nombre de joueurs.</b> Elle passe en cyan quand le jeu tient dans 10 à 30 minutes. Killer demande 3 joueurs minimum. Tous les jeux sont jouables, sauf les Originals.",
   options:"<b>Les règles se choisissent ici, avant la partie</b>, et ne changent plus ensuite. Chaque option est expliquée en une phrase, pour les joueurs qui ne connaissent pas les règles.",
   bull:"<b>La tradition des pubs.</b> Une tape sur le plus proche du centre, il commence. La voix l'annonce. Le cadre en pointillé attend ton personnage.",
@@ -618,7 +618,7 @@ $('teamsw').addEventListener('click',()=>{S.teams=!S.teams;renderPlayers();});
 function teamsOk(){return !S.teams||(S.players.some(p=>p.t==='A')&&S.players.some(p=>p.t==='B'));}
 function renderPlayers(){
   const free=KNOWN.filter(k=>!S.players.some(p=>p.n===k));
-  $('chips').innerHTML=free.length?'<small>Déjà joué ici</small>'+free.slice(0,5).map(k=>'<button type="button" class="chip" data-n="'+k+'">'+k+'</button>').join(''):'';
+  $('chips').innerHTML=free.length?'<small>Récents sur ce téléphone</small>'+free.slice(0,5).map(k=>'<button type="button" class="chip" data-n="'+k+'">'+k+'</button>').join(''):'';
   $('plist').innerHTML=S.players.length?S.players.map((p,i)=>'<div class="prow"><div class="ix"><span>'+(i+1)+'</span></div><div class="pn">'+p.n+'</div>'+(S.teams?'<button type="button" class="team '+p.t+'" data-i="'+i+'" aria-label="Changer d\'équipe">'+p.t+'</button>':'')+'<button type="button" class="rm" data-i="'+i+'" aria-label="Retirer '+p.n+'">×</button></div>').join(''):'<div class="empty">Tape un prénom puis OK, ou touche un prénom proposé. Seul, ça marche aussi : idéal pour s\'entraîner.</div>';
   $('teamsw').setAttribute('aria-pressed',S.teams);
   const n=S.players.length;$('pcount').textContent=n+' joueur'+(n>1?'s':'');
