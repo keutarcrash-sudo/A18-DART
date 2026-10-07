@@ -29,3 +29,11 @@ Chaque jeu est un module du moteur (voir `02-principes-ux.md`, section « Moteur
 | Tueur qui touche son propre double | **Il perd une vie** (règle traditionnelle). Moment « clin d'œil » idéal pour le personnage. |
 | Vies | **Réglable** de 1 à 5, **3 par défaut**. |
 | Saisie | **Les joueurs servent de pavé.** Chaque ligne affiche le prénom, son numéro (chiffres Arena18), ses vies (barres à 18°) et un badge « TUEUR » une fois le statut gagné. Une tape sur la ligne = touché ce numéro en simple, puis Double / Triple sous le pouce (sans chrono). « Raté / Autre » sous la liste. Les joueurs éliminés restent visibles, barrés. |
+
+## Plus gros score
+
+| Sujet | Décision |
+|---|---|
+| Nombre de volées | **Réglable** de 3 à 10, **8 par défaut**. |
+| Saisie | Le **même pavé qu'au 501** (numéro d'abord, Double / Triple sans chrono) : il faut connaître chaque fléchette pour détecter les 180 et les records. |
+| Affichage | La course monte au lieu de descendre : le score grimpe dans le bandeau cyan, et la vue Tableau montre qui mène. Un compteur « Volée 5/8 » remplace le numéro de tour. |
