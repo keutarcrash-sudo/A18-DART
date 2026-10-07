@@ -82,3 +82,15 @@ Classées par urgence. Les premières bloquent l'étape suivante.
 - **Interdits** : emojis et cliparts, fonds colorés, textes colorés autres que blanc ou cyan.
 
 Bonne nouvelle : la charte va déjà dans le sens du brief (fond sombre, pas d'emoji, contraste fort). Point de vigilance : un cyan vif sur noir peut vite tourner au « néon ». Il faut l'utiliser en aplat, sans lueur.
+
+### Réponses suivantes
+
+| Sujet | Réponse | Conséquence |
+|---|---|---|
+| Chiffres du score | Chiffres sur mesure inspirés du « 18 » du logo | Une « fonte » Arena18 de 0 à 9 pour les scores ; Montserrat pour le reste. |
+| Saisie | Fléchette par fléchette | Le pavé de saisie est l'élément le plus important de l'app. Double Out vérifié automatiquement, vraies stats. |
+| Public principal | Groupes du bar, qui ne connaissent pas forcément les règles | L'app explique les règles au moment où on en a besoin (« Il te faut un double »). |
+| Taille des groupes | Très variable | L'affichage doit tenir de 1 à 8 joueurs ; prévoir les équipes. |
+| Durée de jeu | 15 à 30 min | Afficher une durée estimée par jeu selon le nombre de joueurs ; proposer le bon format. |
+| Objectif n°1 | Rendre le moment plus fun | Priorité aux réactions, commentaires et célébrations pendant la partie. Ladder et stats en second plan. |
+| Son | Oui, le son fait partie de l'expérience | Annonces (180, victoire, checkout), sons de saisie. Bouton muet accessible. |
