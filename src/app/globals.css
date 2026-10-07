@@ -1,26 +1,80 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Direction « 18° » (voir .claude/skills/a18-design/SKILL.md).
+ * Couleur = sens, jamais décor. Un seul angle : 18°. Aucun arrondi, aucune ombre.
+ */
+@theme {
+  --color-noir: #171717;
+  --color-noir-deep: #0d0d0d;
+  --color-blanc: #ffffff;
+  --color-gris: #8a8a8a;
+  --color-gris-2: #5b5b5b;
+  --color-filet: #2a2a2a;
+  --color-case: #232323;
+  --color-cyan: #0cc0df; /* joueur actif, meneur, action principale, Double */
+  --color-chartreuse: #c7d530; /* Triple et records uniquement */
+
+  --font-text: var(--font-montserrat), system-ui, sans-serif;
+  --font-num: var(--font-a18), var(--font-montserrat), system-ui, sans-serif;
+
+  --radius-*: initial;
+  --shadow-*: initial;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+  body {
+    background: var(--color-noir);
+    color: var(--color-blanc);
+    font-family: var(--font-text);
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior: none;
+  }
+  button {
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-cyan);
+    outline-offset: 2px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Parallélogramme incliné à 18° des deux côtés : décalage = hauteur × tan 18° (0,325). */
+@utility btn-18 {
+  clip-path: polygon(
+    calc(var(--h, 58px) * 0.325) 0,
+    100% 0,
+    calc(100% - var(--h, 58px) * 0.325) 100%,
+    0 100%
+  );
+}
+
+/* Élément incliné à 18° (bandeaux, cases, barres). Le texte à l'intérieur se redresse avec .unskew-18. */
+@utility skew-18 {
+  transform: skewX(-18deg);
+}
+@utility unskew-18 {
+  transform: skewX(18deg);
+}
+
+/* Cadre en pointillé réservé aux personnages 3D du client. */
+@utility slot-perso {
+  border: 1.5px dashed rgb(255 255 255 / 0.35);
+  background: repeating-linear-gradient(-72deg, transparent 0 9px, rgb(255 255 255 / 0.04) 9px 10px);
+  color: rgb(255 255 255 / 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

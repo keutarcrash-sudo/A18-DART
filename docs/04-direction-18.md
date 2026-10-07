@@ -37,7 +37,7 @@ Bascule automatique selon la position du téléphone, plus un bouton pour forcer
 
 - 20 touches (1 à 20) en 4 rangées de 5, puis une rangée : `25` · `BULL` · `RATÉ` · `ANNULER`.
 - Taper un numéro enregistre un **simple** tout de suite.
-- La dernière rangée est alors remplacée par deux grandes touches : `DOUBLE 20` (cyan) et `TRIPLE 20` (chartreuse). **Pas de chrono** : elles restent affichées jusqu'à la fléchette suivante, une annulation ou la validation. Une tape transforme le simple en double ou en triple. *(Décision après test client : 1,5 s ne laissait pas assez de temps.)*
+- Les touches `25` · `BULL` · `RATÉ` sont alors remplacées par deux grandes touches : `DOUBLE 20` (cyan) et `TRIPLE 20` (chartreuse). **Pas de chrono** : elles restent affichées jusqu'à la fléchette suivante, une annulation ou la validation. Une tape transforme le simple en double ou en triple. *(Décision après test client : 1,5 s ne laissait pas assez de temps.)* **`ANNULER` reste toujours visible** à côté (défaut trouvé en codant la V1 : dans la maquette, Double / Triple le recouvraient).
 - La 3e fléchette saisie fait apparaître « Valider la volée ». En cas de victoire ou de bust, la volée se termine d'elle-même.
 
 ## Ce qui reste à valider sur la planche
