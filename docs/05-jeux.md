@@ -18,3 +18,4 @@ Chaque jeu est un module du moteur (voir `02-principes-ux.md`, section « Moteur
 | Règle par défaut | **Chaque touche fait avancer d'un numéro**, quel que soit le multiplicateur. |
 | Option | « Bonus d'avance » : simple = +1, double = +2, triple = +3. |
 | Saisie | **Deux énormes boutons par fléchette** : « TOUCHÉ 7 » et « RATÉ ». En mode bonus, « TOUCHÉ » se décline en Simple / Double / Triple. Le numéro visé est affiché en géant avec les chiffres Arena18. |
+| Fin | **Au 20** par défaut ; option « Finir au bull » (après le 20, il faut toucher le centre). |
