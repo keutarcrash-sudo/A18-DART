@@ -514,8 +514,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--cyan);outline-o
       <p class="small" style="margin-top:10px" id="demoTxt">Pour voir les célébrations et la fin de partie sans jouer 20 tours.</p>
     </div>
     <div>
-      <button class="switch" type="button" id="voice" aria-pressed="true"><i></i>Voix de synthèse</button>
-      <p class="small" style="margin-top:10px">La voix utilise celle de ton navigateur, en attendant la voix définitive. Les cadres en pointillé marquent la place de tes personnages 3D. Les chiffres sont provisoires.</p>
+      <button class="switch" type="button" id="voice" aria-pressed="false"><i></i>Voix (option future VIP)</button>
+      <p class="small" style="margin-top:10px">Pas de voix en V1 : elle est coupée par défaut et reste une option future. Tu peux l'activer ici pour imaginer le rendu, avec la voix de ton navigateur. Les cadres en pointillé marquent la place de tes personnages 3D. Les chiffres sont provisoires.</p>
     </div>
   </aside>
 </div>
@@ -528,7 +528,7 @@ const clone=o=>JSON.parse(JSON.stringify(o));
 const S={players:[],teams:false,game:null,
   fin:'simple',din:false,legs:1,crk:'classic',clkBonus:false,clkBull:false,lives:3,vols:8,
   ents:[],cur:0,start:0,tour:1,darts:[],busy:false,volStart:null,outOrder:[],winner:null,leg:1,over:false,kn:0,knOrder:[],
-  voice:true,best:{v:0},dayRec:{v:140,n:'Lucas'},checkoutRec:{v:96,n:'Inès'},d180:null,played:37,screen:'home'};
+  voice:false,best:{v:0},dayRec:{v:140,n:'Lucas'},checkoutRec:{v:96,n:'Inès'},d180:null,played:37,screen:'home'};
 const KNOWN=['Thomas','Léa','Sam','Inès','Hugo','Guillaume'];
 const GAMES=[
   {id:'501',name:'501',num:1,desc:'Le classique. De 501 à zéro.',r:17,x01:501},

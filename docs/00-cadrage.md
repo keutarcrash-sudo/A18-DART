@@ -94,7 +94,7 @@ Bonne nouvelle : la charte va déjà dans le sens du brief (fond sombre, pas d'e
 | Durée de jeu | 15 à 30 min | Afficher une durée estimée par jeu selon le nombre de joueurs ; proposer le bon format. |
 | Objectif n°1 | Rendre le moment plus fun | Priorité aux réactions, commentaires et célébrations pendant la partie. Ladder et stats en second plan. |
 | Son | Oui, le son fait partie de l'expérience | Annonces (180, victoire, checkout), sons de saisie. Bouton muet accessible. |
-| Voix | Voix de synthèse qui dit les prénoms | Choix technique plus tard : voix intégrée au téléphone (gratuite, qualité variable) ou service de voix (payant, naturel). |
+| Voix | ~~Voix de synthèse qui dit les prénoms~~ → **retirée de la V1** (voir `06-technique.md`) : pas de voix plutôt qu'une voix médiocre ; option future pour une offre VIP | Choix technique plus tard : voix intégrée au téléphone (gratuite, qualité variable) ou service de voix (payant, naturel). |
 | Ton des commentaires | Chambrer gentiment | Taquin mais toujours bienveillant. |
 | Jeux joués aujourd'hui | 301 / 501 | L'écran X01 est conçu en premier ; les autres jeux s'en dérivent. |
 | Règle de fin | Réglée dans les options avant la partie, jamais modifiée par l'app en cours de jeu | Fin « pile à zéro » par défaut, « Double Out » en option. L'app ne propose pas de changer la règle en cours de partie. |
