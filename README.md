@@ -16,9 +16,9 @@ benchmark → principes UX → directions créatives → choix → architecture 
 | 1. Benchmark | [docs/01-benchmark.md](docs/01-benchmark.md) | fait |
 | 2. Principes UX et parcours | [docs/02-principes-ux.md](docs/02-principes-ux.md) | fait, à valider |
 | 3. Directions créatives (4 pistes, archive) | [docs/03-directions-creatives.md](docs/03-directions-creatives.md) | remplacé par l'étape 3 bis |
-| 3 bis. Direction retenue « 18° » | [docs/04-direction-18.md](docs/04-direction-18.md) + planche cliquable [docs/direction-18.html](docs/direction-18.html) | **à valider** |
-| 4. Architecture | — | après le choix |
-| 5. Design system | — | après le choix |
+| 3 bis. Direction retenue « 18° » | [docs/04-direction-18.md](docs/04-direction-18.md) + planche cliquable [docs/direction-18.html](docs/direction-18.html) | **validée** |
+| 4. Architecture | — | à faire |
+| 5. Design system | — | à faire |
 | 6. Maquettes haute fidélité | — | — |
 | 7. Prototype | — | — |
 | 8. Développement | — | — |
