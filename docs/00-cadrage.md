@@ -117,3 +117,4 @@ Bonne nouvelle : la charte va déjà dans le sens du brief (fond sombre, pas d'e
 |---|---|---|
 | Accueil | **Un énorme bouton JOUER**, presque rien d'autre | Les records du jour et de la semaine sont accessibles en faisant défiler, sous le bouton. « Reprendre la partie » remplace JOUER si une partie est en cours sur ce téléphone. |
 | Ordre de création | **Joueurs puis jeu** | Les prénoms d'abord ; la liste des jeux affiche ensuite la durée estimée selon le nombre de joueurs. |
+| Saisie des prénoms | **Clavier, un par un** | Champ prénom + Entrée pour passer au suivant. Les prénoms déjà utilisés sur ce téléphone sont proposés en une tape. |
