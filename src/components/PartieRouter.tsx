@@ -7,6 +7,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CricketGame } from "@/components/cricket/CricketGame";
+import { ClockGame } from "@/components/clock/ClockGame";
 import { KillerGame } from "@/components/killer/KillerGame";
 import { X01Game } from "@/components/x01/X01Game";
 import { type SavedPartie, loadPartie } from "@/lib/partie";
@@ -25,6 +26,7 @@ export function PartieRouter() {
 
   if (kind === "cricket") return <CricketGame />;
   if (kind === "killer") return <KillerGame />;
+  if (kind === "clock") return <ClockGame />;
   if (kind === "x01") return <X01Game />;
   return <div className="h-dvh bg-noir" />;
 }

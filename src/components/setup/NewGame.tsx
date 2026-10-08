@@ -10,6 +10,7 @@ import { Cta, Screen, Seg, Title, TopBar } from "@/components/ui";
 import { DEFAULT_X01_OPTIONS, type X01Options } from "@/engine/x01";
 import { type CricketMode, DEFAULT_CRICKET_OPTIONS } from "@/engine/cricket";
 import { DEFAULT_KILLER_OPTIONS } from "@/engine/killer";
+import { type ClockOptions, DEFAULT_CLOCK_OPTIONS } from "@/engine/clock";
 import type { Side } from "@/engine/types";
 import { GAMES, type GameInfo, estimateMinutes } from "@/lib/games";
 import { savePartie } from "@/lib/partie";
@@ -32,6 +33,7 @@ export function NewGame() {
   const [opts, setOpts] = useState<X01Options>(DEFAULT_X01_OPTIONS);
   const [cricketMode, setCricketMode] = useState<CricketMode>(DEFAULT_CRICKET_OPTIONS.mode);
   const [lives, setLives] = useState(DEFAULT_KILLER_OPTIONS.lives);
+  const [clockOpts, setClockOpts] = useState<ClockOptions>(DEFAULT_CLOCK_OPTIONS);
 
   // Next garde cet écran en mémoire entre deux visites : on repart toujours de « Qui joue ? »,
   // en gardant les prénoms (pratique quand le même groupe enchaîne sur un autre jeu).
@@ -51,7 +53,9 @@ export function NewGame() {
       i === firstSide && firstMember ? { ...s, members: [firstMember, ...s.members.filter((m) => m !== firstMember)] } : s,
     );
     rememberNames(players.map((p) => p.name));
-    if (game.id === "killer") {
+    if (game.id === "clock") {
+      savePartie({ kind: "clock", setup: { sides: ordered, options: clockOpts, firstSide }, actions: [] });
+    } else if (game.id === "killer") {
       savePartie({ kind: "killer", setup: { sides: ordered, options: { lives }, firstSide }, actions: [] });
     } else if (game.id === "cricket") {
       savePartie({ kind: "cricket", setup: { sides: ordered, options: { mode: cricketMode }, firstSide }, actions: [] });
@@ -104,6 +108,8 @@ export function NewGame() {
             setCricketMode={setCricketMode}
             lives={lives}
             setLives={setLives}
+            clockOpts={clockOpts}
+            setClockOpts={setClockOpts}
             onBack={() => setStep("game")}
             onNext={() => setStep("bull")}
           />
@@ -347,6 +353,8 @@ function Options({
   setCricketMode,
   lives,
   setLives,
+  clockOpts,
+  setClockOpts,
   onBack,
   onNext,
 }: {
@@ -357,6 +365,8 @@ function Options({
   setCricketMode: (m: CricketMode) => void;
   lives: number;
   setLives: (n: number) => void;
+  clockOpts: ClockOptions;
+  setClockOpts: (o: ClockOptions) => void;
   onBack: () => void;
   onNext: () => void;
 }) {
@@ -372,7 +382,34 @@ function Options({
         right="Réglages"
       />
       <Title numeric={game.numeric}>{game.name}</Title>
-      {game.id === "killer" ? (
+      {game.id === "clock" ? (
+        <>
+          <Seg
+            label="Avance"
+            value={clockOpts.bonus}
+            options={[
+              { value: false, label: "Une case" },
+              { value: true, label: "Bonus" },
+            ]}
+            help={
+              clockOpts.bonus
+                ? "Simple = +1, double = +2, triple = +3. Les bons lanceurs filent."
+                : "Chaque touche fait avancer d'un numéro, simple, double ou triple."
+            }
+            onChange={(bonus) => setClockOpts({ ...clockOpts, bonus })}
+          />
+          <Seg
+            label="Fin"
+            value={clockOpts.bullFinish}
+            options={[
+              { value: false, label: "Au 20" },
+              { value: true, label: "Au bull" },
+            ]}
+            help={clockOpts.bullFinish ? "Après le 20, il faut encore toucher le centre." : "Le premier qui touche le 20 gagne."}
+            onChange={(bullFinish) => setClockOpts({ ...clockOpts, bullFinish })}
+          />
+        </>
+      ) : game.id === "killer" ? (
         <Seg
           label="Vies"
           value={lives}
