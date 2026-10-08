@@ -208,6 +208,16 @@ export function X01Game() {
     if (state.volley.length) {
       const rest = state.volleyStart - points;
       if (state.status === "bust") return <b>Bust · trop haut</b>;
+      // Encore des fléchettes à lancer : on redonne le chemin pour finir avec celles qui restent.
+      const left = 3 - state.volley.length;
+      const next = state.status === "open" && state.opened[side] && rest <= 170 ? suggestCheckout(rest, opts.finish, left) : null;
+      if (next) {
+        return (
+          <>
+            Reste <b className="text-blanc">{rest}</b> · pour finir : <b className="text-cyan">{next.map(dartLabel).join(" · ")}</b>
+          </>
+        );
+      }
       return (
         <>
           Reste après la volée : <b className="text-blanc">{rest}</b>

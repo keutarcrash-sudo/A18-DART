@@ -220,3 +220,10 @@ describe("Historique : checkout", () => {
     expect(st.history.map((v) => v.checkout)).toEqual([false, true]);
   });
 });
+
+describe("Suggestion de fin en cours de volée", () => {
+  it("95 en double out : T19 puis D19 ; après T19, il reste 38 → D19 en 2 fléchettes", () => {
+    expect(suggestCheckout(95, "double")?.map((d) => d.n * d.m)).toEqual([57, 38]);
+    expect(suggestCheckout(38, "double", 2)?.map((d) => `${d.m}x${d.n}`)).toEqual(["2x19"]);
+  });
+});
