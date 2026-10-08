@@ -1,6 +1,7 @@
 "use client";
 /** Vue Tableau (téléphone posé à plat) : le classement en géant, « qui mène » en premier. Commune aux jeux à score. */
 import { motion } from "motion/react";
+import { useT } from "@/lib/i18n";
 import type { ReactNode } from "react";
 import { fitFont } from "@/lib/fit";
 
@@ -24,6 +25,7 @@ interface Props {
 }
 
 export function Tableau({ title, who, current, rows, onClose }: Props) {
+  const t = useT();
   const n = rows.length;
   const rh = Math.min(118, Math.floor(540 / n));
 
@@ -36,14 +38,14 @@ export function Tableau({ title, who, current, rows, onClose }: Props) {
           onClick={onClose}
           className="h-[30px] border-[1.5px] border-[#3a3a3a] px-3 text-[10px] font-bold tracking-[0.14em] text-[#cfcfcf]"
         >
-          SAISIR
+          {t("SAISIR")}
         </button>
       </div>
 
       <div className="relative -mx-3.5 mt-2.5 h-[62px]">
         <div className="skew-18 absolute -left-5 bottom-0 right-8 top-0 bg-cyan" />
         <div className="absolute inset-y-0 left-5 flex items-center gap-2.5 whitespace-nowrap font-black uppercase italic text-noir">
-          <small className="text-[12px] tracking-[0.14em]">À toi</small>
+          <small className="text-[12px] tracking-[0.14em]">{t("À toi")}</small>
           <span className="tracking-tight" style={{ fontSize: fitFont(who, 28, 130) }}>
             {who}
           </span>
@@ -74,7 +76,7 @@ export function Tableau({ title, who, current, rows, onClose }: Props) {
               >
                 <span className="truncate">{name}</span>
                 {side === current && (
-                  <span className="shrink-0 bg-cyan px-2 py-0.5 text-[9px] not-italic tracking-[0.14em] text-noir">À TOI</span>
+                  <span className="shrink-0 bg-cyan px-2 py-0.5 text-[9px] not-italic tracking-[0.14em] text-noir">{t("À TOI")}</span>
                 )}
               </div>
               <div className="absolute right-1 font-num leading-none" style={{ top: rh * 0.07, fontSize: rh * 0.39 }}>

@@ -4,6 +4,7 @@
  * Un écran = une question (docs/02-principes-ux.md).
  */
 import { useRouter } from "next/navigation";
+import { useT } from "@/lib/i18n";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { Cta, Screen, Seg, Title, TopBar } from "@/components/ui";
@@ -28,6 +29,7 @@ const MAX_PLAYERS = 8;
 
 export function NewGame() {
   const router = useRouter();
+  const t = useT();
   const [step, setStep] = useState<Step>("players");
   const [players, setPlayers] = useState<Player[]>([]);
   const [teams, setTeams] = useState(false);
@@ -47,7 +49,7 @@ export function NewGame() {
 
   const sides: Side[] = teams
     ? (["A", "B"] as const)
-        .map((t) => ({ name: `Équipe ${t}`, members: players.filter((p) => p.team === t).map((p) => p.name) }))
+        .map((team) => ({ name: `${t("Équipe")} ${team}`, members: players.filter((p) => p.team === team).map((p) => p.name) }))
         .filter((s) => s.members.length > 0)
     : players.map((p) => ({ name: p.name, members: [p.name] }));
 
@@ -98,7 +100,7 @@ export function NewGame() {
         {step === "game" && (
           <Games
             count={players.length}
-            label={teams ? `${sides.length} équipes` : `${players.length} joueur${players.length > 1 ? "s" : ""}`}
+            label={teams ? t("{n} équipes", { n: sides.length }) : players.length > 1 ? t("{n} joueurs", { n: players.length }) : t("{n} joueur", { n: players.length })}
             onBack={() => setStep("players")}
             onPick={(g) => {
               setGame(g);
@@ -157,6 +159,7 @@ function Players({
   onBack: () => void;
   onNext: () => void;
 }) {
+  const t = useT();
   const [draft, setDraft] = useState("");
   const [recents, setRecents] = useState<string[]>([]);
   const input = useRef<HTMLInputElement>(null);
@@ -178,12 +181,12 @@ function Players({
         onBack={onBack}
         left={
           <>
-            Étape <b className="mx-1 text-blanc">1</b>/3
+            {t("Étape")} <b className="mx-1 text-blanc">1</b>/3
           </>
         }
-        right={`${players.length} joueur${players.length > 1 ? "s" : ""}`}
+        right={players.length > 1 ? t("{n} joueurs", { n: players.length }) : t("{n} joueur", { n: players.length })}
       />
-      <Title>Qui joue ?</Title>
+      <Title>{t("Qui joue ?")}</Title>
 
       <form
         className="mt-[18px] flex gap-1.5"
@@ -199,10 +202,10 @@ function Players({
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           maxLength={14}
-          placeholder="Prénom"
+          placeholder={t("Prénom")}
           enterKeyHint="next"
           autoComplete="off"
-          aria-label="Prénom du joueur"
+          aria-label={t("Prénom du joueur")}
           disabled={players.length >= MAX_PLAYERS}
           className="h-[54px] min-w-0 flex-1 border-b-2 border-cyan bg-case px-3.5 text-xl font-black uppercase italic text-blanc outline-none placeholder:normal-case placeholder:text-gris-2"
         />
@@ -213,7 +216,7 @@ function Players({
 
       {free.length > 0 && (
         <div className="mt-3 flex flex-wrap items-center gap-1.5">
-          <small className="mr-1 text-[9px] font-bold uppercase tracking-[0.16em] text-gris">Récents sur ce téléphone</small>
+          <small className="mr-1 text-[9px] font-bold uppercase tracking-[0.16em] text-gris">{t("Récents sur ce téléphone")}</small>
           {free.map((r) => (
             <button
               key={r}
@@ -230,7 +233,7 @@ function Players({
       <div className="mt-4 flex flex-col">
         {players.length === 0 && (
           <p className="border-b border-filet py-5 text-[13px] leading-relaxed text-gris">
-            Tape un prénom puis OK. Seul, ça marche aussi : idéal pour s&apos;entraîner.
+            {t("Tape un prénom puis OK. Seul, ça marche aussi : idéal pour s'entraîner.")}
           </p>
         )}
         {players.map((p, i) => (
@@ -247,7 +250,7 @@ function Players({
             {teams && (
               <button
                 type="button"
-                aria-label={`Changer ${p.name} d'équipe`}
+                aria-label={t("Changer {name} d'équipe", { name: p.name })}
                 onClick={() => setPlayers(players.map((q, j) => (j === i ? { ...q, team: q.team === "A" ? "B" : "A" } : q)))}
                 style={{ "--h": "26px" } as React.CSSProperties}
                 className={`btn-18 h-[26px] w-[38px] text-[13px] font-black italic text-noir ${p.team === "A" ? "bg-cyan" : "bg-blanc"}`}
@@ -257,7 +260,7 @@ function Players({
             )}
             <button
               type="button"
-              aria-label={`Retirer ${p.name}`}
+              aria-label={t("Retirer {name}", { name: p.name })}
               onClick={() => setPlayers(players.filter((_, j) => j !== i))}
               className="h-10 w-8 text-xl text-gris"
             >
@@ -276,12 +279,12 @@ function Players({
         <i className={`skew-18 relative h-4 w-[30px] ${teams ? "bg-cyan" : "bg-[#333]"}`}>
           <i className={`absolute top-0.5 h-3 w-3 transition-all ${teams ? "left-4 bg-noir" : "left-0.5 bg-gris"}`} />
         </i>
-        Jouer en équipes
+        {t("Jouer en équipes")}
       </button>
 
       <div className="min-h-4 flex-1" />
       <Cta disabled={players.length === 0 || !teamsOk || (teams && players.length < 2)} onClick={onNext}>
-        {teams && !teamsOk ? "Il faut 2 équipes" : "Choisir le jeu →"}
+        {teams && !teamsOk ? t("Il faut 2 équipes") : t("Choisir le jeu →")}
       </Cta>
     </Screen>
   );
@@ -290,18 +293,19 @@ function Players({
 /* ---------- 2. Jeu ---------- */
 
 function Games({ count, label, onBack, onPick }: { count: number; label: string; onBack: () => void; onPick: (g: GameInfo) => void }) {
+  const t = useT();
   return (
     <Screen>
       <TopBar
         onBack={onBack}
         left={
           <>
-            Étape <b className="mx-1 text-blanc">2</b>/3
+            {t("Étape")} <b className="mx-1 text-blanc">2</b>/3
           </>
         }
         right={label}
       />
-      <Title>À quoi on joue ?</Title>
+      <Title>{t("À quoi on joue ?")}</Title>
       <div className="mt-3.5 flex flex-col">
         {GAMES.map((g) => {
           const min = estimateMinutes(g, count);
@@ -316,16 +320,16 @@ function Games({ count, label, onBack, onPick }: { count: number; label: string;
               className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2.5 gap-y-1 border-b border-filet py-3.5 text-left active:bg-case disabled:opacity-35"
             >
               <span className={g.numeric ? "font-num text-[32px] leading-none" : "text-[26px] font-black uppercase italic leading-none"}>
-                {g.name}
+                {t(g.name)}
               </span>
               <span className="row-span-2 text-right text-[10px] font-bold uppercase leading-normal tracking-widest text-gris">
                 {!g.ready ? (
-                  "Bientôt"
+                  t("Bientôt")
                 ) : tooFew ? (
                   <>
-                    {g.minPlayers} joueurs
+                    {t("{n} joueurs", { n: g.minPlayers ?? 0 })}
                     <br />
-                    minimum
+                    {t("minimum")}
                   </>
                 ) : (
                   <>
@@ -336,7 +340,7 @@ function Games({ count, label, onBack, onPick }: { count: number; label: string;
                   </>
                 )}
               </span>
-              <span className="text-xs leading-snug text-[#a8a8a8]">{g.desc}</span>
+              <span className="text-xs leading-snug text-[#a8a8a8]">{t(g.desc)}</span>
             </button>
           );
         })}
@@ -383,75 +387,76 @@ function Options({
   onBack: () => void;
   onNext: () => void;
 }) {
+  const t = useT();
   return (
     <Screen>
       <TopBar
         onBack={onBack}
         left={
           <>
-            Étape <b className="mx-1 text-blanc">3</b>/3
+            {t("Étape")} <b className="mx-1 text-blanc">3</b>/3
           </>
         }
-        right="Réglages"
+        right={t("Réglages")}
       />
-      <Title numeric={game.numeric}>{game.name}</Title>
+      <Title numeric={game.numeric}>{t(game.name)}</Title>
       {game.id === "high" ? (
         <Seg
-          label="Volées"
+          label={t("Volées")}
           value={rounds}
           options={[3, 5, 8, 10].map((v) => ({ value: v, label: String(v) }))}
-          help={`${rounds} volées de 3 fléchettes chacun. Le plus gros total gagne.`}
+          help={t("{n} volées de 3 fléchettes chacun. Le plus gros total gagne.", { n: rounds })}
           onChange={setRounds}
         />
       ) : game.id === "clock" ? (
         <>
           <Seg
-            label="Avance"
+            label={t("Avance")}
             value={clockOpts.bonus}
             options={[
-              { value: false, label: "Une case" },
-              { value: true, label: "Bonus" },
+              { value: false, label: t("Une case") },
+              { value: true, label: t("Bonus") },
             ]}
             help={
               clockOpts.bonus
-                ? "Simple = +1, double = +2, triple = +3. Les bons lanceurs filent."
-                : "Chaque touche fait avancer d'un numéro, simple, double ou triple."
+                ? t("Simple = +1, double = +2, triple = +3. Les bons lanceurs filent.")
+                : t("Chaque touche fait avancer d'un numéro, simple, double ou triple.")
             }
             onChange={(bonus) => setClockOpts({ ...clockOpts, bonus })}
           />
           <Seg
-            label="Fin"
+            label={t("Fin")}
             value={clockOpts.bullFinish}
             options={[
-              { value: false, label: "Au 20" },
-              { value: true, label: "Au bull" },
+              { value: false, label: t("Au 20") },
+              { value: true, label: t("Au bull") },
             ]}
-            help={clockOpts.bullFinish ? "Après le 20, il faut encore toucher le centre." : "Le premier qui touche le 20 gagne."}
+            help={clockOpts.bullFinish ? t("Après le 20, il faut encore toucher le centre.") : t("Le premier qui touche le 20 gagne.")}
             onChange={(bullFinish) => setClockOpts({ ...clockOpts, bullFinish })}
           />
         </>
       ) : game.id === "killer" ? (
         <Seg
-          label="Vies"
+          label={t("Vies")}
           value={lives}
           options={[1, 2, 3, 4, 5].map((v) => ({ value: v, label: String(v) }))}
           help={
             lives === 1
-              ? "Une seule vie : un double et c'est fini. Partie express."
-              : `Chacun a ${lives} vies. Touche ton double pour devenir tueur, puis vise le double des autres.`
+              ? t("Une seule vie : un double et c'est fini. Partie express.")
+              : t("Chacun a {n} vies. Touche ton double pour devenir tueur, puis vise le double des autres.", { n: lives })
           }
           onChange={setLives}
         />
       ) : game.id === "cricket" ? (
         <Seg
-          label="Règle"
+          label={t("Règle")}
           value={cricketMode}
           options={[
-            { value: "classic", label: "Classique" },
-            { value: "none", label: "Sans points" },
-            { value: "cut", label: "Cut-throat" },
+            { value: "classic", label: t("Classique") },
+            { value: "none", label: t("Sans points") },
+            { value: "cut", label: t("Cut-throat") },
           ]}
-          help={CRICKET_HELP[cricketMode]}
+          help={t(CRICKET_HELP[cricketMode])}
           onChange={setCricketMode}
         />
       ) : (
@@ -459,48 +464,49 @@ function Options({
       )}
       <div className="min-h-4 flex-1" />
       <Cta tone="cyan" onClick={onNext}>
-        Au bull →
+        {t("Au bull →")}
       </Cta>
     </Screen>
   );
 }
 
 function X01Settings({ opts, setOpts }: { opts: X01Options; setOpts: (o: X01Options) => void }) {
+  const t = useT();
   return (
     <>
       <Seg
-        label="Fin de partie"
+        label={t("Fin de partie")}
         value={opts.finish}
         options={[
-          { value: "simple", label: "Pile à zéro" },
-          { value: "double", label: "Double out" },
+          { value: "simple", label: t("Pile à zéro") },
+          { value: "double", label: t("Double out") },
         ]}
         help={
           opts.finish === "simple"
-            ? "Il suffit de tomber pile à zéro, avec n'importe quelle fléchette."
-            : "Règle officielle : la dernière fléchette doit être un double (ou le bull)."
+            ? t("Il suffit de tomber pile à zéro, avec n'importe quelle fléchette.")
+            : t("Règle officielle : la dernière fléchette doit être un double (ou le bull).")
         }
         onChange={(finish) => setOpts({ ...opts, finish })}
       />
       <Seg
-        label="Début de partie"
+        label={t("Début de partie")}
         value={opts.doubleIn}
         options={[
-          { value: false, label: "Libre" },
-          { value: true, label: "Double in" },
+          { value: false, label: t("Libre") },
+          { value: true, label: t("Double in") },
         ]}
-        help={opts.doubleIn ? "Le score ne commence à descendre qu'après un premier double." : "On marque dès la première fléchette."}
+        help={opts.doubleIn ? t("Le score ne commence à descendre qu'après un premier double.") : t("On marque dès la première fléchette.")}
         onChange={(doubleIn) => setOpts({ ...opts, doubleIn })}
       />
       <Seg
-        label="Manches"
+        label={t("Manches")}
         value={opts.legs}
         options={[
-          { value: 1, label: "1" },
-          { value: 3, label: "3" },
-          { value: 5, label: "5" },
+          { value: 1, label: t("1") },
+          { value: 3, label: t("3") },
+          { value: 5, label: t("5") },
         ]}
-        help={opts.legs === 1 ? "Une seule manche, on va droit au but." : `Le premier à ${Math.ceil(opts.legs / 2)} manches gagne.`}
+        help={opts.legs === 1 ? t("Une seule manche, on va droit au but.") : t("Le premier à {n} manches gagne.", { n: Math.ceil(opts.legs / 2) })}
         onChange={(legs) => setOpts({ ...opts, legs })}
       />
     </>
@@ -522,22 +528,24 @@ function Bull({
   onPick: (name: string) => void;
   onSkip: () => void;
 }) {
+  const t = useT();
   return (
     <Screen>
-      <TopBar onBack={onBack} left="Qui commence ?" />
+      <TopBar onBack={onBack} left={t("Qui commence ?")} />
       <div className="relative mt-4">
         <h1 className="text-[70px] font-black uppercase italic leading-[0.85] tracking-tighter">
-          Au
+          {t("Au")}
           <br />
-          <span className="text-cyan">bull !</span>
+          <span className="text-cyan">{t("bull !")}</span>
         </h1>
         <div className="slot-perso absolute -top-1.5 right-0 flex h-[110px] w-[84px] items-end justify-center p-1.5 text-center text-[8px] font-bold uppercase tracking-[0.14em]">
-          Perso 3D
-          <br />« au bull »
+          {t("Perso 3D")}
+          <br />« {t("au bull")} »
         </div>
       </div>
       <p className="mt-2 text-[13px] leading-normal text-[#bdbdbd]">
-        Chacun lance une fléchette vers le centre. Touche le prénom du plus proche : {sides.length < players.length ? "son équipe commence, avec lui." : "il commence."}
+        {t("Chacun lance une fléchette vers le centre. Touche le prénom du plus proche :")}{" "}
+        {sides.length < players.length ? t("son équipe commence, avec lui.") : t("il commence.")}
       </p>
       <div className="mt-5 grid grid-cols-2 gap-2">
         {players.map((p) => (
@@ -553,7 +561,7 @@ function Bull({
         ))}
       </div>
       <button type="button" onClick={onSkip} className="mt-4 self-start py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-gris">
-        Passer · ordre de saisie
+        {t("Passer · ordre de saisie")}
       </button>
     </Screen>
   );

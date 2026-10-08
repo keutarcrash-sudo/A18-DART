@@ -23,6 +23,7 @@ import { useWakeLock } from "@/lib/device";
 import { fitFont } from "@/lib/fit";
 import { useClockPartie } from "@/lib/partie";
 import { sounds } from "@/lib/sound";
+import { type T, useT } from "@/lib/i18n";
 import { submitRecords } from "@/lib/records";
 import { gameEntry } from "@/lib/recordEntries";
 import { FinDePartie } from "@/components/podium/FinDePartie";
@@ -32,6 +33,7 @@ const targetText = (n: number) => (n === 25 ? "BULL" : String(n));
 
 export function ClockGame() {
   const { partie, state, push, undo, restart } = useClockPartie();
+  const t = useT();
   const [busy, setBusy] = useState(false);
   const [cele, setCele] = useState<CeleSpec | null>(null);
   const [wink, setWink] = useState<string | null>(null);
@@ -92,7 +94,7 @@ export function ClockGame() {
   // Victoire, après un court délai (le temps de corriger avec Annuler).
   useEffect(() => {
     if (!state || busy || handled.current === state || state.status !== "match") return;
-    const t = setTimeout(() => {
+    const timer = setTimeout(() => {
       handled.current = state;
       const w = state.winner!;
       submitRecords([gameEntry(state.setup.sides[w].name, "clock")]);
@@ -101,18 +103,18 @@ export function ClockGame() {
       void celebrate({
         level: "max",
         tone: "cyan",
-        kicker: `Le tour complet · tour ${state.winTurn}`,
+        kicker: t("Le tour complet · tour {n}", { n: state.winTurn ?? 0 }),
         big: state.setup.sides[w].members.length > 1 ? state.setup.sides[w].name : currentMemberClock(state, w),
         numeric: false,
-        sub: "Tour de l'horloge",
+        sub: t("Tour de l'horloge"),
         slot: "victoire",
       }).then(() => {
         setBusy(false);
         setWonShown(true);
       });
     }, 700);
-    return () => clearTimeout(t);
-  }, [state, busy, celebrate]);
+    return () => clearTimeout(timer);
+  }, [state, busy, celebrate, t]);
 
   if (!state) return <div className="h-dvh bg-noir" />;
 
@@ -141,12 +143,12 @@ export function ClockGame() {
     if (has("threeHits")) {
       setBusy(true);
       sounds.ton();
-      await celebrate({ level: "mid", word: "Sans faute", num: "3/3" });
+      await celebrate({ level: "mid", word: t("Sans faute"), num: "3/3" });
       setBusy(false);
     } else if (has("bullNext")) {
-      showWink("Plus que le bull. Respire.");
+      showWink(t("Plus que le bull. Respire."));
     } else if (has("threeMisses")) {
-      showWink("Trois à côté. Ça arrive aux meilleurs.");
+      showWink(t("Trois à côté. Ça arrive aux meilleurs."));
     }
   };
 
@@ -157,11 +159,11 @@ export function ClockGame() {
       <div className="flex h-full flex-col px-3.5 pb-[calc(8px+env(safe-area-inset-bottom))] pt-[calc(18px+env(safe-area-inset-top))]">
         <div className="flex min-h-6 items-center justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-gris">
           <span>
-            <b className="text-blanc">Horloge</b>
-            {bonus && " · Bonus"} · Fin {bullFinish ? "au bull" : "au 20"}
+            <b className="text-blanc">{t("Horloge")}</b>
+            {bonus && ` · ${t("Bonus")}`} · {bullFinish ? t("Fin au bull") : t("Fin au 20")}
           </span>
           <span className="flex items-center gap-2">
-            Tour <b className="text-blanc">{state.turn}</b>
+            {t("Tour")} <b className="text-blanc">{state.turn}</b>
             <MenuButton onClick={() => setMenu(true)} />
           </span>
         </div>
@@ -187,7 +189,7 @@ export function ClockGame() {
         {/* Le numéro visé, en géant */}
         <div className="relative -mx-3.5 mt-3 h-[150px] shrink-0 overflow-hidden">
           <div className="skew-18 absolute inset-y-0 -left-6 right-6 bg-cyan" />
-          <span className="absolute left-7 top-3 text-[11px] font-black uppercase tracking-[0.22em] text-noir">Vise le</span>
+          <span className="absolute left-7 top-3 text-[11px] font-black uppercase tracking-[0.22em] text-noir">{t("Vise le")}</span>
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.span
               key={`${side}-${target}`}
@@ -207,7 +209,7 @@ export function ClockGame() {
           {sides.map((s, i) => {
             const me = i === side;
             return (
-              <div key={i} className="flex items-center gap-2" aria-label={`${s.name} : vise le ${targetText(targetAt(state.pos[i]))}`}>
+              <div key={i} className="flex items-center gap-2" aria-label={t("{name} : vise le {n}", { name: s.name, n: targetText(targetAt(state.pos[i])) })}>
                 <span className={`w-[78px] shrink-0 truncate text-[11px] font-black uppercase italic ${me ? "text-cyan" : "text-[#cfcfcf]"}`}>{s.name}</span>
                 <span className="flex flex-1 gap-[2px]">
                   {Array.from({ length: end }, (_, q) => (
@@ -250,7 +252,7 @@ export function ClockGame() {
                 onClick={() => hit(1)}
                 className="btn-18 h-[84px] bg-blanc text-[15px] font-black uppercase italic leading-tight text-noir active:bg-cyan disabled:opacity-40"
               >
-                Simple
+                {t("Simple")}
                 <br />
                 {target === 25 ? "25" : target}
               </button>
@@ -260,7 +262,7 @@ export function ClockGame() {
                 onClick={() => hit(2)}
                 className="btn-18 h-[84px] bg-cyan text-[15px] font-black uppercase italic leading-tight text-noir active:bg-blanc disabled:opacity-40"
               >
-                Double
+                {t("Double")}
                 <br />
                 {target === 25 ? "Bull" : target}
               </button>
@@ -271,7 +273,7 @@ export function ClockGame() {
                   onClick={() => hit(3)}
                   className="btn-18 h-[84px] bg-chartreuse text-[15px] font-black uppercase italic leading-tight text-noir active:bg-blanc disabled:opacity-40"
                 >
-                  Triple
+                  {t("Triple")}
                   <br />
                   {target}
                 </button>
@@ -285,7 +287,7 @@ export function ClockGame() {
               style={{ "--h": "84px" } as React.CSSProperties}
               className="btn-18 h-[84px] bg-cyan text-[28px] font-black uppercase italic text-noir active:bg-blanc disabled:opacity-40"
             >
-              Touché {target === 25 ? "le bull" : target}
+              {target === 25 ? t("Touché le bull") : t("Touché {n}", { n: target })}
             </button>
           )}
           <button
@@ -295,7 +297,7 @@ export function ClockGame() {
             style={{ "--h": "64px" } as React.CSSProperties}
             className="btn-18 h-16 bg-blanc text-[22px] font-black uppercase italic text-noir active:bg-cyan disabled:opacity-40"
           >
-            Raté
+            {t("Raté")}
           </button>
           <button
             type="button"
@@ -303,7 +305,7 @@ export function ClockGame() {
             onClick={undo}
             className="h-11 text-[11px] font-bold uppercase tracking-[0.16em] text-[#a8a8a8] active:text-cyan disabled:opacity-30"
           >
-            Annuler la dernière fléchette
+            {t("Annuler la dernière fléchette")}
           </button>
         </div>
       </div>
@@ -313,22 +315,22 @@ export function ClockGame() {
       <Celebration spec={cele} onDone={() => celeDone.current?.()} />
 
       {over && state.winner !== null && (
-        <FinDePartie data={podiumClock(state)} onRevanche={() => restart(rankingClock(state)[sides.length - 1])} />
+        <FinDePartie data={podiumClock(state, t)} onRevanche={() => restart(rankingClock(state)[sides.length - 1])} />
       )}
     </main>
   );
 }
 
-function podiumClock(state: ClockState): PodiumData {
+function podiumClock(state: ClockState, t: T): PodiumData {
   const sides = state.setup.sides;
   const end = clockLength(state.setup);
   const winner = sides[state.winner!].name;
   return {
-    title: [winner, "gagne", "le Tour de l'horloge"],
+    title: [winner, t("gagne"), t("le Tour de l'horloge")],
     ranking: rankingClock(state).map((s) => ({
       name: sides[s].name,
-      value: state.pos[s] >= end ? "Arrivé" : `Au ${targetText(targetAt(state.pos[s]))}`,
+      value: state.pos[s] >= end ? t("Arrivé") : t("Au {n}", { n: targetText(targetAt(state.pos[s])) }),
     })),
-    highlight: { label: "Tours pour finir", who: winner, value: String(state.winTurn) },
+    highlight: { label: t("Tours pour finir"), who: winner, value: String(state.winTurn) },
   };
 }

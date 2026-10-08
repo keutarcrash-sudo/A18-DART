@@ -1,6 +1,7 @@
 "use client";
 /** Briques d'interface communes, dans la direction « 18° ». */
 import type { ReactNode } from "react";
+import { useT } from "@/lib/i18n";
 
 export function Screen({ children }: { children: ReactNode }) {
   return (
@@ -11,11 +12,12 @@ export function Screen({ children }: { children: ReactNode }) {
 }
 
 export function TopBar({ onBack, left, right }: { onBack?: () => void; left: ReactNode; right?: ReactNode }) {
+  const t = useT();
   return (
     <div className="flex min-h-6 items-center justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-gris">
       <span className="flex items-center">
         {onBack && (
-          <button type="button" onClick={onBack} aria-label="Retour" className="-ml-1 mr-1 px-1.5 py-1 text-xl font-black leading-none text-blanc">
+          <button type="button" onClick={onBack} aria-label={t("Retour")} className="-ml-1 mr-1 px-1.5 py-1 text-xl font-black leading-none text-blanc">
             ←
           </button>
         )}

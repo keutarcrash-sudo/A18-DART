@@ -22,6 +22,7 @@ import { useWakeLock } from "@/lib/device";
 import { fitFont } from "@/lib/fit";
 import { useKillerPartie } from "@/lib/partie";
 import { sounds } from "@/lib/sound";
+import { type T, useT } from "@/lib/i18n";
 import { submitRecords } from "@/lib/records";
 import { gameEntry } from "@/lib/recordEntries";
 import { FinDePartie } from "@/components/podium/FinDePartie";
@@ -36,6 +37,7 @@ function dartText(d: Dart): string {
 
 export function KillerGame() {
   const { state, push, undo, restart } = useKillerPartie();
+  const t = useT();
   const [busy, setBusy] = useState(false);
   const [cele, setCele] = useState<CeleSpec | null>(null);
   const [wink, setWink] = useState<string | null>(null);
@@ -89,7 +91,7 @@ export function KillerGame() {
   // Victoire : le dernier en vie, après un court délai (le temps de corriger avec Annuler).
   useEffect(() => {
     if (!state || busy || handled.current === state || state.status !== "match") return;
-    const t = setTimeout(() => {
+    const timer = setTimeout(() => {
       handled.current = state;
       const w = state.winner!;
       submitRecords([gameEntry(state.setup.sides[w].name, "killer")]);
@@ -98,7 +100,7 @@ export function KillerGame() {
       void celebrate({
         level: "max",
         tone: "cyan",
-        kicker: "Dernier debout",
+        kicker: t("Dernier debout"),
         big: state.setup.sides[w].members.length > 1 ? state.setup.sides[w].name : currentMemberKiller(state, w),
         numeric: false,
         sub: "Killer",
@@ -108,8 +110,8 @@ export function KillerGame() {
         setWonShown(true);
       });
     }, 700);
-    return () => clearTimeout(t);
-  }, [state, busy, celebrate]);
+    return () => clearTimeout(timer);
+  }, [state, busy, celebrate, t]);
 
   if (!state) return <div className="h-dvh bg-noir" />;
 
@@ -128,7 +130,7 @@ export function KillerGame() {
 
     if (find("numbersDone")) {
       sounds.validate();
-      showWink("Numéros attribués. Que le meilleur gagne !");
+      showWink(t("Numéros attribués. Que le meilleur gagne !"));
       return;
     }
     if (find("numberSet")) {
@@ -149,8 +151,8 @@ export function KillerGame() {
       await celebrate({
         level: "max",
         tone: "bust",
-        kicker: out.by === out.side ? "Son propre double" : `Par ${name(out.by)}`,
-        big: `Éliminé · ${name(out.side)}`,
+        kicker: out.by === out.side ? t("Son propre double") : t("Par {name}", { name: name(out.by) }),
+        big: `${t("Éliminé")} · ${name(out.side)}`,
         numeric: false,
         slot: "chambrage",
       });
@@ -158,21 +160,21 @@ export function KillerGame() {
     } else if (killer) {
       setBusy(true);
       sounds.ton();
-      await celebrate({ level: "mid", word: "Tueur", num: String(next.numbers[killer.side]) });
+      await celebrate({ level: "mid", word: t("Tueur"), num: String(next.numbers[killer.side]) });
       setBusy(false);
     } else if (self) {
-      showWink(`Ton propre double… Il te reste ${self.lives} vie${self.lives > 1 ? "s" : ""}.`);
+      showWink(t(self.lives > 1 ? "Ton propre double… Il te reste {n} vies." : "Ton propre double… Il te reste {n} vie.", { n: self.lives }));
     } else if (hit) {
-      showWink(`${name(hit.side)} : plus que ${hit.lives} vie${hit.lives > 1 ? "s" : ""}.`);
+      showWink(t(hit.lives > 1 ? "{name} : plus que {n} vies." : "{name} : plus que {n} vie.", { name: name(hit.side), n: hit.lives }));
     } else if (dart.m === 2 && !next.killer[next.current]) {
-      showWink(`Pas encore tueur : vise d'abord ton double ${next.numbers[next.current]}.`);
+      showWink(t("Pas encore tueur : vise d'abord ton double {n}.", { n: next.numbers[next.current] }));
     }
   };
 
   const finishVolley = () => {
     if (busy || state.status !== "full") return;
     sounds.validate();
-    if (state.volley.length === 3 && state.volley.every((d) => d.n === 0)) showWink("Trois à côté. Ça arrive aux meilleurs.");
+    if (state.volley.length === 3 && state.volley.every((d) => d.n === 0)) showWink(t("Trois à côté. Ça arrive aux meilleurs."));
     push({ type: "next" });
   };
 
@@ -193,7 +195,7 @@ export function KillerGame() {
       <Celebration spec={cele} onDone={() => celeDone.current?.()} />
 
       {over && state.winner !== null && (
-        <FinDePartie data={podiumKiller(state, name)} onRevanche={() => restart(rankingKiller(state)[sides.length - 1])} />
+        <FinDePartie data={podiumKiller(state, name, t)} onRevanche={() => restart(rankingKiller(state)[sides.length - 1])} />
       )}
     </main>
   );
@@ -214,6 +216,7 @@ function Numbers({
   canUndo: boolean;
   onMenu: () => void;
 }) {
+  const t = useT();
   const side = nextToNumber(state) ?? 0;
   const who = currentMemberKiller(state, side);
   const total = state.setup.sides.length;
@@ -224,7 +227,7 @@ function Numbers({
     <div className="flex h-full flex-col px-3.5 pb-[calc(14px+env(safe-area-inset-bottom))] pt-[calc(18px+env(safe-area-inset-top))]">
       <div className="flex min-h-6 items-center justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-gris">
         <span>
-          <b className="text-blanc">Killer</b> · Les numéros
+          <b className="text-blanc">Killer</b> · {t("Les numéros")}
         </span>
         <span className="flex items-center gap-2">
           <span>
@@ -235,9 +238,9 @@ function Numbers({
       </div>
 
       <h1 className="mt-4 text-[44px] font-black uppercase italic leading-[0.9] tracking-tight">
-        Main
+        {t("Main")}
         <br />
-        faible !
+        {t("faible !")}
       </h1>
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.p
@@ -248,7 +251,7 @@ function Numbers({
           transition={{ duration: 0.25, ease: [0.2, 0.8, 0.2, 1] }}
           className="mt-2 text-[13px] leading-normal text-[#bdbdbd]"
         >
-          <b className="font-black uppercase italic text-cyan">{who}</b>, lance une fléchette de ta main faible, puis touche le numéro obtenu.
+          <b className="font-black uppercase italic text-cyan">{who}</b>, {t("lance une fléchette de ta main faible, puis touche le numéro obtenu.")}
         </motion.p>
       </AnimatePresence>
 
@@ -261,7 +264,7 @@ function Numbers({
               type="button"
               disabled={o >= 0}
               onClick={() => onPick(n)}
-              aria-label={o >= 0 ? `${n}, déjà pris par ${state.setup.sides[o].name}` : `Numéro ${n}`}
+              aria-label={o >= 0 ? t("{n}, déjà pris par {name}", { n, name: state.setup.sides[o].name }) : t("Numéro {n}", { n })}
               className="relative grid h-[52px] place-items-center bg-case active:bg-blanc active:text-noir disabled:bg-transparent disabled:outline disabled:outline-[1.5px] disabled:-outline-offset-[1.5px] disabled:outline-filet"
             >
               <span className={`font-num text-[24px] leading-none ${o >= 0 ? "text-gris-2" : ""}`}>{n}</span>
@@ -274,7 +277,7 @@ function Numbers({
           );
         })}
       </div>
-      <p className="mt-3 text-center text-[10px] font-bold uppercase tracking-[0.16em] text-gris">Hors cible ou numéro déjà pris : on relance</p>
+      <p className="mt-3 text-center text-[10px] font-bold uppercase tracking-[0.16em] text-gris">{t("Hors cible ou numéro déjà pris : on relance")}</p>
 
       <div className="mt-auto pt-2.5">
         <button
@@ -283,7 +286,7 @@ function Numbers({
           onClick={onUndo}
           className="h-[46px] w-full border-[1.5px] border-[#3a3a3a] text-[12px] font-black tracking-wide text-[#cfcfcf] active:bg-case disabled:opacity-30"
         >
-          ANNULER
+          {t("ANNULER")}
         </button>
       </div>
     </div>
@@ -311,6 +314,7 @@ function Board({
   onValidate: () => void;
   onMenu: () => void;
 }) {
+  const t = useT();
   const side = state.current;
   const who = currentMemberKiller(state);
   const amKiller = state.killer[side];
@@ -321,10 +325,10 @@ function Board({
     <div className="flex h-full flex-col px-3.5 pb-[calc(14px+env(safe-area-inset-bottom))] pt-[calc(18px+env(safe-area-inset-top))]">
       <div className="flex min-h-6 items-center justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-gris">
         <span>
-          <b className="text-blanc">Killer</b> · {lives} vie{lives > 1 ? "s" : ""}
+          <b className="text-blanc">Killer</b> · {t(lives > 1 ? "{n} vies" : "{n} vie", { n: lives })}
         </span>
         <span className="flex items-center gap-2">
-          Tour <b className="text-blanc">{state.turn}</b>
+          {t("Tour")} <b className="text-blanc">{state.turn}</b>
           <MenuButton onClick={onMenu} />
         </span>
       </div>
@@ -349,11 +353,11 @@ function Board({
       <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.16em] text-gris">
         {amKiller ? (
           <>
-            <b className="text-cyan">Tueur</b> · vise le double des autres
+            <b className="text-cyan">{t("Tueur")}</b> · {t("vise le double des autres")}
           </>
         ) : (
           <>
-            Vise ton <b className="text-cyan">double {state.numbers[side]}</b> pour devenir tueur
+            {t("Vise ton")} <b className="text-cyan">{t("double {n}", { n: state.numbers[side] })}</b> {t("pour devenir tueur")}
           </>
         )}
       </div>
@@ -370,7 +374,7 @@ function Board({
               type="button"
               disabled={!canThrow || dead}
               onClick={() => onPlay({ n: num, m: 2 })}
-              aria-label={`Double ${num} touché · ${name(i)}`}
+              aria-label={t("Double {n} touché · {name}", { n: num, name: name(i) })}
               className={`flex max-h-[56px] min-h-[40px] flex-1 items-stretch text-left outline-offset-[-1.5px] active:bg-[#303030] ${
                 active ? "bg-case outline outline-[1.5px] outline-cyan" : "bg-case"
               } ${dead ? "opacity-35" : ""}`}
@@ -381,10 +385,10 @@ function Board({
               <span className="flex min-w-0 flex-1 items-center gap-2 px-3">
                 <span className={`min-w-0 truncate text-[17px] font-black uppercase italic ${dead ? "line-through decoration-2" : ""}`}>{name(i)}</span>
                 {state.killer[i] && !dead && (
-                  <span className="shrink-0 bg-blanc px-1.5 py-0.5 text-[9px] font-black uppercase tracking-[0.12em] text-noir">Tueur</span>
+                  <span className="shrink-0 bg-blanc px-1.5 py-0.5 text-[9px] font-black uppercase tracking-[0.12em] text-noir">{t("Tueur")}</span>
                 )}
               </span>
-              <span className="flex shrink-0 items-center gap-[3px] pr-3" aria-label={`${state.lives[i]} vie${state.lives[i] > 1 ? "s" : ""}`}>
+              <span className="flex shrink-0 items-center gap-[3px] pr-3" aria-label={t(state.lives[i] > 1 ? "{n} vies" : "{n} vie", { n: state.lives[i] })}>
                 {Array.from({ length: lives }, (_, q) => (
                   <i
                     key={q}
@@ -396,7 +400,7 @@ function Board({
           );
         })}
       </div>
-      <p className="mt-2 text-[11px] leading-snug text-gris">Seuls les doubles comptent. Touche le joueur dont tu as touché le double, toi compris.</p>
+      <p className="mt-2 text-[11px] leading-snug text-gris">{t("Seuls les doubles comptent. Touche le joueur dont tu as touché le double, toi compris.")}</p>
 
       {/* Les 3 fléchettes de la volée */}
       <div className="mx-1 mt-2 grid h-[40px] shrink-0 grid-cols-3 gap-2">
@@ -420,7 +424,7 @@ function Board({
             onClick={() => onPlay({ n: 0, m: 1 })}
             className="h-[46px] bg-case text-[12px] font-black tracking-wide active:bg-blanc active:text-noir disabled:opacity-40"
           >
-            RATÉ / AUTRE
+            {t("RATÉ / AUTRE")}
           </button>
           <button
             type="button"
@@ -428,7 +432,7 @@ function Board({
             onClick={onUndo}
             className="h-[46px] border-[1.5px] border-[#3a3a3a] text-[12px] font-black tracking-wide text-[#cfcfcf] active:bg-case disabled:opacity-30"
           >
-            ANNULER
+            {t("ANNULER")}
           </button>
         </div>
         <button
@@ -438,7 +442,7 @@ function Board({
           style={{ "--h": "56px" } as React.CSSProperties}
           className="btn-18 h-14 bg-blanc text-[17px] font-black uppercase italic text-noir active:bg-cyan disabled:bg-case disabled:text-gris-2"
         >
-          Valider la volée
+          {t("Valider la volée")}
         </button>
       </div>
     </div>
@@ -447,12 +451,12 @@ function Board({
 
 /* ---------- Fin de partie ---------- */
 
-function podiumKiller(state: KillerState, name: (i: number) => string): PodiumData {
+function podiumKiller(state: KillerState, name: (i: number) => string, t: T): PodiumData {
   const w = state.winner!;
   const lives = state.lives[w];
   return {
-    title: [name(w), "gagne", "le Killer"],
-    ranking: rankingKiller(state).map((s) => ({ name: name(s), value: `N° ${state.numbers[s]}` })),
-    highlight: { label: "Dernier debout", who: `${name(w)} · Tour ${state.turn}`, value: String(lives), unit: lives > 1 ? "vies" : "vie" },
+    title: [name(w), t("gagne"), t("le Killer")],
+    ranking: rankingKiller(state).map((s) => ({ name: name(s), value: t("N° {n}", { n: state.numbers[s] }) })),
+    highlight: { label: t("Dernier debout"), who: `${name(w)} · ${t("Tour")} ${state.turn}`, value: String(lives), unit: lives > 1 ? t("vies") : t("vie") },
   };
 }

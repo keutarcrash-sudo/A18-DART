@@ -8,23 +8,26 @@ import { AnimatePresence, motion } from "motion/react";
 import { useState, useSyncExternalStore } from "react";
 import { clearPartie } from "@/lib/partie";
 import { isMuted, setMuted } from "@/lib/sound";
+import { useT } from "@/lib/i18n";
 
 const noopSubscribe = () => () => {};
 
 export function MenuButton({ onClick }: { onClick: () => void }) {
+  const t = useT();
   return (
     <button
       type="button"
       onClick={onClick}
       className="h-[30px] border-[1.5px] border-[#3a3a3a] px-2.5 text-[10px] font-bold tracking-[0.14em] text-[#cfcfcf] active:bg-case"
     >
-      MENU
+      {t("MENU")}
     </button>
   );
 }
 
 export function GameMenu({ open, onClose, onRestart, label }: { open: boolean; onClose: () => void; onRestart: () => void; label: string }) {
   const router = useRouter();
+  const t = useT();
   const [mutedChoice, setMutedChoice] = useState<boolean | null>(null);
   const mutedStored = useSyncExternalStore(noopSubscribe, isMuted, () => false);
   const muted = mutedChoice ?? mutedStored;
@@ -44,17 +47,17 @@ export function GameMenu({ open, onClose, onRestart, label }: { open: boolean; o
         >
           <div className="flex min-h-6 items-center justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-gris">
             <span>
-              <b className="text-blanc">{label}</b> · Partie en pause
+              <b className="text-blanc">{t(label)}</b> · {t("Partie en pause")}
             </span>
-            <button type="button" onClick={onClose} aria-label="Fermer le menu" className="px-2 py-1 text-xl font-black leading-none text-blanc">
+            <button type="button" onClick={onClose} aria-label={t("Fermer le menu")} className="px-2 py-1 text-xl font-black leading-none text-blanc">
               ×
             </button>
           </div>
-          <h1 className="mt-4 text-[40px] font-black uppercase italic leading-[0.95] tracking-tight">Pause</h1>
+          <h1 className="mt-4 text-[40px] font-black uppercase italic leading-[0.95] tracking-tight">{t("Pause")}</h1>
 
           <div className="mt-8 flex flex-col gap-2.5" style={{ "--h": "58px" } as React.CSSProperties}>
             <button type="button" onClick={onClose} className={`${item} bg-cyan text-noir active:bg-blanc`}>
-              Reprendre la partie
+              {t("Reprendre la partie")}
             </button>
             <button
               type="button"
@@ -64,9 +67,9 @@ export function GameMenu({ open, onClose, onRestart, label }: { open: boolean; o
               }}
               className={`${item} bg-blanc text-noir active:bg-cyan`}
             >
-              Recommencer
+              {t("Recommencer")}
             </button>
-            <p className="-mt-1 mb-1 text-xs text-[#a8a8a8]">Mêmes joueurs, même jeu, tout repart de zéro.</p>
+            <p className="-mt-1 mb-1 text-xs text-[#a8a8a8]">{t("Mêmes joueurs, même jeu, tout repart de zéro.")}</p>
             <button
               type="button"
               onClick={() => {
@@ -77,9 +80,9 @@ export function GameMenu({ open, onClose, onRestart, label }: { open: boolean; o
               }}
               className={`${item} bg-case text-blanc active:bg-blanc active:text-noir`}
             >
-              Nouvelle partie
+              {t("Nouvelle partie")}
             </button>
-            <p className="-mt-1 mb-1 text-xs text-[#a8a8a8]">Autres joueurs ou autre jeu. La partie en cours s&apos;arrête.</p>
+            <p className="-mt-1 mb-1 text-xs text-[#a8a8a8]">{t("Autres joueurs ou autre jeu. La partie en cours s'arrête.")}</p>
             <button
               type="button"
               onClick={() => {
@@ -88,9 +91,9 @@ export function GameMenu({ open, onClose, onRestart, label }: { open: boolean; o
               }}
               className="mt-1 h-12 w-full text-[15px] font-black uppercase italic tracking-wide text-[#cfcfcf] underline decoration-filet decoration-2 underline-offset-8 active:text-cyan"
             >
-              Accueil
+              {t("Accueil")}
             </button>
-            <p className="-mt-1 text-xs text-[#a8a8a8]">La partie reste en mémoire : « Reprendre » la relance.</p>
+            <p className="-mt-1 text-xs text-[#a8a8a8]">{t("La partie reste en mémoire : « Reprendre » la relance.")}</p>
           </div>
 
           <button
@@ -105,7 +108,7 @@ export function GameMenu({ open, onClose, onRestart, label }: { open: boolean; o
             <i className={`skew-18 relative h-4 w-[30px] ${muted ? "bg-[#333]" : "bg-cyan"}`}>
               <i className={`absolute top-0.5 h-3 w-3 transition-all ${muted ? "left-0.5 bg-gris" : "left-4 bg-noir"}`} />
             </i>
-            Sons {muted ? "coupés" : "activés"}
+            {muted ? t("Sons coupés") : t("Sons activés")}
           </button>
         </motion.div>
       )}

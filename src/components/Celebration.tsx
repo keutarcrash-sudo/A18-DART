@@ -6,6 +6,7 @@
  * - wink : bulle du personnage, ne bloque pas la saisie (26, trois ratés…).
  */
 import { AnimatePresence, motion } from "motion/react";
+import { useT } from "@/lib/i18n";
 import { fitFont } from "@/lib/fit";
 
 export type CeleSpec =
@@ -15,6 +16,7 @@ export type CeleSpec =
 const BG = { cyan: "bg-cyan", chartreuse: "bg-chartreuse", bust: "bg-blanc" } as const;
 
 export function Celebration({ spec, onDone }: { spec: CeleSpec | null; onDone: () => void }) {
+  const t = useT();
   return (
     <AnimatePresence>
       {spec?.level === "max" && (
@@ -49,7 +51,7 @@ export function Celebration({ spec, onDone }: { spec: CeleSpec | null; onDone: (
             {spec.slot}
           </span>
           <span className="absolute bottom-[calc(22px+env(safe-area-inset-bottom))] left-5 text-[9px] font-bold uppercase tracking-[0.2em] opacity-60">
-            Touche pour continuer
+            {t("Touche pour continuer")}
           </span>
         </motion.button>
       )}
@@ -81,6 +83,7 @@ export function Celebration({ spec, onDone }: { spec: CeleSpec | null; onDone: (
 }
 
 export function Wink({ text }: { text: string | null }) {
+  const t = useT();
   return (
     <AnimatePresence>
       {text && (
@@ -92,7 +95,7 @@ export function Wink({ text }: { text: string | null }) {
           className="pointer-events-none absolute inset-x-3.5 bottom-[352px] z-30 flex items-end gap-2.5"
         >
           <span className="slot-perso flex h-[66px] w-[52px] shrink-0 items-end justify-center bg-noir p-1 text-[8px] font-bold uppercase">
-            Perso
+            {t("Perso")}
           </span>
           <p
             style={{ "--h": "40px" } as React.CSSProperties}

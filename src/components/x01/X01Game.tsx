@@ -20,6 +20,7 @@ import { useFlatPhone, useWakeLock } from "@/lib/device";
 import { useX01Partie } from "@/lib/partie";
 import { fitFont } from "@/lib/fit";
 import { sounds } from "@/lib/sound";
+import { type T, useT } from "@/lib/i18n";
 import { isDayRecord, submitRecords, useDayBest } from "@/lib/records";
 import { recordsX01 } from "@/lib/recordEntries";
 import { FinDePartie } from "@/components/podium/FinDePartie";
@@ -32,6 +33,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export function X01Game() {
   const { state, push, setLastMult, undo, restart } = useX01Partie();
+  const t = useT();
   const [busy, setBusy] = useState(false);
   // L'écran de fin n'apparaît qu'après la célébration de la victoire.
   const [wonShown, setWonShown] = useState(false);
@@ -91,8 +93,8 @@ export function X01Game() {
 
       if (st.status === "bust") {
         sounds.bust();
-        await celebrate({ level: "max", tone: "bust", kicker: who, big: "Bust", numeric: false, sub: `On revient à ${st.volleyStart}`, slot: "bust" });
-        showWink("Trop fort, littéralement.");
+        await celebrate({ level: "max", tone: "bust", kicker: who, big: "Bust", numeric: false, sub: t("On revient à {n}", { n: st.volleyStart }), slot: "bust" });
+        showWink(t("Trop fort, littéralement."));
         push({ type: "next" });
         setBusy(false);
         return;
@@ -113,15 +115,15 @@ export function X01Game() {
       if (record) {
         beatDay(points);
         sounds.oneEighty();
-        await celebrate({ level: "max", tone: "chartreuse", kicker: "Record du jour à l'Arena18", big: String(points), numeric: true, sub: who, slot: "record" });
+        await celebrate({ level: "max", tone: "chartreuse", kicker: t("Record du jour à l'Arena18"), big: String(points), numeric: true, sub: who, slot: "record" });
       } else if (ev.has("oneEighty")) {
         sounds.oneEighty();
-        await celebrate({ level: "max", tone: "cyan", kicker: who, big: "180", numeric: true, sub: "Le maximum. Rien que ça.", slot: "180" });
+        await celebrate({ level: "max", tone: "cyan", kicker: who, big: "180", numeric: true, sub: t("Le maximum. Rien que ça."), slot: "180" });
       } else if (ev.has("ton")) {
         sounds.ton();
         await celebrate({ level: "mid", word: "Ton-up", num: String(points) });
-      } else if (ev.has("twentySix")) showWink("26… le classique.");
-      else if (ev.has("threeMisses")) showWink("Trois à côté. Ça arrive aux meilleurs.");
+      } else if (ev.has("twentySix")) showWink(t("26… le classique."));
+      else if (ev.has("threeMisses")) showWink(t("Trois à côté. Ça arrive aux meilleurs."));
 
       if (st.status === "leg" || st.status === "match") {
         sounds.win();
@@ -142,7 +144,7 @@ export function X01Game() {
       else setWonShown(true);
       setBusy(false);
     },
-    [celebrate, push, showWink, dayBest, beatDay],
+    [celebrate, push, showWink, dayBest, beatDay, t],
   );
 
   // Une partie déjà terminée qu'on recharge ne rejoue pas sa célébration.
@@ -207,33 +209,33 @@ export function X01Game() {
   const hint = (() => {
     if (state.volley.length) {
       const rest = state.volleyStart - points;
-      if (state.status === "bust") return <b>Bust · trop haut</b>;
+      if (state.status === "bust") return <b>{t("Bust · trop haut")}</b>;
       // Encore des fléchettes à lancer : on redonne le chemin pour finir avec celles qui restent.
       const left = 3 - state.volley.length;
       const next = state.status === "open" && state.opened[side] && rest <= 170 ? suggestCheckout(rest, opts.finish, left) : null;
       if (next) {
         return (
           <>
-            Reste <b className="text-blanc">{rest}</b> · pour finir : <b className="text-cyan">{next.map(dartLabel).join(" · ")}</b>
+            {t("Reste")} <b className="text-blanc">{rest}</b> · {t("pour finir :")} <b className="text-cyan">{next.map(dartLabel).join(" · ")}</b>
           </>
         );
       }
       return (
         <>
-          Reste après la volée : <b className="text-blanc">{rest}</b>
+          {t("Reste après la volée :")} <b className="text-blanc">{rest}</b>
         </>
       );
     }
-    if (!state.opened[side]) return "Double in : cherche un double pour démarrer";
+    if (!state.opened[side]) return t("Double in : cherche un double pour démarrer");
     const route = state.volleyStart <= 170 ? suggestCheckout(state.volleyStart, opts.finish) : null;
     if (route && (doubleOut || route.length < 3)) {
       return (
         <>
-          Pour finir : <b className="text-cyan">{route.map(dartLabel).join(" · ")}</b>
+          {t("Pour finir :")} <b className="text-cyan">{route.map(dartLabel).join(" · ")}</b>
         </>
       );
     }
-    return "Volée en cours";
+    return t("Volée en cours");
   })();
 
   const order = rankingX01(state);
@@ -247,17 +249,17 @@ export function X01Game() {
         {/* Barre du haut */}
         <div className="flex min-h-6 items-center justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-gris">
           <span>
-            <b className="text-blanc">{start}</b> · {doubleOut ? "Double out" : "Fin simple"}
+            <b className="text-blanc">{start}</b> · {doubleOut ? "Double out" : t("Fin simple")}
             {opts.legs > 1 && ` · M${state.leg}`}
           </span>
           <span className="flex items-center gap-2">
-            Tour <b className="text-blanc">{state.turn}</b>
+            {t("Tour")} <b className="text-blanc">{state.turn}</b>
             <button
               type="button"
               onClick={() => setView("tableau")}
               className="h-[30px] border-[1.5px] border-[#3a3a3a] px-2.5 text-[10px] font-bold tracking-[0.14em] text-[#cfcfcf]"
             >
-              TABLEAU
+              {t("TABLEAU")}
             </button>
             <MenuButton onClick={() => setMenu(true)} />
           </span>
@@ -301,8 +303,8 @@ export function X01Game() {
             </motion.div>
           </AnimatePresence>
           <div className="slot-perso absolute -top-[30px] right-[-4px] z-0 flex h-[126px] w-[90px] items-end justify-center p-1.5 text-center text-[8px] font-bold uppercase tracking-[0.14em]">
-            Perso 3D
-            <br />« à toi »
+            {t("Perso 3D")}
+            <br />« {t("à toi")} »
           </div>
         </div>
 
@@ -383,7 +385,7 @@ export function X01Game() {
             <Tableau
               title={
                 <>
-                  <b className="text-blanc">{start}</b> · Course vers zéro
+                  <b className="text-blanc">{start}</b> · {t("Course vers zéro")}
                 </>
               }
               who={who}
@@ -393,7 +395,7 @@ export function X01Game() {
                 name: state.setup.sides[i].name,
                 value: state.scores[i],
                 fill: (start - state.scores[i]) / start,
-                sub: `${opts.legs > 1 ? `${state.legsWon[i]} manche${state.legsWon[i] > 1 ? "s" : ""} · ` : ""}${start - state.scores[i]} points marqués`,
+                sub: `${opts.legs > 1 ? `${t(state.legsWon[i] > 1 ? "{n} manches" : "{n} manche", { n: state.legsWon[i] })} · ` : ""}${t("{n} points marqués", { n: start - state.scores[i] })}`,
               }))}
               onClose={() => setView("saisie")}
             />
@@ -406,7 +408,7 @@ export function X01Game() {
       <Celebration spec={cele} onDone={() => celeDone.current?.()} />
 
       {over && state.winner !== null && (
-        <FinDePartie data={podiumX01(state)} onRevanche={() => restart(order[order.length - 1])} />
+        <FinDePartie data={podiumX01(state, t)} onRevanche={() => restart(order[order.length - 1])} />
       )}
     </main>
   );
@@ -430,16 +432,16 @@ function countTo(from: number, to: number, ms: number, set: (v: number) => void)
   });
 }
 
-function podiumX01(state: X01State): PodiumData {
+function podiumX01(state: X01State, t: T): PodiumData {
   const sides = state.setup.sides;
   const multi = state.setup.options.legs > 1;
   const best = bestVolley(state);
   return {
-    title: [sides[state.winner!].name, "gagne", `le ${state.setup.options.start}`],
+    title: [sides[state.winner!].name, t("gagne"), t("le {game}", { game: state.setup.options.start })],
     ranking: rankingX01(state).map((s) => ({
       name: sides[s].name,
-      value: multi ? `${state.legsWon[s]} manche${state.legsWon[s] > 1 ? "s" : ""}` : s === state.winner ? undefined : `Reste ${state.scores[s]}`,
+      value: multi ? t(state.legsWon[s] > 1 ? "{n} manches" : "{n} manche", { n: state.legsWon[s] }) : s === state.winner ? undefined : t("Reste {n}", { n: state.scores[s] }),
     })),
-    highlight: best ? { label: "Volée de la partie", who: `${best.member} · Tour ${best.turn}`, value: String(best.points) } : undefined,
+    highlight: best ? { label: t("Volée de la partie"), who: `${best.member} · ${t("Tour")} ${best.turn}`, value: String(best.points) } : undefined,
   };
 }

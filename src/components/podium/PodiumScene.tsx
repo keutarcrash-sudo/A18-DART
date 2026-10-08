@@ -2,6 +2,7 @@
  * La scène du podium (référence : docs/parcours.html, écrans « Podium » et « Story »).
  * Sert deux fois : à l'écran en fin de partie, et dans l'image story 9:16 à partager.
  */
+import { useT } from "@/lib/i18n";
 
 export interface PodiumData {
   /** Trois lignes du titre, celle du milieu en cyan : « GUILLAUME / GAGNE / LE 501 ». */
@@ -35,6 +36,7 @@ const STEP = [
  * @param width  largeur utile en px (pour ajuster les grands textes).
  */
 export function PodiumScene({ data, story = false, width, date }: { data: PodiumData; story?: boolean; width: number; date: string }) {
+  const t = useT();
   const [l1, l2, l3] = data.title;
   // Ordre des marches à l'écran : 2e, 1er, 3e.
   const places = [1, 0, 2].filter((r) => r < data.ranking.length);
@@ -77,9 +79,9 @@ export function PodiumScene({ data, story = false, width, date }: { data: Podium
               {p.value && <span className="text-[9px] font-bold uppercase tracking-[0.14em] text-gris">{p.value}</span>}
               {first && !story ? (
                 <div className="slot-perso mb-2 mt-1 flex h-[104px] w-[74%] items-end justify-center p-1 text-center text-[7px] font-bold uppercase tracking-[0.14em]">
-                  Perso 3D
+                  {t("Perso 3D")}
                   <br />
-                  victoire
+                  {t("victoire")}
                 </div>
               ) : (
                 <div
@@ -126,9 +128,9 @@ export function PodiumScene({ data, story = false, width, date }: { data: Podium
       {story && (
         <div className="mt-4 flex items-end justify-between">
           <span className="whitespace-nowrap text-[17px] font-black uppercase italic tracking-tight">
-            À vous de <span className="text-cyan">jouer</span>
+            {t("À vous de")} <span className="text-cyan">{t("jouer")}</span>
           </span>
-          <span className="whitespace-nowrap text-[8px] font-bold uppercase tracking-[0.18em] text-gris">Fléchettes · Arena18</span>
+          <span className="whitespace-nowrap text-[8px] font-bold uppercase tracking-[0.18em] text-gris">{t("Fléchettes · Arena18")}</span>
         </div>
       )}
     </div>

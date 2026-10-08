@@ -5,6 +5,7 @@
  * (décision client après test : 1,5 s ne laissait pas le temps).
  */
 import type { Mult } from "@/engine/types";
+import { useT } from "@/lib/i18n";
 
 const ROWS = [
   [1, 2, 3, 4, 5],
@@ -29,6 +30,7 @@ const key =
   "h-[46px] bg-case text-blanc active:bg-blanc active:text-noir disabled:opacity-40 disabled:active:bg-case disabled:active:text-blanc";
 
 export function Pad({ disabled, multFor, canValidate, canUndo, onNumber, onMult, onUndo, onValidate }: Props) {
+  const t = useT();
   return (
     <div className="relative flex flex-col gap-[5px] pt-3">
       {ROWS.map((row) => (
@@ -66,7 +68,7 @@ export function Pad({ disabled, multFor, canValidate, canUndo, onNumber, onMult,
             onClick={() => onNumber(0)}
             className={`${key} text-[12px] font-black tracking-wide`}
           >
-            RATÉ
+            {t("RATÉ")}
           </button>
           <button
             type="button"
@@ -74,7 +76,7 @@ export function Pad({ disabled, multFor, canValidate, canUndo, onNumber, onMult,
             onClick={onUndo}
             className="h-[46px] border-[1.5px] border-[#3a3a3a] text-[12px] font-black tracking-wide text-[#cfcfcf] active:bg-case disabled:opacity-30"
           >
-            ANNULER
+            {t("ANNULER")}
           </button>
         </div>
 
@@ -106,7 +108,7 @@ export function Pad({ disabled, multFor, canValidate, canUndo, onNumber, onMult,
         style={{ "--h": "56px" } as React.CSSProperties}
         className="btn-18 h-14 bg-blanc text-[17px] font-black uppercase italic text-noir active:bg-cyan disabled:bg-case disabled:text-gris-2"
       >
-        Valider la volée
+        {t("Valider la volée")}
       </button>
     </div>
   );

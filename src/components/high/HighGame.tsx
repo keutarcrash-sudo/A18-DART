@@ -16,6 +16,7 @@ import { useFlatPhone, useWakeLock } from "@/lib/device";
 import { fitFont } from "@/lib/fit";
 import { useHighPartie } from "@/lib/partie";
 import { sounds } from "@/lib/sound";
+import { type T, useT } from "@/lib/i18n";
 import { isDayRecord, submitRecords, useDayBest } from "@/lib/records";
 import { recordsHigh } from "@/lib/recordEntries";
 import { FinDePartie } from "@/components/podium/FinDePartie";
@@ -25,6 +26,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export function HighGame() {
   const { state, push, setLastMult, undo, restart } = useHighPartie();
+  const t = useT();
   const [busy, setBusy] = useState(false);
   // L'écran de fin n'apparaît qu'après la célébration de la victoire.
   const [wonShown, setWonShown] = useState(false);
@@ -96,16 +98,16 @@ export function HighGame() {
       if (record) {
         beatDay(points);
         sounds.oneEighty();
-        await celebrate({ level: "max", tone: "chartreuse", kicker: "Record du jour à l'Arena18", big: String(points), numeric: true, sub: who, slot: "record" });
+        await celebrate({ level: "max", tone: "chartreuse", kicker: t("Record du jour à l'Arena18"), big: String(points), numeric: true, sub: who, slot: "record" });
       } else if (find("oneEighty")) {
         sounds.oneEighty();
-        await celebrate({ level: "max", tone: "cyan", kicker: who, big: "180", numeric: true, sub: "Le maximum. Rien que ça.", slot: "180" });
+        await celebrate({ level: "max", tone: "cyan", kicker: who, big: "180", numeric: true, sub: t("Le maximum. Rien que ça."), slot: "180" });
       } else if (find("ton")) {
         sounds.ton();
         await celebrate({ level: "mid", word: "Ton-up", num: String(points) });
-      } else if (find("twentySix")) showWink("26… le classique.");
-      else if (find("threeMisses")) showWink("Trois à côté. Ça arrive aux meilleurs.");
-      else if (find("takesLead") && st.status !== "match") showWink(`${st.setup.sides[side].name} passe devant.`);
+      } else if (find("twentySix")) showWink(t("26… le classique."));
+      else if (find("threeMisses")) showWink(t("Trois à côté. Ça arrive aux meilleurs."));
+      else if (find("takesLead") && st.status !== "match") showWink(t("{name} passe devant.", { name: st.setup.sides[side].name }));
 
       const won = find("matchWon");
       if (won) {
@@ -113,8 +115,8 @@ export function HighGame() {
         const names = won.sides.map((i) => st.setup.sides[i].name);
         await celebrate(
           names.length > 1
-            ? { level: "max", tone: "cyan", kicker: `${st.scores[won.sides[0]]} points chacun`, big: "Égalité", numeric: false, sub: names.join(" · "), slot: "victoire" }
-            : { level: "max", tone: "cyan", kicker: `Plus gros score · ${st.scores[won.sides[0]]}`, big: names[0], numeric: false, slot: "victoire" },
+            ? { level: "max", tone: "cyan", kicker: t("{n} points chacun", { n: st.scores[won.sides[0]] }), big: t("Égalité"), numeric: false, sub: names.join(" · "), slot: "victoire" }
+            : { level: "max", tone: "cyan", kicker: `${t("Plus gros score")} · ${st.scores[won.sides[0]]}`, big: names[0], numeric: false, slot: "victoire" },
         );
       }
 
@@ -124,7 +126,7 @@ export function HighGame() {
       else setWonShown(true);
       setBusy(false);
     },
-    [celebrate, push, showWink, dayBest, beatDay],
+    [celebrate, push, showWink, dayBest, beatDay, t],
   );
 
   // Une partie déjà finie qu'on recharge ne rejoue pas sa célébration.
@@ -186,23 +188,23 @@ export function HighGame() {
     if (state.volley.length) {
       return (
         <>
-          Total après la volée : <b className="text-blanc">{state.volleyStart + points}</b>
+          {t("Total après la volée :")} <b className="text-blanc">{state.volleyStart + points}</b>
         </>
       );
     }
     const others = Math.max(...state.scores.filter((_, i) => i !== side));
     const mine = state.scores[side];
-    if (sides.length < 2 || top === 0) return `Volée ${state.turn} sur ${rounds}`;
-    if (mine === others) return "À égalité avec le premier";
+    if (sides.length < 2 || top === 0) return t("Volée {n} sur {total}", { n: state.turn, total: rounds });
+    if (mine === others) return t("À égalité avec le premier");
     if (mine > others)
       return (
         <>
-          Tu mènes de <b className="text-cyan">{mine - others}</b>
+          {t("Tu mènes de")} <b className="text-cyan">{mine - others}</b>
         </>
       );
     return (
       <>
-        Pour passer devant : <b className="text-cyan">{others - mine + 1}</b>
+        {t("Pour passer devant :")} <b className="text-cyan">{others - mine + 1}</b>
       </>
     );
   })();
@@ -213,9 +215,9 @@ export function HighGame() {
         {/* Barre du haut */}
         <div className="flex min-h-6 items-center justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-gris">
           <span>
-            <b className="text-blanc">Plus gros score</b>
+            <b className="text-blanc">{t("Plus gros score")}</b>
             <br />
-            Volée <b className="text-blanc">{state.turn}</b>/{rounds}
+            {t("Volée")} <b className="text-blanc">{state.turn}</b>/{rounds}
           </span>
           <span className="flex items-center gap-2">
             <button
@@ -223,7 +225,7 @@ export function HighGame() {
               onClick={() => setView("tableau")}
               className="h-[30px] border-[1.5px] border-[#3a3a3a] px-2.5 text-[10px] font-bold tracking-[0.14em] text-[#cfcfcf]"
             >
-              TABLEAU
+              {t("TABLEAU")}
             </button>
             <MenuButton onClick={() => setMenu(true)} />
           </span>
@@ -264,8 +266,8 @@ export function HighGame() {
             </motion.div>
           </AnimatePresence>
           <div className="slot-perso absolute -top-[30px] right-[-4px] z-0 flex h-[126px] w-[90px] items-end justify-center p-1.5 text-center text-[8px] font-bold uppercase tracking-[0.14em]">
-            Perso 3D
-            <br />« à toi »
+            {t("Perso 3D")}
+            <br />« {t("à toi")} »
           </div>
         </div>
 
@@ -346,7 +348,7 @@ export function HighGame() {
             <Tableau
               title={
                 <>
-                  <b className="text-blanc">Plus gros score</b> · Volée {state.turn}/{rounds}
+                  <b className="text-blanc">{t("Plus gros score")}</b> · {t("Volée")} {state.turn}/{rounds}
                 </>
               }
               who={who}
@@ -358,7 +360,7 @@ export function HighGame() {
                   name: sides[i].name,
                   value: state.scores[i],
                   fill: top > 0 ? state.scores[i] / top : 0,
-                  sub: `${n} volée${n > 1 ? "s" : ""} sur ${rounds}${n ? ` · moyenne ${Math.round(state.scores[i] / n)}` : ""}`,
+                  sub: `${t(n > 1 ? "{n} volées sur {total}" : "{n} volée sur {total}", { n, total: rounds })}${n ? ` · ${t("moyenne {n}", { n: Math.round(state.scores[i] / n) })}` : ""}`,
                 };
               })}
               onClose={() => setView("saisie")}
@@ -371,7 +373,7 @@ export function HighGame() {
       <Wink text={wink} />
       <Celebration spec={cele} onDone={() => celeDone.current?.()} />
 
-      {over && <FinDePartie data={podiumHigh(state)} onRevanche={() => restart(order[order.length - 1])} />}
+      {over && <FinDePartie data={podiumHigh(state, t)} onRevanche={() => restart(order[order.length - 1])} />}
     </main>
   );
 }
@@ -394,13 +396,13 @@ function countTo(from: number, to: number, ms: number, set: (v: number) => void)
   });
 }
 
-function podiumHigh(state: HighState): PodiumData {
+function podiumHigh(state: HighState, t: T): PodiumData {
   const sides = state.setup.sides;
   const best = bestHighVolley(state);
   const tie = state.winners.length > 1;
   return {
-    title: tie ? ["Égalité", "au", "Plus gros score"] : [sides[state.winners[0]].name, "gagne", "le Plus gros score"],
+    title: tie ? [t("Égalité"), t("au"), t("Plus gros score")] : [sides[state.winners[0]].name, t("gagne"), t("le Plus gros score")],
     ranking: rankingHigh(state).map((s) => ({ name: sides[s].name, value: `${state.scores[s]} pts` })),
-    highlight: best ? { label: "Volée de la partie", who: `${best.member} · Volée ${best.turn}`, value: String(best.points) } : undefined,
+    highlight: best ? { label: t("Volée de la partie"), who: `${best.member} · ${t("Volée")} ${best.turn}`, value: String(best.points) } : undefined,
   };
 }

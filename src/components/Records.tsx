@@ -1,9 +1,11 @@
 "use client";
 /** Records d'Arena18 sous le bouton JOUER (référence : docs/parcours.html, écran « Accueil »). */
 import { useState } from "react";
+import { useT } from "@/lib/i18n";
 import { type Period, recordsEnabled, useRecordsSummary } from "@/lib/records";
 
 export function Records() {
+  const t = useT();
   const [period, setPeriod] = useState<Period>("day");
   const state = useRecordsSummary(period);
   if (!recordsEnabled) return null;
@@ -14,9 +16,9 @@ export function Records() {
   const ones = data?.one_eighties ?? [];
 
   return (
-    <section className="mt-12" aria-label="Records d'Arena18">
+    <section className="mt-12" aria-label={t("Records d'Arena18")}>
       <div className="flex items-end justify-between gap-3">
-        <h2 className="text-[26px] font-black uppercase italic leading-none tracking-tight">Records</h2>
+        <h2 className="text-[26px] font-black uppercase italic leading-none tracking-tight">{t("Records")}</h2>
         <div className="flex gap-1" style={{ "--h": "30px" } as React.CSSProperties}>
           {(["day", "week"] as const).map((p) => (
             <button
@@ -26,35 +28,35 @@ export function Records() {
               onClick={() => setPeriod(p)}
               className={`btn-18 h-[30px] px-4 text-[10px] font-black uppercase italic tracking-wide ${p === period ? "bg-cyan text-noir" : "bg-case text-[#cfcfcf]"}`}
             >
-              {p === "day" ? "Aujourd'hui" : "Semaine"}
+              {p === "day" ? t("Aujourd'hui") : t("Semaine")}
             </button>
           ))}
         </div>
       </div>
 
       {state.status === "error" ? (
-        <p className="mt-4 border-b border-filet pb-4 text-[13px] text-gris">Records indisponibles pour l&apos;instant. Ils reviennent avec le réseau.</p>
+        <p className="mt-4 border-b border-filet pb-4 text-[13px] text-gris">{t("Records indisponibles pour l'instant. Ils reviennent avec le réseau.")}</p>
       ) : (
         <div className="mt-2">
           <Row
-            label={`Meilleure volée ${day ? "du jour" : "de la semaine"}`}
-            who={data?.best_volley?.name ?? (data ? "Personne encore. Toi ?" : wait)}
+            label={day ? t("Meilleure volée du jour") : t("Meilleure volée de la semaine")}
+            who={data?.best_volley?.name ?? (data ? t("Personne encore. Toi ?") : wait)}
             value={data?.best_volley ? String(data.best_volley.value) : wait}
           />
           <Row
-            label="Plus gros checkout"
-            who={data?.best_checkout?.name ?? (data ? "Personne encore. Toi ?" : wait)}
+            label={t("Plus gros checkout")}
+            who={data?.best_checkout?.name ?? (data ? t("Personne encore. Toi ?") : wait)}
             value={data?.best_checkout ? String(data.best_checkout.value) : wait}
           />
           <Row
-            label={`180 ${day ? "du jour" : "de la semaine"}`}
-            who={ones.length ? ones.slice(0, 3).join(" · ") + (ones.length > 3 ? ` +${ones.length - 3}` : "") : data ? "Personne encore. Toi ?" : wait}
+            label={day ? t("180 du jour") : t("180 de la semaine")}
+            who={ones.length ? ones.slice(0, 3).join(" · ") + (ones.length > 3 ? ` +${ones.length - 3}` : "") : data ? t("Personne encore. Toi ?") : wait}
             value={ones.length ? (ones.length > 1 ? `×${ones.length}` : "180") : "—"}
             white={!ones.length}
           />
           <Row
-            label={`Parties ${day ? "aujourd'hui" : "cette semaine"}`}
-            who="À l'Arena18"
+            label={day ? t("Parties aujourd'hui") : t("Parties cette semaine")}
+            who={t("À l'Arena18")}
             value={data ? String(data.games) : wait}
             white
           />

@@ -23,6 +23,7 @@ import { useWakeLock } from "@/lib/device";
 import { fitFont } from "@/lib/fit";
 import { useCricketPartie } from "@/lib/partie";
 import { sounds } from "@/lib/sound";
+import { type T, useT } from "@/lib/i18n";
 import { submitRecords } from "@/lib/records";
 import { gameEntry } from "@/lib/recordEntries";
 import { FinDePartie } from "@/components/podium/FinDePartie";
@@ -39,6 +40,7 @@ function dartText(d: Dart): string {
 
 export function CricketGame() {
   const { state, push, setLastMult, undo, restart } = useCricketPartie();
+  const t = useT();
   const [busy, setBusy] = useState(false);
   // L'écran de fin n'apparaît qu'après la célébration de la victoire.
   const [wonShown, setWonShown] = useState(false);
@@ -89,14 +91,14 @@ export function CricketGame() {
       sounds.validate();
       if (has("nineMarks")) {
         sounds.oneEighty();
-        await celebrate({ level: "max", tone: "cyan", kicker: who, big: "9", numeric: true, sub: "Neuf touches. Le maximum.", slot: "exploit" });
+        await celebrate({ level: "max", tone: "cyan", kicker: who, big: "9", numeric: true, sub: t("Neuf touches. Le maximum."), slot: "exploit" });
       } else if (has("manyMarks")) {
         sounds.ton();
-        await celebrate({ level: "mid", word: "Touches", num: String(marks) });
+        await celebrate({ level: "mid", word: t("Touches"), num: String(marks) });
       } else if (closed.length && st.status !== "match") {
-        showWink(`Le ${closed[0].n === 25 ? "bull" : closed[0].n} est fermé. Les autres, attention.`);
+        showWink(t("Le {n} est fermé. Les autres, attention.", { n: closed[0].n === 25 ? "bull" : closed[0].n }));
       } else if (has("noMarks")) {
-        showWink("Rien sur le tableau. Ça arrive aux meilleurs.");
+        showWink(t("Rien sur le tableau. Ça arrive aux meilleurs."));
       }
 
       if (st.status === "match") {
@@ -105,7 +107,7 @@ export function CricketGame() {
         await celebrate({
           level: "max",
           tone: "cyan",
-          kicker: "Victoire",
+          kicker: t("Victoire"),
           big: who,
           numeric: false,
           sub: st.setup.sides[side].members.length > 1 ? st.setup.sides[side].name : "Cricket",
@@ -117,7 +119,7 @@ export function CricketGame() {
       }
       setBusy(false);
     },
-    [celebrate, push, showWink],
+    [celebrate, push, showWink, t],
   );
 
   // Une partie déjà gagnée qu'on recharge ne rejoue pas sa célébration.
@@ -177,10 +179,10 @@ export function CricketGame() {
       <div className="flex h-full flex-col px-3.5 pb-[calc(14px+env(safe-area-inset-bottom))] pt-[calc(18px+env(safe-area-inset-top))]">
         <div className="flex min-h-6 items-center justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-gris">
           <span>
-            <b className="text-blanc">Cricket</b> · {MODE_LABEL[mode]}
+            <b className="text-blanc">Cricket</b> · {t(MODE_LABEL[mode])}
           </span>
           <span className="flex items-center gap-2">
-            Tour <b className="text-blanc">{state.turn}</b>
+            {t("Tour")} <b className="text-blanc">{state.turn}</b>
             <MenuButton onClick={() => setMenu(true)} />
           </span>
         </div>
@@ -204,7 +206,7 @@ export function CricketGame() {
           </AnimatePresence>
           {showPoints && (
             <div className="shrink-0 text-right">
-              <small className="block text-[9px] font-bold uppercase tracking-[0.18em] text-gris">Points</small>
+              <small className="block text-[9px] font-bold uppercase tracking-[0.18em] text-gris">{t("Points")}</small>
               <span className="font-num text-[32px] leading-none text-cyan">{state.points[side]}</span>
             </div>
           )}
@@ -236,7 +238,7 @@ export function CricketGame() {
                 type="button"
                 disabled={busy || state.status !== "open"}
                 onClick={() => hit(num)}
-                aria-label={`Touché ${num === 25 ? "le bull" : `le ${num}`}`}
+                aria-label={num === 25 ? t("Touché le bull") : t("Touché le {n}", { n: num })}
                 className={`grid h-[46px] items-stretch gap-1 bg-case pr-1.5 text-center active:bg-[#303030] ${dead ? "opacity-30" : ""}`}
                 style={{ gridTemplateColumns: cols }}
               >
@@ -283,7 +285,7 @@ export function CricketGame() {
               onClick={() => hit(0)}
               className="h-[46px] bg-case text-[12px] font-black tracking-wide active:bg-blanc active:text-noir disabled:opacity-40"
             >
-              RATÉ / AUTRE
+              {t("RATÉ / AUTRE")}
             </button>
             <button
               type="button"
@@ -294,7 +296,7 @@ export function CricketGame() {
               }}
               className="h-[46px] border-[1.5px] border-[#3a3a3a] text-[12px] font-black tracking-wide text-[#cfcfcf] active:bg-case disabled:opacity-30"
             >
-              ANNULER
+              {t("ANNULER")}
             </button>
             {multFor !== null && !busy && state.status !== "match" && (
               <div className={`absolute inset-y-0 left-0 right-[calc(33.333%+1.7px)] grid gap-[5px] bg-noir ${multFor === 25 ? "grid-cols-1" : "grid-cols-2"}`}>
@@ -316,7 +318,7 @@ export function CricketGame() {
             style={{ "--h": "56px" } as React.CSSProperties}
             className="btn-18 h-14 bg-blanc text-[17px] font-black uppercase italic text-noir active:bg-cyan disabled:bg-case disabled:text-gris-2"
           >
-            Valider la volée
+            {t("Valider la volée")}
           </button>
         </div>
       </div>
@@ -326,22 +328,22 @@ export function CricketGame() {
       <Celebration spec={cele} onDone={() => celeDone.current?.()} />
 
       {over && state.winner !== null && (
-        <FinDePartie data={podiumCricket(state)} onRevanche={() => restart(rankingCricket(state)[n - 1])} />
+        <FinDePartie data={podiumCricket(state, t)} onRevanche={() => restart(rankingCricket(state)[n - 1])} />
       )}
     </main>
   );
 }
 
-function podiumCricket(state: CricketState): PodiumData {
+function podiumCricket(state: CricketState, t: T): PodiumData {
   const sides = state.setup.sides;
   const best = bestCricketVolley(state);
   const points = state.setup.options.mode !== "none";
   return {
-    title: [sides[state.winner!].name, "gagne", "le Cricket"],
+    title: [sides[state.winner!].name, t("gagne"), t("le Cricket")],
     ranking: rankingCricket(state).map((s) => ({
       name: sides[s].name,
-      value: `${closedCount(state, s)}/7${points ? ` · ${state.points[s]} pts` : " fermés"}`,
+      value: `${closedCount(state, s)}/7${points ? ` · ${state.points[s]} pts` : ` ${t("fermés")}`}`,
     })),
-    highlight: best ? { label: "Meilleure volée", who: `${best.member} · Tour ${best.turn}`, value: String(best.marks), unit: "touches" } : undefined,
+    highlight: best ? { label: t("Meilleure volée"), who: `${best.member} · ${t("Tour")} ${best.turn}`, value: String(best.marks), unit: t("touches") } : undefined,
   };
 }

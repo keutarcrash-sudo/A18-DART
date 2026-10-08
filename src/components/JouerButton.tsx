@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { loadPartie, partieEnCours, partieLabel } from "@/lib/partie";
 import { enterFullscreen } from "@/lib/pwa";
+import { useT } from "@/lib/i18n";
 
 export function JouerButton() {
+  const t = useT();
   const [resume, setResume] = useState<string | null>(null);
 
   useEffect(() => {
@@ -16,23 +18,23 @@ export function JouerButton() {
 
   return (
     <>
-    <Link href={resume ? "/partie" : "/nouvelle"} onClick={resume ? enterFullscreen : undefined} className="group relative -ml-[30px] -mr-3.5 mt-3.5 block h-[190px]" aria-label={resume ? "Reprendre la partie" : "Jouer"}>
+    <Link href={resume ? "/partie" : "/nouvelle"} onClick={resume ? enterFullscreen : undefined} className="group relative -ml-[30px] -mr-3.5 mt-3.5 block h-[190px]" aria-label={resume ? t("Reprendre la partie") : t("Jouer")}>
       <span className="skew-18 absolute inset-y-0 left-0 right-[26px] bg-cyan transition-transform duration-150 group-active:scale-[0.97]" />
       <span
         className={`absolute left-10 font-black italic leading-[0.82] tracking-tighter text-noir ${resume ? "top-[26px] text-[50px]" : "top-[38px] text-[78px]"}`}
       >
         {resume ? (
           <>
-            REPRE
+            {t("REPRE")}
             <br />
-            NDRE
+            {t("NDRE")}
           </>
         ) : (
-          "JOUER"
+          t("JOUER")
         )}
       </span>
       <span className="absolute bottom-[22px] left-[46px] text-[13px] font-black uppercase italic tracking-[0.14em] text-noir">
-        {resume ? `Partie en cours · ${resume}` : "À vous de jouer"}
+        {resume ? `${t("Partie en cours")} · ${t(resume)}` : t("À vous de jouer")}
       </span>
       <span className="absolute bottom-4 right-[52px] text-[40px] font-black text-noir">→</span>
     </Link>
@@ -42,7 +44,7 @@ export function JouerButton() {
         style={{ "--h": "58px" } as React.CSSProperties}
         className="btn-18 mt-3 grid h-[58px] place-items-center bg-blanc text-[17px] font-black uppercase italic text-noir active:bg-cyan"
       >
-        Nouvelle partie
+        {t("Nouvelle partie")}
       </Link>
     )}
     </>

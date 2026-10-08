@@ -4,6 +4,7 @@
  * (docs/00-cadrage.md). « Partager » prépare l'image story 9:16 et ouvre le partage du téléphone.
  */
 import Link from "next/link";
+import { useT } from "@/lib/i18n";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { toPng } from "html-to-image";
@@ -15,6 +16,7 @@ const STORY_W = 360;
 const STORY_H = 640;
 
 export function FinDePartie({ data, onRevanche }: { data: PodiumData; onRevanche: () => void }) {
+  const t = useT();
   const [sharing, setSharing] = useState(false);
   const [date] = useState(todayLabel);
 
@@ -25,22 +27,22 @@ export function FinDePartie({ data, onRevanche }: { data: PodiumData; onRevanche
       </div>
       <div className="mt-4 grid shrink-0 grid-cols-2 gap-1.5" style={{ "--h": "56px" } as React.CSSProperties}>
         <button type="button" onClick={onRevanche} className="btn-18 h-14 bg-cyan text-base font-black uppercase italic text-noir active:bg-blanc">
-          Revanche
+          {t("Revanche")}
         </button>
         <button
           type="button"
           onClick={() => setSharing(true)}
           className="btn-18 h-14 bg-blanc text-base font-black uppercase italic text-noir active:bg-cyan"
         >
-          Partager
+          {t("Partager")}
         </button>
       </div>
       <div className="mt-1 flex shrink-0 justify-between">
         <Link href="/nouvelle" onClick={() => clearPartie()} className="py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[#a8a8a8] active:text-cyan">
-          Autre jeu
+          {t("Autre jeu")}
         </Link>
         <Link href="/" className="py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[#a8a8a8] active:text-cyan">
-          Accueil
+          {t("Accueil")}
         </Link>
       </div>
 
@@ -52,6 +54,7 @@ export function FinDePartie({ data, onRevanche }: { data: PodiumData; onRevanche
 /* ---------- L'image story et le partage ---------- */
 
 function Partage({ data, date, onClose }: { data: PodiumData; date: string; onClose: () => void }) {
+  const t = useT();
   const story = useRef<HTMLDivElement>(null);
   const box = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.8);
@@ -93,7 +96,7 @@ function Partage({ data, date, onClose }: { data: PodiumData; date: string; onCl
     };
   }, []);
 
-  const text = `${data.title.join(" ")} à l'Arena18. À vous de jouer !`;
+  const text = t("{title} à l'Arena18. À vous de jouer !", { title: data.title.join(" ") });
   const canShare = !!file && typeof navigator !== "undefined" && !!navigator.canShare?.({ files: [file] });
 
   const share = () => {
@@ -125,9 +128,9 @@ function Partage({ data, date, onClose }: { data: PodiumData; date: string; onCl
           <span aria-hidden className="text-base leading-none">
             ←
           </span>
-          Partager
+          {t("Partager")}
         </button>
-        <span>Format story 9:16</span>
+        <span>{t("Format story 9:16")}</span>
       </div>
 
       {/* Aperçu : l'image est dessinée en vrai à 360 × 640, puis réduite pour tenir à l'écran. */}
@@ -146,12 +149,12 @@ function Partage({ data, date, onClose }: { data: PodiumData; date: string; onCl
 
       <div className="mt-3 shrink-0">
         <p className="mb-2 h-4 text-center text-[11px] font-bold uppercase tracking-[0.14em] text-gris">
-          {error ? "L'image n'a pas pu être préparée." : !file ? "Préparation de l'image…" : saved ? "Image enregistrée." : ""}
+          {error ? t("L'image n'a pas pu être préparée.") : !file ? t("Préparation de l'image…") : saved ? t("Image enregistrée.") : ""}
         </p>
         <div className={`grid gap-1.5 ${canShare ? "grid-cols-[1.4fr_1fr]" : "grid-cols-1"}`} style={{ "--h": "56px" } as React.CSSProperties}>
           {canShare && (
             <button type="button" onClick={share} className="btn-18 h-14 bg-cyan text-base font-black uppercase italic text-noir active:bg-blanc">
-              Partager
+              {t("Partager")}
             </button>
           )}
           <button
@@ -160,7 +163,7 @@ function Partage({ data, date, onClose }: { data: PodiumData; date: string; onCl
             onClick={save}
             className="btn-18 h-14 bg-blanc text-base font-black uppercase italic text-noir active:bg-cyan disabled:bg-case disabled:text-gris-2"
           >
-            Enregistrer
+            {t("Enregistrer")}
           </button>
         </div>
       </div>

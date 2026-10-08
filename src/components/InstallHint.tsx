@@ -5,10 +5,12 @@
  * Invisible si l'app est déjà installée ou si le navigateur ne sait pas l'installer.
  */
 import { AnimatePresence, motion } from "motion/react";
+import { useT } from "@/lib/i18n";
 import { useState } from "react";
 import { useInstall } from "@/lib/pwa";
 
 export function InstallHint() {
+  const t = useT();
   const { mode, install } = useInstall();
   const [help, setHelp] = useState(false);
   if (mode === "none") return null;
@@ -22,7 +24,7 @@ export function InstallHint() {
         className="flex items-center gap-2.5 py-2 text-[11px] font-black uppercase italic tracking-[0.12em] text-[#cfcfcf] active:text-cyan"
       >
         <i className="skew-18 block h-3.5 w-2 bg-cyan" />
-        Installer l&apos;app sur ton téléphone
+        {t("Installer l'app sur ton téléphone")}
       </button>
       <AnimatePresence initial={false}>
         {help && (
@@ -36,13 +38,13 @@ export function InstallHint() {
             <li className="mt-1 flex gap-2.5">
               <span className="font-num text-cyan">1</span>
               <span>
-                Dans Safari, touche <b className="text-blanc">Partager</b> (le carré avec une flèche vers le haut).
+                {t("Dans Safari, touche")} <b className="text-blanc">{t("Partager")}</b> {t("(le carré avec une flèche vers le haut).")}
               </span>
             </li>
             <li className="mt-1 flex gap-2.5">
               <span className="font-num text-cyan">2</span>
               <span>
-                Choisis <b className="text-blanc">Sur l&apos;écran d&apos;accueil</b>. L&apos;app s&apos;ouvre ensuite en plein écran, même sans réseau.
+                {t("Choisis")} <b className="text-blanc">{t("Sur l'écran d'accueil")}</b>. {t("L'app s'ouvre ensuite en plein écran, même sans réseau.")}
               </span>
             </li>
           </motion.ol>
