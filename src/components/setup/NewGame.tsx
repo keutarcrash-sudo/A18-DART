@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { Cta, Screen, Seg, Title, TopBar } from "@/components/ui";
 import { DEFAULT_X01_OPTIONS, type X01Options } from "@/engine/x01";
+import { type CricketMode, DEFAULT_CRICKET_OPTIONS } from "@/engine/cricket";
 import type { Side } from "@/engine/types";
 import { GAMES, type GameInfo, estimateMinutes } from "@/lib/games";
 import { savePartie } from "@/lib/partie";
@@ -28,6 +29,7 @@ export function NewGame() {
   const [teams, setTeams] = useState(false);
   const [game, setGame] = useState<GameInfo>(GAMES[0]);
   const [opts, setOpts] = useState<X01Options>(DEFAULT_X01_OPTIONS);
+  const [cricketMode, setCricketMode] = useState<CricketMode>(DEFAULT_CRICKET_OPTIONS.mode);
 
   const sides: Side[] = teams
     ? (["A", "B"] as const)
@@ -40,11 +42,15 @@ export function NewGame() {
       i === firstSide && firstMember ? { ...s, members: [firstMember, ...s.members.filter((m) => m !== firstMember)] } : s,
     );
     rememberNames(players.map((p) => p.name));
-    savePartie({
-      kind: "x01",
-      setup: { sides: ordered, options: { ...opts, start: Number(game.id) as X01Options["start"] }, firstSide },
-      actions: [],
-    });
+    if (game.id === "cricket") {
+      savePartie({ kind: "cricket", setup: { sides: ordered, options: { mode: cricketMode }, firstSide }, actions: [] });
+    } else {
+      savePartie({
+        kind: "x01",
+        setup: { sides: ordered, options: { ...opts, start: Number(game.id) as X01Options["start"] }, firstSide },
+        actions: [],
+      });
+    }
     router.push("/partie");
   };
 
@@ -79,7 +85,15 @@ export function NewGame() {
           />
         )}
         {step === "options" && (
-          <Options game={game} opts={opts} setOpts={setOpts} onBack={() => setStep("game")} onNext={() => setStep("bull")} />
+          <Options
+            game={game}
+            opts={opts}
+            setOpts={setOpts}
+            cricketMode={cricketMode}
+            setCricketMode={setCricketMode}
+            onBack={() => setStep("game")}
+            onNext={() => setStep("bull")}
+          />
         )}
         {step === "bull" && (
           <Bull
@@ -305,16 +319,27 @@ function Games({ count, label, onBack, onPick }: { count: number; label: string;
 
 /* ---------- 3. Réglages ---------- */
 
+const CRICKET_HELP: Record<CricketMode, string> = {
+  classic:
+    "Ferme 15 à 20 et le centre (3 touches chacun). Un numéro fermé rapporte des points tant que les autres ne l'ont pas fermé. Il faut tout fermer et mener aux points.",
+  none: "Pas de points : le premier qui ferme tout gagne.",
+  cut: "Tes points vont aux adversaires qui n'ont pas fermé. Il faut tout fermer avec le plus petit score.",
+};
+
 function Options({
   game,
   opts,
   setOpts,
+  cricketMode,
+  setCricketMode,
   onBack,
   onNext,
 }: {
   game: GameInfo;
   opts: X01Options;
   setOpts: (o: X01Options) => void;
+  cricketMode: CricketMode;
+  setCricketMode: (m: CricketMode) => void;
   onBack: () => void;
   onNext: () => void;
 }) {
@@ -330,6 +355,32 @@ function Options({
         right="Réglages"
       />
       <Title numeric={game.numeric}>{game.name}</Title>
+      {game.id === "cricket" ? (
+        <Seg
+          label="Règle"
+          value={cricketMode}
+          options={[
+            { value: "classic", label: "Classique" },
+            { value: "none", label: "Sans points" },
+            { value: "cut", label: "Cut-throat" },
+          ]}
+          help={CRICKET_HELP[cricketMode]}
+          onChange={setCricketMode}
+        />
+      ) : (
+        <X01Settings opts={opts} setOpts={setOpts} />
+      )}
+      <div className="min-h-4 flex-1" />
+      <Cta tone="cyan" onClick={onNext}>
+        Au bull →
+      </Cta>
+    </Screen>
+  );
+}
+
+function X01Settings({ opts, setOpts }: { opts: X01Options; setOpts: (o: X01Options) => void }) {
+  return (
+    <>
       <Seg
         label="Fin de partie"
         value={opts.finish}
@@ -365,11 +416,7 @@ function Options({
         help={opts.legs === 1 ? "Une seule manche, on va droit au but." : `Le premier à ${Math.ceil(opts.legs / 2)} manches gagne.`}
         onChange={(legs) => setOpts({ ...opts, legs })}
       />
-      <div className="min-h-4 flex-1" />
-      <Cta tone="cyan" onClick={onNext}>
-        Au bull →
-      </Cta>
-    </Screen>
+    </>
   );
 }
 

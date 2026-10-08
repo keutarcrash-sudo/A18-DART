@@ -2,18 +2,15 @@
 /** Le gros bloc JOUER, incliné à 18°. Devient « Reprendre » si une partie est en cours sur ce téléphone. */
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { loadPartie } from "@/lib/partie";
-import { replayX01 } from "@/engine/x01";
+import { loadPartie, partieEnCours, partieLabel } from "@/lib/partie";
 
 export function JouerButton() {
   const [resume, setResume] = useState<string | null>(null);
 
   useEffect(() => {
     const p = loadPartie();
-    if (!p) return;
-    const st = replayX01(p.setup, p.actions);
     // eslint-disable-next-line react-hooks/set-state-in-effect -- lecture unique du stockage du téléphone
-    if (st.status !== "match" && p.actions.length > 0) setResume(`${p.setup.options.start}`);
+    if (p && partieEnCours(p)) setResume(partieLabel(p));
   }, []);
 
   return (

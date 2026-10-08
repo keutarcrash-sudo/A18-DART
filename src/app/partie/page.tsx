@@ -1,5 +1,5 @@
-import { X01Game } from "@/components/x01/X01Game";
+import { PartieRouter } from "@/components/PartieRouter";
 
 export default function PartiePage() {
-  return <X01Game />;
+  return <PartieRouter />;
 }

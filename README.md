@@ -23,7 +23,7 @@ benchmark → principes UX → directions créatives → choix → architecture 
 | 5. Design system | — | à faire |
 | 6. Maquette du parcours complet | [docs/parcours.html](docs/parcours.html) | **à valider** |
 | 7. Prototype | — | — |
-| 8. Développement V1 | `src/` (Next.js 16 + Tailwind 4) | **en cours** : accueil, création de partie (joueurs, jeu, réglages, bull) et partie de 301/501 jouables ; moteur testé (`npm test`) |
+| 8. Développement V1 | `src/` (Next.js 16 + Tailwind 4) | **en cours** : accueil, création de partie (joueurs, jeu, réglages, bull), 301/501 et Cricket jouables ; moteur testé (`npm test`) |
 
 `docs/direction-18.html` est une maquette de travail cliquable : vue Saisie (pavé « numéro d'abord »), vue Tableau (course vers zéro) et podium au format story. Ce n'est pas encore l'app.
 
