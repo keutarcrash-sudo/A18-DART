@@ -10,6 +10,12 @@ import { AnimatePresence, motion } from "motion/react";
 import { useT } from "@/lib/i18n";
 import { fitFont } from "@/lib/fit";
 import { Mascot, type Mood, POP, PopIn, Shape, type ShapeName, halftone } from "@/components/pop/Pop";
+import { SCENE_DURATION, type SceneKind, SceneBoard, Tear, useAppear, useSceneTime } from "@/components/pop/Scene";
+
+/** Durée d'une célébration (ms) avant de passer toute seule : le temps que la scène se joue. */
+export function celeDuration(spec: CeleSpec): number {
+  return spec.level === "max" ? SCENE_DURATION * 1000 + 300 : 1100;
+}
 
 export type CeleSpec =
   | { level: "max"; tone: "cyan" | "chartreuse" | "bust"; kicker: string; big: string; numeric: boolean; sub?: string; slot: string }
@@ -26,8 +32,9 @@ interface Deco {
 }
 
 /** Chaque moment a sa mascotte et ses stickers, placés sur les bords pour laisser le chiffre lisible. */
-const SETS: Record<string, { mood: Mood; burst?: string; deco: Deco[] }> = {
+const SETS: Record<string, { mood: Mood; scene: SceneKind; boom?: string; burst?: string; deco: Deco[] }> = {
   "180": {
+    scene: "triple",
     mood: "wow",
     burst: POP.yellow,
     deco: [
@@ -38,6 +45,7 @@ const SETS: Record<string, { mood: Mood; burst?: string; deco: Deco[] }> = {
     ],
   },
   exploit: {
+    scene: "triple",
     mood: "wow",
     burst: POP.yellow,
     deco: [
@@ -47,6 +55,7 @@ const SETS: Record<string, { mood: Mood; burst?: string; deco: Deco[] }> = {
     ],
   },
   victoire: {
+    scene: "bull",
     mood: "joy",
     burst: POP.yellow,
     deco: [
@@ -58,6 +67,7 @@ const SETS: Record<string, { mood: Mood; burst?: string; deco: Deco[] }> = {
     ],
   },
   record: {
+    scene: "bull", boom: "Record !",
     mood: "smug",
     burst: POP.white,
     deco: [
@@ -67,6 +77,7 @@ const SETS: Record<string, { mood: Mood; burst?: string; deco: Deco[] }> = {
     ],
   },
   bust: {
+    scene: "shatter", boom: "Bust !",
     mood: "dizzy",
     deco: [
       { shape: "bolt", fill: POP.yellow, size: 82, rotate: -18, pos: { left: "4%", top: "10%" } },
@@ -75,6 +86,7 @@ const SETS: Record<string, { mood: Mood; burst?: string; deco: Deco[] }> = {
     ],
   },
   chambrage: {
+    scene: "shatter", boom: "Out !",
     mood: "dizzy",
     deco: [
       { shape: "bolt", fill: POP.pink, size: 82, rotate: -16, pos: { left: "4%", top: "10%" } },
@@ -89,58 +101,7 @@ export function Celebration({ spec, onDone }: { spec: CeleSpec | null; onDone: (
   const set = spec?.level === "max" ? (SETS[spec.slot] ?? SETS.victoire) : null;
   return (
     <AnimatePresence>
-      {spec?.level === "max" && set && (
-        <motion.button
-          type="button"
-          key="max"
-          onClick={onDone}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.15 }}
-          className={`absolute inset-0 z-40 flex flex-col items-start justify-center overflow-hidden px-5 text-left text-noir ${BG[spec.tone]}`}
-          style={halftone(spec.tone === "bust" ? "rgb(0 0 0 / 0.08)" : "rgb(0 0 0 / 0.12)")}
-        >
-          {set.deco.map((d, i) => (
-            <PopIn key={i} delay={0.12 + i * 0.07} rotate={d.rotate} className="pointer-events-none absolute" style={d.pos}>
-              <Shape name={d.shape} fill={d.fill} size={d.size} />
-            </PopIn>
-          ))}
-          <PopIn delay={0.05} rotate={8} className="pointer-events-none absolute right-3 top-[calc(56px+env(safe-area-inset-top))]">
-            <Mascot mood={set.mood} size={118} />
-          </PopIn>
-
-          <span className="relative z-10 -skew-x-[18deg] bg-noir px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-blanc">
-            <span className="inline-block skew-x-[18deg]">{spec.kicker}</span>
-          </span>
-          <span className="relative mt-1.5">
-            {set.burst && (
-              <PopIn delay={0} rotate={0} float={false} className="pointer-events-none absolute left-1/2 top-1/2 z-0 -ml-[160px] -mt-[160px]">
-                <motion.div animate={{ rotate: 360 }} transition={{ duration: 18, repeat: Infinity, ease: "linear" }}>
-                  <Shape name="burst" fill={set.burst} size={320} flat />
-                </motion.div>
-              </PopIn>
-            )}
-            <motion.span
-              initial={{ x: -40, skewX: -18, opacity: 0 }}
-              animate={{ x: 0, skewX: 0, opacity: 1 }}
-              transition={{ type: "spring", stiffness: 420, damping: 22 }}
-              className={
-                spec.numeric
-                  ? "relative z-10 block font-num text-[150px] leading-[0.9]"
-                  : "relative z-10 block whitespace-nowrap font-black uppercase italic leading-[0.9] tracking-tight"
-              }
-              style={spec.numeric ? undefined : { fontSize: fitFont(spec.big, 64, 44) }}
-            >
-              {spec.big}
-            </motion.span>
-          </span>
-          {spec.sub && <span className="relative z-10 mt-3.5 text-xl font-black uppercase italic">{spec.sub}</span>}
-          <span className="absolute bottom-[calc(22px+env(safe-area-inset-bottom))] left-5 text-[9px] font-bold uppercase tracking-[0.2em] opacity-60">
-            {t("Touche pour continuer")}
-          </span>
-        </motion.button>
-      )}
+      {spec?.level === "max" && set && <MaxCele key="max" spec={spec} set={set} onDone={onDone} label={t("Touche pour continuer")} />}
       {spec?.level === "mid" && (
         <motion.button
           type="button"
@@ -198,5 +159,75 @@ export function Wink({ text }: { text: string | null }) {
         </motion.div>
       )}
     </AnimatePresence>
+  );
+}
+
+/** Grande célébration : la scène (déchirure, fléchette, cible), puis le texte qui claque au moment de l'impact. */
+function MaxCele({
+  spec,
+  set,
+  onDone,
+  label,
+}: {
+  spec: Extract<CeleSpec, { level: "max" }>;
+  set: (typeof SETS)[string];
+  onDone: () => void;
+  label: string;
+}) {
+  const time = useSceneTime();
+  const textAt = set.scene === "triple" ? 1.45 : set.scene === "bull" ? 0.95 : 0.75;
+  const kick = useAppear(time, textAt);
+  const big = useAppear(time, textAt + 0.08);
+  const sub = useAppear(time, textAt + 0.2);
+  const tone = BG[spec.tone];
+  const dots = halftone(spec.tone === "bust" ? "rgb(0 0 0 / 0.08)" : "rgb(0 0 0 / 0.12)");
+
+  return (
+    <motion.button
+      type="button"
+      onClick={onDone}
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.15 }}
+      className="absolute inset-0 z-40 overflow-hidden text-left text-noir"
+    >
+      {set.scene === "shatter" ? (
+        <motion.div className={`absolute inset-0 ${tone}`} style={dots} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} />
+      ) : (
+        <Tear time={time} className={tone} style={dots}>
+          {null}
+        </Tear>
+      )}
+
+      <div className="relative flex h-full flex-col px-5 pb-[calc(40px+env(safe-area-inset-bottom))] pt-[calc(48px+env(safe-area-inset-top))]">
+        <SceneBoard kind={set.scene} time={time} boom={set.boom} />
+
+        <div className="mt-auto">
+          <motion.span style={kick} className="relative z-10 inline-block origin-left -skew-x-[18deg] bg-noir px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-blanc">
+            <span className="inline-block skew-x-[18deg]">{spec.kicker}</span>
+          </motion.span>
+          <motion.span
+            style={{ ...big, ...(spec.numeric ? {} : { fontSize: fitFont(spec.big, 60, 44) }) }}
+            className={
+              spec.numeric
+                ? "relative z-10 mt-1 block origin-left font-num text-[120px] leading-[0.9]"
+                : "relative z-10 mt-1.5 block origin-left whitespace-nowrap font-black uppercase italic leading-[0.9] tracking-tight"
+            }
+          >
+            {spec.big}
+          </motion.span>
+          {spec.sub && (
+            <motion.span style={sub} className="relative z-10 mt-2 block origin-left text-xl font-black uppercase italic">
+              {spec.sub}
+            </motion.span>
+          )}
+        </div>
+      </div>
+
+      <motion.div style={useAppear(time, textAt + 0.25)} className="pointer-events-none absolute bottom-[calc(70px+env(safe-area-inset-bottom))] right-3">
+        <Mascot mood={set.mood} size={96} />
+      </motion.div>
+      <span className="absolute bottom-[calc(14px+env(safe-area-inset-bottom))] left-5 text-[9px] font-bold uppercase tracking-[0.2em] opacity-60">{label}</span>
+    </motion.button>
   );
 }

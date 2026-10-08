@@ -6,7 +6,7 @@
  */
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Celebration, type CeleSpec, Wink } from "@/components/Celebration";
+import { Celebration, type CeleSpec, Wink, celeDuration } from "@/components/Celebration";
 import type { Dart, Mult } from "@/engine/types";
 import {
   CRICKET_NUMBERS,
@@ -66,7 +66,7 @@ export function CricketGame() {
         };
         celeDone.current = finish;
         setCele(spec);
-        setTimeout(finish, spec.level === "max" ? 2000 : 1100);
+        setTimeout(finish, celeDuration(spec));
       }),
     [],
   );

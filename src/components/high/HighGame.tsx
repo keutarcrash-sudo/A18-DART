@@ -6,7 +6,7 @@
  */
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Celebration, type CeleSpec, Wink } from "@/components/Celebration";
+import { Celebration, type CeleSpec, Wink, celeDuration } from "@/components/Celebration";
 import { GameMenu, MenuButton } from "@/components/GameMenu";
 import { Pad } from "@/components/x01/Pad";
 import { Tableau } from "@/components/x01/Tableau";
@@ -63,7 +63,7 @@ export function HighGame() {
         };
         celeDone.current = finish;
         setCele(spec);
-        setTimeout(finish, spec.level === "max" ? 2000 : 1100);
+        setTimeout(finish, celeDuration(spec));
       }),
     [],
   );

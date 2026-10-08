@@ -5,7 +5,7 @@
  */
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Celebration, type CeleSpec, Wink } from "@/components/Celebration";
+import { Celebration, type CeleSpec, Wink, celeDuration } from "@/components/Celebration";
 import { type Dart, type Mult, dartLabel } from "@/engine/types";
 import {
   type X01Event,
@@ -60,7 +60,7 @@ export function X01Game() {
   const celebrate = useCallback(
     (spec: CeleSpec) =>
       new Promise<void>((resolve) => {
-        const ms = spec.level === "max" ? 2000 : 1100;
+        const ms = celeDuration(spec);
         let done = false;
         const finish = () => {
           if (done) return;

@@ -6,7 +6,7 @@
  */
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Celebration, type CeleSpec, Wink } from "@/components/Celebration";
+import { Celebration, type CeleSpec, Wink, celeDuration } from "@/components/Celebration";
 import { GameMenu, MenuButton } from "@/components/GameMenu";
 import type { Action, Dart } from "@/engine/types";
 import {
@@ -62,7 +62,7 @@ export function KillerGame() {
         };
         celeDone.current = finish;
         setCele(spec);
-        setTimeout(finish, spec.level === "max" ? 2000 : 1100);
+        setTimeout(finish, celeDuration(spec));
       }),
     [],
   );
