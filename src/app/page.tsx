@@ -17,7 +17,7 @@ export default function Home() {
       <JouerButton />
 
       <p className="mt-10 max-w-[30ch] text-sm leading-relaxed text-[#bdbdbd]">
-        Scanne, entre vos prénoms, choisis le jeu. L&apos;app compte les points, toi tu vises.
+        Toi, tu vises. Nous, on compte les points… et on chambre un peu.
       </p>
 
       <Records />
