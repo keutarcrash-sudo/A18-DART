@@ -96,7 +96,10 @@ export function CricketGame() {
         sounds.ton();
         await celebrate({ level: "mid", word: t("Touches"), num: String(marks) });
       } else if (closed.length && st.status !== "match") {
-        showWink(t("Le {n} est fermé. Les autres, attention.", { n: closed[0].n === 25 ? "bull" : closed[0].n }));
+        const n = closed[0].n === 25 ? "BULL" : String(closed[0].n);
+        await celebrate({ level: "scene", kind: "closed", num: n === "BULL" ? "B" : n, text: t("{n} fermé", { n }) });
+      } else if (st.volley.length === 3 && st.volley.every((d) => d.n === 0)) {
+        await celebrate({ level: "scene", kind: "misses", text: t("Trois à côté. Ça arrive aux meilleurs.") });
       } else if (has("noMarks")) {
         showWink(t("Rien sur le tableau. Ça arrive aux meilleurs."));
       }

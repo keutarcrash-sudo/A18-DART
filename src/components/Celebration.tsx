@@ -11,15 +11,19 @@ import { useT } from "@/lib/i18n";
 import { fitFont } from "@/lib/fit";
 import { Mascot, type Mood, POP, PopIn, Shape, type ShapeName, halftone } from "@/components/pop/Pop";
 import { SCENE_DURATION, type SceneKind, SceneBoard, Tear, useAppear, useSceneTime } from "@/components/pop/Scene";
+import { MINI_DURATION, MiniScene, type MiniSpec } from "@/components/pop/MiniScenes";
 
 /** Durée d'une célébration (ms) avant de passer toute seule : le temps que la scène se joue. */
 export function celeDuration(spec: CeleSpec): number {
-  return spec.level === "max" ? SCENE_DURATION * 1000 + 300 : 1100;
+  if (spec.level === "max") return SCENE_DURATION * 1000 + 300;
+  if (spec.level === "scene") return MINI_DURATION[spec.kind] * 1000 + 300;
+  return 1100;
 }
 
 export type CeleSpec =
   | { level: "max"; tone: "cyan" | "chartreuse" | "bust"; kicker: string; big: string; numeric: boolean; sub?: string; slot: string }
-  | { level: "mid"; word: string; num: string };
+  | { level: "mid"; word: string; num: string }
+  | ({ level: "scene" } & MiniSpec);
 
 const BG = { cyan: "bg-cyan", chartreuse: "bg-chartreuse", bust: "bg-blanc" } as const;
 
@@ -102,6 +106,22 @@ export function Celebration({ spec, onDone }: { spec: CeleSpec | null; onDone: (
   return (
     <AnimatePresence>
       {spec?.level === "max" && set && <MaxCele key="max" spec={spec} set={set} onDone={onDone} label={t("Touche pour continuer")} />}
+      {spec?.level === "scene" && (
+        <motion.button
+          type="button"
+          key={`scene-${spec.kind}`}
+          onClick={onDone}
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.15 }}
+          className="absolute inset-0 z-40 overflow-hidden text-left"
+        >
+          <MiniScene spec={spec} />
+          <span className="absolute bottom-[calc(14px+env(safe-area-inset-bottom))] left-5 text-[9px] font-bold uppercase tracking-[0.2em] text-noir opacity-60">
+            {t("Touche pour continuer")}
+          </span>
+        </motion.button>
+      )}
       {spec?.level === "mid" && (
         <motion.button
           type="button"

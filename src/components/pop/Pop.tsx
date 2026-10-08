@@ -93,11 +93,21 @@ export function Shape({ name, fill, size, flat }: { name: ShapeName; fill: strin
 
 /* ---------- La mascotte : un smiley aux gros yeux de cartoon ---------- */
 
-export type Mood = "joy" | "wow" | "wink" | "dizzy" | "smug";
+export type Mood = "joy" | "wow" | "wink" | "dizzy" | "smug" | "hide";
 
 export function Mascot({ mood = "joy", size = 120 }: { mood?: Mood; size?: number }) {
   const eye = (cx: number, closed: boolean, dizzy: boolean) =>
-    dizzy ? (
+    mood === "hide" ? (
+      // Yeux plissés « > < » : il ne veut pas voir ça.
+      <path
+        d={cx < 50 ? `M${cx - 10} 36 L${cx + 8} 44 L${cx - 10} 52` : `M${cx + 10} 36 L${cx - 8} 44 L${cx + 10} 52`}
+        fill="none"
+        stroke={POP.ink}
+        strokeWidth={5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    ) : dizzy ? (
       <g stroke={POP.ink} strokeWidth={5} strokeLinecap="round">
         <line x1={cx - 9} y1={34} x2={cx + 9} y2={52} />
         <line x1={cx + 9} y1={34} x2={cx - 9} y2={52} />
@@ -117,6 +127,7 @@ export function Mascot({ mood = "joy", size = 120 }: { mood?: Mood; size?: numbe
     wink: <path d="M32 66 Q 50 80 68 66" fill="none" stroke={POP.ink} strokeWidth={5} strokeLinecap="round" />,
     dizzy: <path d="M34 74 Q 42 66 50 74 T 66 74" fill="none" stroke={POP.ink} strokeWidth={5} strokeLinecap="round" />,
     smug: <path d="M36 70 Q 56 78 68 64" fill="none" stroke={POP.ink} strokeWidth={5} strokeLinecap="round" />,
+    hide: <path d="M36 74 Q 43 66 50 72 T 64 70" fill="none" stroke={POP.ink} strokeWidth={5} strokeLinecap="round" />,
   }[mood];
   return (
     <svg viewBox="-8 -8 124 124" width={size} height={size} aria-hidden>

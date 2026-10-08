@@ -238,6 +238,10 @@ export const EN: Record<string, string> = {
   "moyenne {n}": "average {n}",
   au: "at",
 
+  // Scènes
+  "Pas terrible… mais on apprécie l'hommage.": "Not great… but we appreciate the tribute.",
+  "{n} fermé": "{n} closed",
+
   // Podium et partage
   gagne: "wins",
   "le {game}": "the {game}",

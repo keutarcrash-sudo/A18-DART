@@ -171,10 +171,14 @@ export function KillerGame() {
     }
   };
 
-  const finishVolley = () => {
+  const finishVolley = async () => {
     if (busy || state.status !== "full") return;
     sounds.validate();
-    if (state.volley.length === 3 && state.volley.every((d) => d.n === 0)) showWink(t("Trois à côté. Ça arrive aux meilleurs."));
+    if (state.volley.length === 3 && state.volley.every((d) => d.n === 0)) {
+      setBusy(true);
+      await celebrate({ level: "scene", kind: "misses", text: t("Trois à côté. Ça arrive aux meilleurs.") });
+      setBusy(false);
+    }
     push({ type: "next" });
   };
 
@@ -187,7 +191,7 @@ export function KillerGame() {
       {state.status === "numbers" ? (
         <Numbers state={state} onPick={(n) => void play({ n, m: 1 })} onUndo={undo} canUndo={!nothingToUndo} onMenu={() => setMenu(true)} />
       ) : (
-        <Board state={state} busy={busy} lives={lives} name={name} onPlay={(d) => void play(d)} onUndo={undo} onValidate={finishVolley} onMenu={() => setMenu(true)} />
+        <Board state={state} busy={busy} lives={lives} name={name} onPlay={(d) => void play(d)} onUndo={undo} onValidate={() => void finishVolley()} onMenu={() => setMenu(true)} />
       )}
 
       <GameMenu open={menu} onClose={() => setMenu(false)} onRestart={() => restart(state.setup.firstSide)} label="Killer" />

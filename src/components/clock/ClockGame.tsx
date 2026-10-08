@@ -148,7 +148,9 @@ export function ClockGame() {
     } else if (has("bullNext")) {
       showWink(t("Plus que le bull. Respire."));
     } else if (has("threeMisses")) {
-      showWink(t("Trois à côté. Ça arrive aux meilleurs."));
+      setBusy(true);
+      await celebrate({ level: "scene", kind: "misses", text: t("Trois à côté. Ça arrive aux meilleurs.") });
+      setBusy(false);
     }
   };
 

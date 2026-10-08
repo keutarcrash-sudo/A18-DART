@@ -17,31 +17,32 @@ export const SCENE_DURATION = 2.6;
 
 /* ---------- Petits outils de minutage ---------- */
 
-const clamp = (v: number) => Math.min(1, Math.max(0, v));
+export const clamp = (v: number) => Math.min(1, Math.max(0, v));
 /** Avancement de 0 à 1 entre les instants a et b. */
-const seg = (t: number, a: number, b: number) => clamp((t - a) / (b - a));
-const easeOut = (u: number) => 1 - Math.pow(1 - u, 3);
-const easeIn = (u: number) => u * u;
-const lerp = (a: number, b: number, u: number) => a + (b - a) * u;
+export const seg = (t: number, a: number, b: number) => clamp((t - a) / (b - a));
+export const easeOut = (u: number) => 1 - Math.pow(1 - u, 3);
+export const easeIn = (u: number) => u * u;
+export const lerp = (a: number, b: number, u: number) => a + (b - a) * u;
 /** Rebond « sticker » : dépasse un peu puis se pose. */
-const pop = (u: number) => (u <= 0 ? 0 : u >= 1 ? 1 : easeOut(u) + 0.28 * Math.sin(u * Math.PI));
+export const pop = (u: number) => (u <= 0 ? 0 : u >= 1 ? 1 : easeOut(u) + 0.28 * Math.sin(u * Math.PI));
 
-function useTimeline(): MotionValue<number> {
+/** Horloge de scène : de 0 à `duration` secondes (directement à la fin si les animations sont réduites). */
+export function useTimeline(duration = SCENE_DURATION): MotionValue<number> {
   const time = useMotionValue(0);
   const reduce = useReducedMotion();
   useEffect(() => {
     if (reduce) {
-      time.set(SCENE_DURATION);
+      time.set(duration);
       return;
     }
-    const c = animate(time, SCENE_DURATION, { duration: SCENE_DURATION, ease: "linear" });
+    const c = animate(time, duration, { duration, ease: "linear" });
     return () => c.stop();
-  }, [time, reduce]);
+  }, [time, reduce, duration]);
   return time;
 }
 
 /** Groupe SVG dont l'attribut `transform` suit l'horloge (Motion ne le fait pas tout seul pour un attribut SVG). */
-function MG({ transform, opacity, children }: { transform: MotionValue<string>; opacity?: MotionValue<number>; children: ReactNode }) {
+export function MG({ transform, opacity, children }: { transform: MotionValue<string>; opacity?: MotionValue<number>; children: ReactNode }) {
   const ref = useRef<SVGGElement>(null);
   useMotionValueEvent(transform, "change", (v) => ref.current?.setAttribute("transform", v));
   return (
@@ -53,8 +54,8 @@ function MG({ transform, opacity, children }: { transform: MotionValue<string>; 
 
 /* ---------- La cible pop art (centre 200,200, rayon 140) ---------- */
 
-const C = 200;
-const polar = (r: number, deg: number): [number, number] => {
+export const C = 200;
+export const polar = (r: number, deg: number): [number, number] => {
   const a = ((deg - 90) * Math.PI) / 180;
   return [C + r * Math.cos(a), C + r * Math.sin(a)];
 };
@@ -67,7 +68,7 @@ function ringPath(r0: number, r1: number, a0: number, a1: number): string {
 }
 
 /** Un secteur complet (simple + double + triple), dessiné à part pour pouvoir voler en éclats. */
-function Sector({ i }: { i: number }) {
+export function Sector({ i }: { i: number }) {
   const a0 = i * 18 - 9;
   const a1 = i * 18 + 9;
   const dark = i % 2 === 0;
@@ -82,7 +83,7 @@ function Sector({ i }: { i: number }) {
   );
 }
 
-function Bull() {
+export function Bull() {
   return (
     <g stroke={POP.ink} strokeWidth={2.5}>
       <circle cx={C} cy={C} r={18} fill={POP.cyan} />
@@ -93,7 +94,7 @@ function Bull() {
 
 /* ---------- La fléchette : pointe en (0,0), corps vers le bas, inclinée ensuite ---------- */
 
-function Dart() {
+export function Dart() {
   const line = { stroke: POP.ink, strokeWidth: 3, strokeLinejoin: "round" as const };
   return (
     <g>
@@ -110,7 +111,7 @@ function Dart() {
 }
 
 /** Une fléchette qui vole du coin bas-droit (en gros plan) jusqu'à sa cible, puis vibre en se plantant. */
-function FlyingDart({ time, tx, ty, t0, t1, angle = 32 }: { time: MotionValue<number>; tx: number; ty: number; t0: number; t1: number; angle?: number }) {
+export function FlyingDart({ time, tx, ty, t0, t1, angle = 32 }: { time: MotionValue<number>; tx: number; ty: number; t0: number; t1: number; angle?: number }) {
   const transform = useTransform(time, (t) => {
     const u = easeIn(seg(t, t0, t1));
     const x = lerp(520, tx, u);
@@ -130,14 +131,14 @@ function FlyingDart({ time, tx, ty, t0, t1, angle = 32 }: { time: MotionValue<nu
 }
 
 /** Onde de choc à l'impact. */
-function Shock({ time, x, y, t0, color = POP.white }: { time: MotionValue<number>; x: number; y: number; t0: number; color?: string }) {
+export function Shock({ time, x, y, t0, color = POP.white }: { time: MotionValue<number>; x: number; y: number; t0: number; color?: string }) {
   const r = useTransform(time, (t) => lerp(10, 170, easeOut(seg(t, t0, t0 + 0.45))));
   const opacity = useTransform(time, (t) => (t < t0 ? 0 : 1 - seg(t, t0, t0 + 0.45)));
   return <motion.circle cx={x} cy={y} r={r} fill="none" stroke={color} strokeWidth={8} opacity={opacity} />;
 }
 
 /** Onomatopée de BD qui claque à un instant donné. */
-function Boom({ time, t0, children, className, rotate = -8 }: { time: MotionValue<number>; t0: number; children: ReactNode; className: string; rotate?: number }) {
+export function Boom({ time, t0, children, className, rotate = -8 }: { time: MotionValue<number>; t0: number; children: ReactNode; className: string; rotate?: number }) {
   const scale = useTransform(time, (t) => pop(seg(t, t0, t0 + 0.25)));
   const opacity = useTransform(time, (t): number => (t < t0 ? 0 : 1));
   return (
@@ -258,7 +259,7 @@ export function SceneBoard({ kind, time, boom }: { kind: SceneKind; time: Motion
   );
 }
 
-function WholeBoard() {
+export function WholeBoard() {
   return (
     <g>
       <circle cx={C + 8} cy={C + 8} r={140} fill={POP.ink} />

@@ -104,9 +104,14 @@ export function HighGame() {
         await celebrate({ level: "max", tone: "cyan", kicker: who, big: "180", numeric: true, sub: t("Le maximum. Rien que ça."), slot: "180" });
       } else if (find("ton")) {
         sounds.ton();
-        await celebrate({ level: "mid", word: "Ton-up", num: String(points) });
+        await celebrate({ level: "scene", kind: "ton", kicker: "Ton-up", num: String(points) });
+      } else if (points === 18 && st.status !== "match") {
+        // L'hommage : une volée de 18 pile à l'Arena18.
+        await celebrate({ level: "scene", kind: "eighteen", kicker: who, text: t("Pas terrible… mais on apprécie l'hommage.") });
       } else if (find("twentySix")) showWink(t("26… le classique."));
-      else if (find("threeMisses")) showWink(t("Trois à côté. Ça arrive aux meilleurs."));
+      else if (find("threeMisses")) {
+        await celebrate({ level: "scene", kind: "misses", text: t("Trois à côté. Ça arrive aux meilleurs.") });
+      }
       else if (find("takesLead") && st.status !== "match") showWink(t("{name} passe devant.", { name: st.setup.sides[side].name }));
 
       const won = find("matchWon");
