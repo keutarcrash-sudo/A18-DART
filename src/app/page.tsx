@@ -20,9 +20,9 @@ export default function Home() {
       <p className="mt-10 max-w-[30ch] text-sm leading-relaxed text-[#bdbdbd]">
         À l&apos;Arena18, le 180 joue à domicile.
       </p>
-      <InstallHint />
 
       <Records />
+      <InstallHint />
     </main>
   );
 }
