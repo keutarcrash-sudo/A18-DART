@@ -17,7 +17,7 @@ export default function Home() {
       <JouerButton />
 
       <p className="mt-10 max-w-[30ch] text-sm leading-relaxed text-[#bdbdbd]">
-        Toi, tu vises. Nous, on compte les points… et on chambre un peu.
+        À Arena18, le 180 joue à domicile.
       </p>
 
       <Records />
