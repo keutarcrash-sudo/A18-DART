@@ -58,7 +58,7 @@ Avant de proposer quelque chose qui contredit une décision ci-dessous, demande 
 | Choix du jeu | Durée estimée selon le nombre de joueurs, en cyan si 10–30 min. |
 | Réglages | Les règles se choisissent **avant** la partie, jamais modifiées par l'app ensuite. Une phrase d'explication par option. |
 | Qui commence | Écran **« Au bull ! »** : on touche le prénom du plus proche du centre. |
-| 301 / 501 / Plus gros score | Pavé **« numéro d'abord »** : une tape = simple ; Double (cyan) / Triple (chartreuse) apparaissent sous le pouce **sans chrono**, jusqu'à la fléchette suivante. « Valider la volée » après 3 fléchettes ; victoire et bust terminent la volée d'eux-mêmes. |
+| 301 / 501 / Plus gros score | Pavé **« numéro d'abord »** : une tape = simple ; Double (cyan) / Triple (chartreuse) apparaissent juste au-dessus du pavé (par-dessus la rangée des 3 fléchettes, jamais sur un bouton de saisie) **sans chrono**, jusqu'à la fléchette suivante. « Valider la volée » après 3 fléchettes ; victoire et bust terminent la volée d'eux-mêmes. |
 | Cricket | **Le tableau est le pavé** : on touche la ligne du numéro (20→15, B), puis Double / Triple. 3 barres à 18° par numéro, cyan quand fermé. |
 | Tour de l'horloge | Deux énormes boutons **TOUCHÉ n / RATÉ** (en mode Bonus : Simple / Double / Triple). Numéro visé en géant. La volée passe seule après 3 fléchettes. |
 | Killer | Numéros attribués au **lancer main faible**. **Les joueurs sont le pavé** : une tape = double touché sur ce joueur. Vies en barres à 18°, badge « TUEUR ». |

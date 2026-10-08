@@ -33,6 +33,26 @@ export function Pad({ disabled, multFor, canValidate, canUndo, onNumber, onMult,
   const t = useT();
   return (
     <div className="relative flex flex-col gap-[5px] pt-3">
+      {/* Double / Triple : juste au-dessus du pavé, sous le pouce. 25, BULL, RATÉ et ANNULER restent accessibles. */}
+      {multFor !== null && (
+        // Au-dessus du pavé, par-dessus la rangée des 3 fléchettes (simple affichage) : aucun bouton de saisie n'est caché.
+        <div className="absolute inset-x-0 top-[-44px] grid h-[50px] grid-cols-2 gap-[5px] bg-noir">
+          <button
+            type="button"
+            onClick={() => onMult(2)}
+            className="h-[50px] bg-cyan text-[15px] font-black italic text-noir active:bg-blanc"
+          >
+            DOUBLE {multFor}
+          </button>
+          <button
+            type="button"
+            onClick={() => onMult(3)}
+            className="h-[50px] bg-chartreuse text-[15px] font-black italic text-noir active:bg-blanc"
+          >
+            TRIPLE {multFor}
+          </button>
+        </div>
+      )}
       {ROWS.map((row) => (
         <div key={row[0]} className="grid grid-cols-5 gap-[5px]">
           {row.map((n) => (
@@ -80,25 +100,6 @@ export function Pad({ disabled, multFor, canValidate, canUndo, onNumber, onMult,
           </button>
         </div>
 
-        {/* Double / Triple : remplacent 25 / BULL / RATÉ, sous le pouce. ANNULER reste toujours accessible. */}
-        {multFor !== null && (
-          <div className="absolute inset-y-0 left-0 right-[calc(25%+1.25px)] grid grid-cols-2 gap-[5px] bg-noir">
-            <button
-              type="button"
-              onClick={() => onMult(2)}
-              className="h-[46px] bg-cyan text-[14px] font-black italic text-noir active:bg-blanc"
-            >
-              DOUBLE {multFor}
-            </button>
-            <button
-              type="button"
-              onClick={() => onMult(3)}
-              className="h-[46px] bg-chartreuse text-[14px] font-black italic text-noir active:bg-blanc"
-            >
-              TRIPLE {multFor}
-            </button>
-          </div>
-        )}
       </div>
 
       <button

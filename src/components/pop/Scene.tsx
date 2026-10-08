@@ -68,7 +68,7 @@ function ringPath(r0: number, r1: number, a0: number, a1: number): string {
 }
 
 /** Un secteur complet (simple + double + triple), dessiné à part pour pouvoir voler en éclats. */
-export function Sector({ i }: { i: number }) {
+export function Sector({ i, fill }: { i: number; fill?: string }) {
   const a0 = i * 18 - 9;
   const a1 = i * 18 + 9;
   const dark = i % 2 === 0;
@@ -76,7 +76,7 @@ export function Sector({ i }: { i: number }) {
   const line = { stroke: POP.ink, strokeWidth: 2.5, strokeLinejoin: "round" as const };
   return (
     <g>
-      <path d={ringPath(18, 118, a0, a1)} fill={dark ? POP.ink : "#FFF4DC"} {...line} />
+      <path d={ringPath(18, 118, a0, a1)} fill={fill ?? (dark ? POP.ink : "#FFF4DC")} {...line} />
       <path d={ringPath(106, 118, a0, a1)} fill={ring} {...line} />
       <path d={ringPath(64, 76, a0, a1)} fill={ring} {...line} />
     </g>

@@ -58,6 +58,8 @@ export interface CricketState {
   volley: Dart[];
   /** Touches utiles de la volée en cours (y compris celles qui marquent des points). */
   volleyMarks: number;
+  /** Numéros fermés pendant la volée en cours (par n'importe laquelle des 3 fléchettes). */
+  volleyClosed: CricketNumber[];
   status: CricketStatus;
   winner: number | null;
   history: CricketVolley[];
@@ -82,6 +84,7 @@ export function initCricket(setup: CricketSetup): CricketState {
     turn: 1,
     volley: [],
     volleyMarks: 0,
+    volleyClosed: [],
     status: "open",
     winner: null,
     history: [],
@@ -133,7 +136,10 @@ function applyDart(prev: CricketState, dart: Dart): CricketState {
       if (st.marks[side][n] < 3) {
         st.marks[side][n] += 1;
         st.volleyMarks += 1;
-        if (st.marks[side][n] === 3) st.events.push({ type: "closed", side, n });
+        if (st.marks[side][n] === 3) {
+          st.events.push({ type: "closed", side, n });
+          st.volleyClosed.push(n);
+        }
         continue;
       }
       const open = st.marks.map((m, j) => j !== side && m[n] < 3);
@@ -177,6 +183,7 @@ function applyNext(prev: CricketState): CricketState {
   if (st.current === st.setup.firstSide) st.turn += 1;
   st.volley = [];
   st.volleyMarks = 0;
+  st.volleyClosed = [];
   st.status = "open";
   st.events = [{ type: "nextPlayer", side: st.current }];
   return st;

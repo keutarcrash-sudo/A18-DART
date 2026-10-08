@@ -5,6 +5,7 @@
  */
 import { useRouter } from "next/navigation";
 import { useT } from "@/lib/i18n";
+import { Mascot } from "@/components/pop/Pop";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { Cta, Screen, Seg, Title, TopBar } from "@/components/ui";
@@ -538,9 +539,8 @@ function Bull({
           <br />
           <span className="text-cyan">{t("bull !")}</span>
         </h1>
-        <div className="slot-perso absolute -top-1.5 right-0 flex h-[110px] w-[84px] items-end justify-center p-1.5 text-center text-[8px] font-bold uppercase tracking-[0.14em]">
-          {t("Perso 3D")}
-          <br />« {t("au bull")} »
+        <div className="absolute -top-1 right-0">
+          <Mascot mood="wow" size={96} />
         </div>
       </div>
       <p className="mt-2 text-[13px] leading-normal text-[#bdbdbd]">

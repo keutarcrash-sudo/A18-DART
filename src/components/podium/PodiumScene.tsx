@@ -3,6 +3,7 @@
  * Sert deux fois : à l'écran en fin de partie, et dans l'image story 9:16 à partager.
  */
 import { useT } from "@/lib/i18n";
+import { Mascot } from "@/components/pop/Pop";
 
 export interface PodiumData {
   /** Trois lignes du titre, celle du milieu en cyan : « GUILLAUME / GAGNE / LE 501 ». */
@@ -77,11 +78,9 @@ export function PodiumScene({ data, story = false, width, date }: { data: Podium
             <div key={r} className="flex w-1/3 min-w-0 flex-col items-center">
               <span className="w-full truncate px-1 text-center text-[12px] font-black uppercase italic">{p.name}</span>
               {p.value && <span className="text-[9px] font-bold uppercase tracking-[0.14em] text-gris">{p.value}</span>}
-              {first && !story ? (
-                <div className="slot-perso mb-2 mt-1 flex h-[104px] w-[74%] items-end justify-center p-1 text-center text-[7px] font-bold uppercase tracking-[0.14em]">
-                  {t("Perso 3D")}
-                  <br />
-                  {t("victoire")}
+              {first ? (
+                <div className="mb-2 mt-1">
+                  <Mascot mood="joy" size={story ? 92 : 100} />
                 </div>
               ) : (
                 <div

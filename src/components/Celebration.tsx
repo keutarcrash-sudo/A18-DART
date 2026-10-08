@@ -227,7 +227,7 @@ function MaxCele({
             <span className="inline-block skew-x-[18deg]">{spec.kicker}</span>
           </motion.span>
           <motion.span
-            style={{ ...big, ...(spec.numeric ? {} : { fontSize: fitFont(spec.big, 60, 44) }) }}
+            style={{ ...big, ...(spec.numeric ? {} : { fontSize: fitFont(spec.big, 60, 150) }) }}
             className={
               spec.numeric
                 ? "relative z-10 mt-1 block origin-left font-num text-[120px] leading-[0.9]"

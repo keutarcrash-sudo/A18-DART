@@ -54,3 +54,17 @@ Bascule automatique selon la position du téléphone, plus un bouton pour forcer
 - Au bar, derrière les deux cibles : panneaux en **OSB** (bois aggloméré) habillés de stickers.
 - **Icône de l'app** : une fléchette plantée dans le 18, sans le logo A18 (réservé à l'app de réservation d'Arena18, pour éviter toute confusion).
 - À préciser avec le visuel de Pierre : palette pop art exacte, motifs (trames de points, contours noirs, smileys…), et où ils apparaissent.
+
+### Les scènes animées (prototype, en test)
+
+| Moment | Scène |
+|---|---|
+| Victoire, record du jour | La fléchette déchire l'écran et se plante dans le bull (« BULL ! », « RECORD ! »). |
+| 180, 9 touches au Cricket | Trois fléchettes dans le triple 20 (« TCHAK ×3 »). |
+| Bust, joueur éliminé (Killer) | La cible se fissure et vole en éclats (« BUST ! », « OUT ! »). |
+| Ton-up (100 et plus) | Fléchette enflammée, « BOOM ! ». |
+| Trois ratés (501, Plus gros score) | Les fléchettes se plantent dans le panneau en OSB autour de la cible. Pas au Cricket, au Killer ni à l'Horloge : là, « Raté » peut vouloir dire « autre numéro ». |
+| Numéro fermé (Cricket) | Un cadenas claque sur le ou les numéros fermés pendant la volée. |
+| Volée de 18 pile | L'hommage : la cible tourne, la part du 18 se détache, confettis, « 360° ÷ 20 = 18° ». |
+
+La mascotte smiley remplace les cadres « Perso 3D » (écran « Au bull », podium, célébrations).

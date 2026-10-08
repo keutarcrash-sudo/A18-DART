@@ -120,3 +120,12 @@ describe("Classement et événements", () => {
     expect(st.marks[0][19]).toBe(0);
   });
 });
+
+describe("Cricket : numéros fermés pendant la volée", () => {
+  it("garde tous les numéros fermés, même par la première fléchette", () => {
+    const st = replayCricket(setup(), [d(20, 3), d(19), d(0)]);
+    expect(st.volleyClosed).toEqual([20]);
+    const st2 = replayCricket(setup(), [d(20, 3), d(19, 3), d(0), next]);
+    expect(st2.volleyClosed).toEqual([]);
+  });
+});

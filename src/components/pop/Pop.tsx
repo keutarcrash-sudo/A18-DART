@@ -95,7 +95,7 @@ export function Shape({ name, fill, size, flat }: { name: ShapeName; fill: strin
 
 export type Mood = "joy" | "wow" | "wink" | "dizzy" | "smug" | "hide";
 
-export function Mascot({ mood = "joy", size = 120 }: { mood?: Mood; size?: number }) {
+export function Mascot({ mood = "joy", size = 120, hat = false }: { mood?: Mood; size?: number; hat?: boolean }) {
   const eye = (cx: number, closed: boolean, dizzy: boolean) =>
     mood === "hide" ? (
       // Yeux plissés « > < » : il ne veut pas voir ça.
@@ -137,6 +137,15 @@ export function Mascot({ mood = "joy", size = 120 }: { mood?: Mood; size?: numbe
         <g fill={POP.pink} opacity={0.85}>
           <ellipse cx={22} cy={62} rx={8} ry={5} />
           <ellipse cx={78} cy={62} rx={8} ry={5} />
+        </g>
+      )}
+      {hat && (
+        // Chapeau de fête, de travers.
+        <g transform="rotate(-22 50 6)" stroke={POP.ink} strokeWidth={4} strokeLinejoin="round">
+          <path d="M28 14 L50 -40 L72 14 Z" fill={POP.pink} />
+          <path d="M36 -6 L64 -6 L68 4 L32 4 Z" fill={POP.yellow} stroke="none" />
+          <path d="M28 14 L50 -40 L72 14 Z" fill="none" />
+          <circle cx={50} cy={-42} r={7} fill={POP.yellow} />
         </g>
       )}
       {eye(36, false, mood === "dizzy")}

@@ -148,9 +148,8 @@ export function ClockGame() {
     } else if (has("bullNext")) {
       showWink(t("Plus que le bull. Respire."));
     } else if (has("threeMisses")) {
-      setBusy(true);
-      await celebrate({ level: "scene", kind: "misses", text: t("Trois à côté. Ça arrive aux meilleurs.") });
-      setBusy(false);
+      // « Raté » = le numéro visé est manqué, pas forcément la cible : simple bulle.
+      showWink(t("Trois à côté. Ça arrive aux meilleurs."));
     }
   };
 

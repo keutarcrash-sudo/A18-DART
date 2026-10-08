@@ -307,10 +307,6 @@ export function X01Game() {
               {who}
             </motion.div>
           </AnimatePresence>
-          <div className="slot-perso absolute -top-[30px] right-[-4px] z-0 flex h-[126px] w-[90px] items-end justify-center p-1.5 text-center text-[8px] font-bold uppercase tracking-[0.14em]">
-            {t("Perso 3D")}
-            <br />« {t("à toi")} »
-          </div>
         </div>
 
         {/* Bandeau du score */}

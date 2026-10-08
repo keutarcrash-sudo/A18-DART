@@ -85,7 +85,8 @@ export function CricketGame() {
       const who = currentMemberCricket(st);
       const ev = st.events;
       const has = (t: CricketEvent["type"]) => ev.some((e) => e.type === t);
-      const closed = ev.filter((e): e is Extract<CricketEvent, { type: "closed" }> => e.type === "closed");
+      // Tous les numéros fermés pendant la volée, pas seulement par la dernière fléchette.
+      const closed = st.volleyClosed.map((n) => ({ n }));
       const marks = ev.find((e): e is Extract<CricketEvent, { type: "volley" }> => e.type === "volley")?.marks ?? 0;
 
       sounds.validate();
@@ -96,11 +97,12 @@ export function CricketGame() {
         sounds.ton();
         await celebrate({ level: "mid", word: t("Touches"), num: String(marks) });
       } else if (closed.length && st.status !== "match") {
-        const n = closed[0].n === 25 ? "BULL" : String(closed[0].n);
-        await celebrate({ level: "scene", kind: "closed", num: n === "BULL" ? "B" : n, text: t("{n} fermé", { n }) });
-      } else if (st.volley.length === 3 && st.volley.every((d) => d.n === 0)) {
-        await celebrate({ level: "scene", kind: "misses", text: t("Trois à côté. Ça arrive aux meilleurs.") });
+        // Plusieurs numéros fermés dans la même volée : on les montre tous.
+        const ns = closed.map((c) => (c.n === 25 ? "BULL" : String(c.n)));
+        const n = ns.join(" · ");
+        await celebrate({ level: "scene", kind: "closed", num: n, text: t(ns.length > 1 ? "{n} fermés" : "{n} fermé", { n }) });
       } else if (has("noMarks")) {
+        // « Raté / Autre » peut être un autre numéro : pas de scène « fléchettes dans le bois » ici.
         showWink(t("Rien sur le tableau. Ça arrive aux meilleurs."));
       }
 
@@ -302,12 +304,13 @@ export function CricketGame() {
               {t("ANNULER")}
             </button>
             {multFor !== null && !busy && state.status !== "match" && (
-              <div className={`absolute inset-y-0 left-0 right-[calc(33.333%+1.7px)] grid gap-[5px] bg-noir ${multFor === 25 ? "grid-cols-1" : "grid-cols-2"}`}>
-                <button type="button" onClick={() => onMult(2)} className="h-[46px] bg-cyan text-[14px] font-black italic text-noir active:bg-blanc">
+              // Au-dessus des boutons, par-dessus la rangée des 3 fléchettes : RATÉ / AUTRE et ANNULER restent accessibles.
+              <div className={`absolute inset-x-0 bottom-[calc(100%+5px)] grid h-[50px] gap-[5px] bg-noir ${multFor === 25 ? "grid-cols-1" : "grid-cols-2"}`}>
+                <button type="button" onClick={() => onMult(2)} className="h-[50px] bg-cyan text-[15px] font-black italic text-noir active:bg-blanc">
                   {multFor === 25 ? "DOUBLE BULL" : `DOUBLE ${multFor}`}
                 </button>
                 {multFor !== 25 && (
-                  <button type="button" onClick={() => onMult(3)} className="h-[46px] bg-chartreuse text-[14px] font-black italic text-noir active:bg-blanc">
+                  <button type="button" onClick={() => onMult(3)} className="h-[50px] bg-chartreuse text-[15px] font-black italic text-noir active:bg-blanc">
                     TRIPLE {multFor}
                   </button>
                 )}

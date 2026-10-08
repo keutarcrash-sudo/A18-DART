@@ -174,11 +174,8 @@ export function KillerGame() {
   const finishVolley = async () => {
     if (busy || state.status !== "full") return;
     sounds.validate();
-    if (state.volley.length === 3 && state.volley.every((d) => d.n === 0)) {
-      setBusy(true);
-      await celebrate({ level: "scene", kind: "misses", text: t("Trois à côté. Ça arrive aux meilleurs.") });
-      setBusy(false);
-    }
+    // « Raté / Autre » peut être un simple ou un autre numéro : simple bulle, pas de fléchettes dans le bois.
+    if (state.volley.length === 3 && state.volley.every((d) => d.n === 0)) showWink(t("Trois à côté. Ça arrive aux meilleurs."));
     push({ type: "next" });
   };
 
