@@ -211,3 +211,12 @@ describe("Suggestion de fin", () => {
     expect(lbl(suggestCheckout(60, "simple"))).toEqual(["T20"]);
   });
 });
+
+describe("Historique : checkout", () => {
+  it("la volée qui finit la manche est marquée checkout", () => {
+    const setup: X01Setup = { sides: [{ name: "A", members: ["A"] }], options: { ...DEFAULT_X01_OPTIONS, start: 301 }, firstSide: 0 };
+    const t20: Action = { type: "dart", dart: { n: 20, m: 3 } };
+    const st = replayX01(setup, [t20, t20, t20, { type: "next" }, t20, t20, { type: "dart", dart: { n: 1, m: 1 } }]);
+    expect(st.history.map((v) => v.checkout)).toEqual([false, true]);
+  });
+});

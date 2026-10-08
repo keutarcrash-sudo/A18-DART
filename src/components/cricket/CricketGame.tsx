@@ -23,6 +23,8 @@ import { useWakeLock } from "@/lib/device";
 import { fitFont } from "@/lib/fit";
 import { useCricketPartie } from "@/lib/partie";
 import { sounds } from "@/lib/sound";
+import { submitRecords } from "@/lib/records";
+import { gameEntry } from "@/lib/recordEntries";
 import { FinDePartie } from "@/components/podium/FinDePartie";
 import type { PodiumData } from "@/components/podium/PodiumScene";
 import { GameMenu, MenuButton } from "@/components/GameMenu";
@@ -98,6 +100,7 @@ export function CricketGame() {
       }
 
       if (st.status === "match") {
+        submitRecords([gameEntry(st.setup.sides[side].name, "cricket")]);
         sounds.win();
         await celebrate({
           level: "max",

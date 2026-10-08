@@ -1,6 +1,7 @@
 import { JouerButton } from "@/components/JouerButton";
+import { Records } from "@/components/Records";
 
-/** Accueil : un seul geste possible, JOUER. */
+/** Accueil : un seul geste possible, JOUER. Les records d'Arena18 en faisant défiler. */
 export default function Home() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-[460px] flex-col px-3.5 pb-[calc(24px+env(safe-area-inset-bottom))] pt-[calc(18px+env(safe-area-inset-top))]">
@@ -18,6 +19,8 @@ export default function Home() {
       <p className="mt-10 max-w-[30ch] text-sm leading-relaxed text-[#bdbdbd]">
         Scanne, entre vos prénoms, choisis le jeu. L&apos;app compte les points, toi tu vises.
       </p>
+
+      <Records />
     </main>
   );
 }

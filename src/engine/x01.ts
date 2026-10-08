@@ -58,6 +58,8 @@ export interface X01Volley {
   darts: Dart[];
   points: number;
   bust: boolean;
+  /** Volée qui gagne la manche : sa valeur est le checkout (score de départ de la volée). */
+  checkout: boolean;
 }
 
 export interface X01State {
@@ -191,6 +193,7 @@ function snapshotVolley(st: X01State, points: number, bust: boolean): X01Volley 
     darts: st.volley.slice(),
     points: bust ? 0 : points,
     bust,
+    checkout: !bust && st.scores[st.current] === 0,
   };
 }
 

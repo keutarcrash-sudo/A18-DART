@@ -16,6 +16,8 @@ import { useFlatPhone, useWakeLock } from "@/lib/device";
 import { fitFont } from "@/lib/fit";
 import { useHighPartie } from "@/lib/partie";
 import { sounds } from "@/lib/sound";
+import { isDayRecord, submitRecords, useDayBest } from "@/lib/records";
+import { recordsHigh } from "@/lib/recordEntries";
 import { FinDePartie } from "@/components/podium/FinDePartie";
 import type { PodiumData } from "@/components/podium/PodiumScene";
 
@@ -36,6 +38,7 @@ export function HighGame() {
   const celeDone = useRef<(() => void) | null>(null);
   const winkTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { flat, askPermission } = useFlatPhone();
+  const { best: dayBest, beat: beatDay } = useDayBest();
 
   useWakeLock(true);
   // Téléphone posé à plat → vue Tableau ; repris en main → vue Saisie. Le bouton reste prioritaire jusqu'au prochain changement.
@@ -87,8 +90,14 @@ export function HighGame() {
         await countTo(from, to, 520, setAnimScore);
       }
       sounds.validate();
+      if (st.status === "match") submitRecords(recordsHigh(st));
 
-      if (find("oneEighty")) {
+      const record = isDayRecord(dayBest, points);
+      if (record) {
+        beatDay(points);
+        sounds.oneEighty();
+        await celebrate({ level: "max", tone: "chartreuse", kicker: "Record du jour à Arena18", big: String(points), numeric: true, sub: who, slot: "record" });
+      } else if (find("oneEighty")) {
         sounds.oneEighty();
         await celebrate({ level: "max", tone: "cyan", kicker: who, big: "180", numeric: true, sub: "Le maximum. Rien que ça.", slot: "180" });
       } else if (find("ton")) {
@@ -115,7 +124,7 @@ export function HighGame() {
       else setWonShown(true);
       setBusy(false);
     },
-    [celebrate, push, showWink],
+    [celebrate, push, showWink, dayBest, beatDay],
   );
 
   // Une partie déjà finie qu'on recharge ne rejoue pas sa célébration.

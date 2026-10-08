@@ -20,6 +20,8 @@ import { useFlatPhone, useWakeLock } from "@/lib/device";
 import { useX01Partie } from "@/lib/partie";
 import { fitFont } from "@/lib/fit";
 import { sounds } from "@/lib/sound";
+import { isDayRecord, submitRecords, useDayBest } from "@/lib/records";
+import { recordsX01 } from "@/lib/recordEntries";
 import { FinDePartie } from "@/components/podium/FinDePartie";
 import type { PodiumData } from "@/components/podium/PodiumScene";
 import { GameMenu, MenuButton } from "@/components/GameMenu";
@@ -43,6 +45,7 @@ export function X01Game() {
   const celeDone = useRef<(() => void) | null>(null);
   const winkTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { flat, askPermission } = useFlatPhone();
+  const { best: dayBest, beat: beatDay } = useDayBest();
 
   useWakeLock(true);
   // Téléphone posé à plat → vue Tableau ; repris en main → vue Saisie. Le bouton reste prioritaire jusqu'au prochain changement.
@@ -104,8 +107,14 @@ export function X01Game() {
         await countTo(from, to, 520, setAnimScore);
       }
       sounds.validate();
+      if (st.status === "match") submitRecords(recordsX01(st));
 
-      if (ev.has("oneEighty")) {
+      const record = isDayRecord(dayBest, points);
+      if (record) {
+        beatDay(points);
+        sounds.oneEighty();
+        await celebrate({ level: "max", tone: "chartreuse", kicker: "Record du jour à Arena18", big: String(points), numeric: true, sub: who, slot: "record" });
+      } else if (ev.has("oneEighty")) {
         sounds.oneEighty();
         await celebrate({ level: "max", tone: "cyan", kicker: who, big: "180", numeric: true, sub: "Le maximum. Rien que ça.", slot: "180" });
       } else if (ev.has("ton")) {
@@ -133,7 +142,7 @@ export function X01Game() {
       else setWonShown(true);
       setBusy(false);
     },
-    [celebrate, push, showWink],
+    [celebrate, push, showWink, dayBest, beatDay],
   );
 
   // Une partie déjà terminée qu'on recharge ne rejoue pas sa célébration.

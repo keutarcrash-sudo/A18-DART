@@ -37,3 +37,14 @@ Base connue du client (Next.js sur Vercel), plus quelques outils nouveaux, chois
 | Sujet | Décision |
 |---|---|
 | Nom de l'app | **A18 Darts** (court, reprend le logo, tient sous une icône de téléphone). Adresse web à définir, par exemple `darts.arena18.fr` ou l'adresse Vercel par défaut au départ. |
+
+## Records (Supabase)
+
+| Sujet | Mise en place |
+|---|---|
+| Base | Projet Supabase « arena18-darts ». La table et le résumé se créent en collant `supabase/records.sql` dans **SQL Editor** (on peut le relancer sans risque). |
+| Clés | `NEXT_PUBLIC_SUPABASE_URL` et `NEXT_PUBLIC_SUPABASE_ANON_KEY` (clé publique « anon » ou « publishable »), dans Vercel → Settings → Environment Variables, puis redéployer. Modèle : `.env.example`. Sans elles, l'app marche sans records. |
+| Ce qui est envoyé | En fin de partie seulement (une partie abandonnée n'envoie rien) : volées de 60 et plus, 180, checkouts (301/501), et la partie (pour « Parties aujourd'hui »). Si le réseau manque, l'envoi attend sur le téléphone. |
+| Sécurité | Le téléphone peut seulement **ajouter** des lignes et lire le **résumé** ; la base refuse les scores impossibles. Filtre de gros mots dans l'app. |
+| Modération | Supabase → Table Editor → `records` → sélectionner la ligne → Delete. |
+| Record du jour battu | Une volée de 60 et plus qui dépasse la meilleure volée du jour : célébration plein écran en chartreuse. |

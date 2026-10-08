@@ -22,6 +22,8 @@ import { useWakeLock } from "@/lib/device";
 import { fitFont } from "@/lib/fit";
 import { useKillerPartie } from "@/lib/partie";
 import { sounds } from "@/lib/sound";
+import { submitRecords } from "@/lib/records";
+import { gameEntry } from "@/lib/recordEntries";
 import { FinDePartie } from "@/components/podium/FinDePartie";
 import type { PodiumData } from "@/components/podium/PodiumScene";
 
@@ -90,6 +92,7 @@ export function KillerGame() {
     const t = setTimeout(() => {
       handled.current = state;
       const w = state.winner!;
+      submitRecords([gameEntry(state.setup.sides[w].name, "killer")]);
       sounds.win();
       setBusy(true);
       void celebrate({
