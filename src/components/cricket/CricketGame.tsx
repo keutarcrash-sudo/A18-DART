@@ -37,6 +37,8 @@ function dartText(d: Dart): string {
 export function CricketGame() {
   const { state, push, setLastMult, undo, restart } = useCricketPartie();
   const [busy, setBusy] = useState(false);
+  // L'écran de fin n'apparaît qu'après la célébration de la victoire.
+  const [wonShown, setWonShown] = useState(false);
   const [cele, setCele] = useState<CeleSpec | null>(null);
   const [wink, setWink] = useState<string | null>(null);
   const [multFor, setMultFor] = useState<number | null>(null);
@@ -105,6 +107,7 @@ export function CricketGame() {
           sub: st.setup.sides[side].members.length > 1 ? st.setup.sides[side].name : "Cricket",
           slot: "victoire",
         });
+        setWonShown(true);
       } else {
         push({ type: "next" });
       }
@@ -119,8 +122,14 @@ export function CricketGame() {
   useEffect(() => {
     if (!state || firstSeen.current) return;
     firstSeen.current = true;
-    if (state.status === "match") handled.current = state;
+    if (state.status === "match") {
+      handled.current = state;
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- partie déjà finie au chargement
+      setWonShown(true);
+    }
   }, [state]);
+  // Annuler ou recommencer après une victoire : on revient en jeu.
+  if (wonShown && state && state.status !== "match") setWonShown(false);
 
   // La victoire termine la volée d'elle-même (court délai pour corriger Double / Triple).
   useEffect(() => {
@@ -140,7 +149,7 @@ export function CricketGame() {
   const mode = state.setup.options.mode;
   const showPoints = mode !== "none";
   const cols = `52px repeat(${n}, minmax(0, 1fr))`;
-  const over = state.status === "match" && !busy && !cele;
+  const over = state.status === "match" && wonShown && !busy && !cele;
   const shortName = (s: string) => (n > 4 ? s.slice(0, 3) : s);
   const team = state.setup.sides[side].members.length > 1;
 

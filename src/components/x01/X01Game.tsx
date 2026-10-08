@@ -30,6 +30,8 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 export function X01Game() {
   const { state, push, setLastMult, undo, restart } = useX01Partie();
   const [busy, setBusy] = useState(false);
+  // L'écran de fin n'apparaît qu'après la célébration de la victoire.
+  const [wonShown, setWonShown] = useState(false);
   const [animScore, setAnimScore] = useState<number | null>(null);
   const [minus, setMinus] = useState<{ id: number; text: string } | null>(null);
   const [cele, setCele] = useState<CeleSpec | null>(null);
@@ -127,6 +129,7 @@ export function X01Game() {
       setAnimScore(null);
       setMinus(null);
       if (st.status !== "match") push({ type: "next" });
+      else setWonShown(true);
       setBusy(false);
     },
     [celebrate, push, showWink],
@@ -138,8 +141,14 @@ export function X01Game() {
   useEffect(() => {
     if (!state || firstSeen.current) return;
     firstSeen.current = true;
-    if (state.status === "match") handled.current = state;
+    if (state.status === "match") {
+      handled.current = state;
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- partie déjà finie au chargement
+      setWonShown(true);
+    }
   }, [state]);
+  // Annuler ou recommencer après une victoire : on revient en jeu.
+  if (wonShown && state && state.status !== "match") setWonShown(false);
 
   // Victoire et bust terminent la volée d'eux-mêmes (après un court délai pour pouvoir corriger Double / Triple).
   useEffect(() => {
@@ -159,7 +168,7 @@ export function X01Game() {
   const who = currentMember(state);
   const { points } = volleyScore(state);
   const doubleOut = opts.finish === "double";
-  const over = state.status === "match" && !busy && !cele;
+  const over = state.status === "match" && wonShown && !busy && !cele;
 
   const onNumber = (n: number, m: Mult = 1) => {
     if (busy || state.status !== "open") return;
