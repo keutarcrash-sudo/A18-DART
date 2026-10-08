@@ -22,7 +22,7 @@ export const GAMES: GameInfo[] = [
   { id: "originals", name: "Arena18 Originals", desc: "Nos jeux maison. Bientôt.", rounds: 0, ready: false },
 ];
 
-/** Durée estimée en minutes : environ 27 secondes par volée et par joueur. */
+/** Durée estimée en minutes : environ 27 secondes par volée et par joueur, arrondie à 5 minutes (c'est une estimation). */
 export function estimateMinutes(g: GameInfo, players: number): number {
-  return Math.max(3, Math.round(g.rounds * Math.max(1, players) * 0.45));
+  return Math.max(5, Math.round((g.rounds * Math.max(1, players) * 0.45) / 5) * 5);
 }
