@@ -239,7 +239,6 @@ export const EN: Record<string, string> = {
   au: "at",
 
   // Scènes
-  "Pas terrible… mais on apprécie l'hommage.": "Not great… but we appreciate the tribute.",
   "{n} fermé": "{n} closed",
   "{n} fermés": "{n} closed",
 

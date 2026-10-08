@@ -65,6 +65,5 @@ Bascule automatique selon la position du téléphone, plus un bouton pour forcer
 | Ton-up (100 et plus) | Fléchette enflammée, « BOOM ! ». |
 | Trois ratés (501, Plus gros score) | Les fléchettes se plantent dans le panneau en OSB autour de la cible. Pas au Cricket, au Killer ni à l'Horloge : là, « Raté » peut vouloir dire « autre numéro ». |
 | Numéro fermé (Cricket) | Un cadenas claque sur le ou les numéros fermés pendant la volée. |
-| Volée de 18 pile | L'hommage : la cible tourne, la part du 18 se détache, confettis, « 360° ÷ 20 = 18° ». |
 
 La mascotte smiley remplace les cadres « Perso 3D » (écran « Au bull », podium, célébrations).

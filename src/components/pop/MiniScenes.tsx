@@ -4,16 +4,15 @@
  * - « misses »   : trois ratés, les fléchettes se plantent dans le panneau en OSB autour de la cible ;
  * - « ton »      : volée de 100 et plus, une fléchette enflammée traverse l'écran ;
  * - « closed »   : numéro fermé au Cricket, un cadenas claque dessus ;
- * - « eighteen » : volée de 18 pile, l'hommage à l'Arena18.
  * Même principe que Scene.tsx : une horloge pilote tout, une tape passe la scène.
  */
 import { type MotionValue, motion, useTransform } from "motion/react";
 import type { ReactNode } from "react";
 import { Mascot, POP, Shape, halftone } from "./Pop";
-import { Boom, Bull, C, Dart, FlyingDart, MG, Sector, WholeBoard, easeIn, easeOut, lerp, polar, pop, seg, useTimeline } from "./Scene";
+import { Boom, C, Dart, FlyingDart, MG, WholeBoard, easeIn, easeOut, lerp, pop, seg, useTimeline } from "./Scene";
 
-export type MiniKind = "misses" | "ton" | "closed" | "eighteen";
-export const MINI_DURATION: Record<MiniKind, number> = { misses: 1.9, ton: 1.7, closed: 1.4, eighteen: 3 };
+export type MiniKind = "misses" | "ton" | "closed";
+export const MINI_DURATION: Record<MiniKind, number> = { misses: 1.9, ton: 1.7, closed: 1.4 };
 
 export interface MiniSpec {
   kind: MiniKind;
@@ -53,8 +52,6 @@ export function MiniScene({ spec }: { spec: MiniSpec }) {
       return <Ton time={time} spec={spec} />;
     case "closed":
       return <Closed time={time} spec={spec} />;
-    case "eighteen":
-      return <Eighteen time={time} spec={spec} />;
   }
 }
 
@@ -224,162 +221,6 @@ function Closed({ time, spec }: { time: MotionValue<number>; spec: MiniSpec }) {
       <motion.p style={label} className="absolute inset-x-0 top-[58%] text-center text-[34px] font-black uppercase italic text-noir">
         {spec.text}
       </motion.p>
-    </div>
-  );
-}
-
-/* ---------- Volée de 18 : l'hommage ---------- */
-
-/** Ordre des numéros sur une vraie cible, en partant du haut, dans le sens des aiguilles d'une montre. */
-const ORDER = [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5];
-const I18 = ORDER.indexOf(18);
-/** La cible tourne puis s'arrête pile avec le 18 en haut. */
-const SPIN_END = 720 - I18 * 18;
-
-function boardSpin(t: number) {
-  return lerp(0, SPIN_END, easeOut(seg(t, 0.1, 0.95)));
-}
-
-function NumberRing() {
-  return (
-    <g>
-      <circle cx={C + 8} cy={C + 8} r={150} fill={POP.ink} />
-      <circle cx={C} cy={C} r={150} fill={POP.ink} />
-      {ORDER.map((n, i) => {
-        const [x, y] = polar(134, i * 18);
-        return (
-          <text
-            key={n}
-            x={x}
-            y={y}
-            fill={n === 18 ? POP.yellow : POP.white}
-            fontSize={n === 18 ? 22 : 17}
-            textAnchor="middle"
-            dominantBaseline="central"
-            transform={`rotate(${i * 18} ${x} ${y})`}
-            style={{ fontFamily: "var(--font-a18)" }}
-          >
-            {n}
-          </text>
-        );
-      })}
-    </g>
-  );
-}
-
-const CONFETTI = (() => {
-  let seed = 1818;
-  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
-  const colors = [POP.yellow, POP.cyan, POP.white, POP.lime, POP.orange, POP.blue];
-  return Array.from({ length: 38 }, () => ({
-    vx: (rnd() - 0.5) * 520,
-    vy: -180 - rnd() * 320,
-    spin: (rnd() - 0.5) * 900,
-    w: 8 + rnd() * 10,
-    h: 14 + rnd() * 14,
-    c: colors[Math.floor(rnd() * colors.length)],
-  }));
-})();
-
-function Confetti({ time, t0 }: { time: MotionValue<number>; t0: number }) {
-  return (
-    <g>
-      {CONFETTI.map((p, k) => (
-        <ConfettiPiece key={k} time={time} t0={t0} p={p} />
-      ))}
-    </g>
-  );
-}
-
-function ConfettiPiece({ time, t0, p }: { time: MotionValue<number>; t0: number; p: (typeof CONFETTI)[number] }) {
-  const transform = useTransform(time, (t) => {
-    const u = Math.max(0, t - t0);
-    return `translate(${C + p.vx * u} ${150 + p.vy * u + 520 * u * u}) rotate(${p.spin * u}) skewX(-18)`;
-  });
-  const opacity = useTransform(time, (t): number => (t < t0 ? 0 : 1 - seg(t, t0 + 1.4, t0 + 1.9)));
-  return (
-    <MG transform={transform} opacity={opacity}>
-      <rect x={-p.w / 2} y={-p.h / 2} width={p.w} height={p.h} fill={p.c} stroke={POP.ink} strokeWidth={2} />
-    </MG>
-  );
-}
-
-function Eighteen({ time, spec }: { time: MotionValue<number>; spec: MiniSpec }) {
-  const bg = useTransform(time, (t) => `polygon(0 0, ${lerp(0, 160, easeOut(seg(t, 0, 0.3)))}% 0, ${lerp(-32, 128, easeOut(seg(t, 0, 0.3)))}% 100%, 0 100%)`);
-  const board = useTransform(time, (t) => `rotate(${boardSpin(t)} ${C} ${C})`);
-  const boardIn = useTransform(time, (t) => `translate(${C} ${C}) scale(${lerp(0.4, 1, pop(seg(t, 0.05, 0.35)))}) translate(${-C} ${-C})`);
-  const dim = useTransform(time, (t) => 1 - 0.75 * seg(t, 1.0, 1.3));
-  // La part du 18 : tourne avec la cible, puis se détache, monte et grossit.
-  const slice = useTransform(time, (t) => {
-    const u = easeOut(seg(t, 1.0, 1.45));
-    const [cx, cy] = polar(70, 0);
-    return `translate(0 ${30 * u}) translate(${cx} ${cy}) scale(${lerp(1, 2, u)}) translate(${-cx} ${-cy}) rotate(${u > 0 ? 0 : boardSpin(t) + I18 * 18} ${C} ${C})`;
-  });
-  const sliceOut = useTransform(time, (t): number => (t < 1.0 ? 0 : 1));
-  const stamp = useTransform(time, (t) => {
-    const u = seg(t, 1.45, 1.7);
-    const s = u <= 0 ? 0 : lerp(2.4, 1, easeOut(u));
-    return `translate(${C} 118) scale(${s}) rotate(${-6 * (1 - u)})`;
-  });
-  const tag = useIn(time, 1.75);
-  const kick = useIn(time, 1.55);
-  return (
-    <div className="absolute inset-0">
-      <motion.div className="absolute inset-0" style={{ background: POP.pink, ...halftone("rgb(0 0 0 / 0.13)"), clipPath: bg }} />
-      <div className="absolute inset-x-0 top-[6%] mx-auto aspect-square w-[min(92vw,410px)]">
-        <svg viewBox="0 0 400 400" className="absolute inset-0 h-full w-full overflow-visible" aria-hidden>
-          <MG transform={boardIn}>
-            <motion.g style={{ opacity: dim }}>
-              <MG transform={board}>
-                <NumberRing />
-                {ORDER.map((_, i) => (i === I18 ? null : <Sector key={i} i={i} />))}
-                <Bull />
-              </MG>
-            </motion.g>
-            <motion.g style={{ opacity: useTransform(time, (t): number => (t < 1.0 ? 1 : 0)) }}>
-              <MG transform={board}>
-                <Sector i={I18} />
-              </MG>
-            </motion.g>
-            <MG transform={slice} opacity={sliceOut}>
-              <g transform={`rotate(${-I18 * 18} ${C} ${C})`}>
-                <g transform={`translate(4 6)`}>
-                  <path d={`M${polar(18, I18 * 18 - 9).join(" ")} L${polar(118, I18 * 18 - 9).join(" ")} A118 118 0 0 1 ${polar(118, I18 * 18 + 9).join(" ")} L${polar(18, I18 * 18 + 9).join(" ")} Z`} fill={POP.ink} />
-                </g>
-                <Sector i={I18} fill={POP.yellow} />
-              </g>
-            </MG>
-          </MG>
-          <Confetti time={time} t0={1.5} />
-          <MG transform={stamp}>
-            <text x={0} y={0} textAnchor="middle" dominantBaseline="central" fontSize={88} fill={POP.white} stroke={POP.ink} strokeWidth={7} paintOrder="stroke" style={{ fontFamily: "var(--font-a18)" }}>
-              18
-            </text>
-          </MG>
-        </svg>
-        <Boom time={time} t0={1.5} className="left-[0%] top-[2%]" rotate={-10}>
-          Hommage !
-        </Boom>
-      </div>
-      <div className="absolute inset-x-0 top-[calc(6%+min(92vw,410px)*0.86)] flex flex-col items-center gap-2">
-        <motion.span style={kick} className="-skew-x-[18deg] bg-noir px-3 py-1 text-[12px] font-black uppercase tracking-[0.2em] text-blanc">
-          <span className="inline-block skew-x-[18deg]">{spec.kicker} · 18</span>
-        </motion.span>
-        <motion.span
-          style={{ ...tag, background: POP.yellow, boxShadow: `4px 4px 0 ${POP.ink}` }}
-          className="border-[3px] border-noir px-3 py-1 font-num text-[22px] text-noir"
-        >
-          360° ÷ 20 = 18°
-        </motion.span>
-      </div>
-      <div className="absolute inset-x-4 bottom-[calc(44px+env(safe-area-inset-bottom))] flex items-end gap-2">
-        <motion.div style={useIn(time, 1.9)} className="shrink-0">
-          <Mascot mood="joy" size={92} hat />
-        </motion.div>
-        <Bubble time={time} t0={2.0}>
-          {spec.text}
-        </Bubble>
-      </div>
     </div>
   );
 }

@@ -105,9 +105,6 @@ export function HighGame() {
       } else if (find("ton")) {
         sounds.ton();
         await celebrate({ level: "scene", kind: "ton", kicker: "Ton-up", num: String(points) });
-      } else if (points === 18 && st.status !== "match") {
-        // L'hommage : une volée de 18 pile à l'Arena18.
-        await celebrate({ level: "scene", kind: "eighteen", kicker: who, text: t("Pas terrible… mais on apprécie l'hommage.") });
       } else if (find("twentySix")) showWink(t("26… le classique."));
       else if (find("threeMisses")) {
         await celebrate({ level: "scene", kind: "misses", text: t("Trois à côté. Ça arrive aux meilleurs.") });
