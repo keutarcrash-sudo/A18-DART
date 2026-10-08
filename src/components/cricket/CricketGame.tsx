@@ -4,7 +4,6 @@
  * Le tableau EST le pavé : on touche la ligne du numéro touché (simple), puis Double / Triple
  * sous le pouce, sans chrono. « Raté / Autre » pour les fléchettes hors 15-20 et centre.
  */
-import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Celebration, type CeleSpec, Wink } from "@/components/Celebration";
@@ -22,8 +21,10 @@ import {
 } from "@/engine/cricket";
 import { useWakeLock } from "@/lib/device";
 import { fitFont } from "@/lib/fit";
-import { clearPartie, useCricketPartie } from "@/lib/partie";
+import { useCricketPartie } from "@/lib/partie";
 import { sounds } from "@/lib/sound";
+import { FinDePartie } from "@/components/podium/FinDePartie";
+import type { PodiumData } from "@/components/podium/PodiumScene";
 import { GameMenu, MenuButton } from "@/components/GameMenu";
 
 const MODE_LABEL = { classic: "Classique", none: "Sans points", cut: "Cut-throat" } as const;
@@ -322,74 +323,22 @@ export function CricketGame() {
       <Celebration spec={cele} onDone={() => celeDone.current?.()} />
 
       {over && state.winner !== null && (
-        <FinCricket state={state} onRevanche={() => restart(rankingCricket(state)[n - 1])} onQuit={() => clearPartie()} />
+        <FinDePartie data={podiumCricket(state)} onRevanche={() => restart(rankingCricket(state)[n - 1])} />
       )}
     </main>
   );
 }
 
-function FinCricket({ state, onRevanche, onQuit }: { state: CricketState; onRevanche: () => void; onQuit: () => void }) {
-  const winner = state.setup.sides[state.winner!].name;
-  const order = rankingCricket(state);
+function podiumCricket(state: CricketState): PodiumData {
+  const sides = state.setup.sides;
   const best = bestCricketVolley(state);
-  const showPoints = state.setup.options.mode !== "none";
-  return (
-    <div className="absolute inset-0 z-50 flex flex-col bg-noir px-[18px] pb-[calc(18px+env(safe-area-inset-bottom))] pt-[calc(22px+env(safe-area-inset-top))]">
-      {/* eslint-disable-next-line @next/next/no-img-element -- logo fixe */}
-      <img src="/logo-a18.png" alt="Arena18" className="h-[30px] w-auto self-start" />
-      <div className="mt-[18px] text-[52px] font-black uppercase italic leading-[0.86] tracking-tight">
-        <span className="block whitespace-nowrap" style={{ fontSize: fitFont(winner, 52, 40) }}>
-          {winner}
-        </span>
-        <span className="text-cyan">gagne</span>
-        <br />
-        le Cricket
-      </div>
-      <ol className="mt-6 flex flex-col">
-        {order.map((s, i) => (
-          <li key={s} className="flex items-center justify-between gap-3 border-t border-filet py-2.5">
-            <span className="min-w-0 truncate text-lg font-black uppercase italic">
-              <span className={i === 0 ? "text-cyan" : "text-gris"}>{i + 1}</span> {state.setup.sides[s].name}
-            </span>
-            <span className="shrink-0 text-right text-[10px] font-bold uppercase tracking-[0.14em] text-gris">
-              {closedCount(state, s)}/7 fermés
-              {showPoints && <b className="ml-2 font-num text-2xl font-normal tracking-normal text-blanc">{state.points[s]}</b>}
-            </span>
-          </li>
-        ))}
-      </ol>
-      {best && (
-        <div className="mt-3 flex items-end justify-between border-t border-filet pt-2.5">
-          <div>
-            <small className="block text-[9px] font-bold uppercase tracking-[0.18em] text-gris">Meilleure volée</small>
-            <span className="text-[13px] font-black uppercase italic">
-              {best.member} · Tour {best.turn}
-            </span>
-          </div>
-          <div className="font-num text-4xl leading-none text-chartreuse">
-            {best.marks}
-            <small className="ml-1 font-text text-[11px] font-bold uppercase not-italic tracking-[0.14em] text-gris">touches</small>
-          </div>
-        </div>
-      )}
-      <div className="mt-auto grid grid-cols-2 gap-1.5">
-        <button
-          type="button"
-          onClick={onRevanche}
-          className="btn-18 h-14 bg-cyan text-base font-black uppercase italic text-noir"
-          style={{ "--h": "56px" } as React.CSSProperties}
-        >
-          Revanche
-        </button>
-        <Link
-          href="/nouvelle"
-          onClick={onQuit}
-          className="btn-18 grid h-14 place-items-center bg-blanc text-[15px] font-black uppercase italic text-noir"
-          style={{ "--h": "56px" } as React.CSSProperties}
-        >
-          Nouvelle partie
-        </Link>
-      </div>
-    </div>
-  );
+  const points = state.setup.options.mode !== "none";
+  return {
+    title: [sides[state.winner!].name, "gagne", "le Cricket"],
+    ranking: rankingCricket(state).map((s) => ({
+      name: sides[s].name,
+      value: `${closedCount(state, s)}/7${points ? ` · ${state.points[s]} pts` : " fermés"}`,
+    })),
+    highlight: best ? { label: "Meilleure volée", who: `${best.member} · Tour ${best.turn}`, value: String(best.marks), unit: "touches" } : undefined,
+  };
 }

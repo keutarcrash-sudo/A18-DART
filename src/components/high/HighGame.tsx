@@ -4,7 +4,6 @@
  * Même pavé qu'au 501, mais le score monte. « Volée 3/8 » remplace le tour.
  * La partie s'arrête toute seule après la dernière volée du dernier joueur.
  */
-import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Celebration, type CeleSpec, Wink } from "@/components/Celebration";
@@ -15,8 +14,10 @@ import { type Dart, type Mult, dartLabel } from "@/engine/types";
 import { type HighEvent, type HighState, bestHighVolley, currentMemberHigh, highRounds, rankingHigh } from "@/engine/high";
 import { useFlatPhone, useWakeLock } from "@/lib/device";
 import { fitFont } from "@/lib/fit";
-import { clearPartie, useHighPartie } from "@/lib/partie";
+import { useHighPartie } from "@/lib/partie";
 import { sounds } from "@/lib/sound";
+import { FinDePartie } from "@/components/podium/FinDePartie";
+import type { PodiumData } from "@/components/podium/PodiumScene";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -361,7 +362,7 @@ export function HighGame() {
       <Wink text={wink} />
       <Celebration spec={cele} onDone={() => celeDone.current?.()} />
 
-      {over && <FinHigh state={state} onRevanche={() => restart(order[order.length - 1])} onQuit={() => clearPartie()} />}
+      {over && <FinDePartie data={podiumHigh(state)} onRevanche={() => restart(order[order.length - 1])} />}
     </main>
   );
 }
@@ -384,71 +385,13 @@ function countTo(from: number, to: number, ms: number, set: (v: number) => void)
   });
 }
 
-function FinHigh({ state, onRevanche, onQuit }: { state: HighState; onRevanche: () => void; onQuit: () => void }) {
+function podiumHigh(state: HighState): PodiumData {
   const sides = state.setup.sides;
-  const tie = state.winners.length > 1;
-  const winner = tie ? "Égalité" : sides[state.winners[0]].name;
-  const order = rankingHigh(state);
   const best = bestHighVolley(state);
-  return (
-    <div className="absolute inset-0 z-50 flex flex-col bg-noir px-[18px] pb-[calc(18px+env(safe-area-inset-bottom))] pt-[calc(22px+env(safe-area-inset-top))]">
-      {/* eslint-disable-next-line @next/next/no-img-element -- logo fixe */}
-      <img src="/logo-a18.png" alt="Arena18" className="h-[30px] w-auto self-start" />
-      <div className="mt-[18px] text-[52px] font-black uppercase italic leading-[0.86] tracking-tight">
-        <span className="block whitespace-nowrap" style={{ fontSize: fitFont(winner, 52, 40) }}>
-          {winner}
-        </span>
-        {tie ? (
-          <span className="text-[30px]">
-            au <span className="text-cyan">Plus gros score</span>
-          </span>
-        ) : (
-          <>
-            <span className="text-cyan">gagne</span>
-            <br />
-            <span className="text-[30px]">le Plus gros score</span>
-          </>
-        )}
-      </div>
-      <ol className="mt-6 flex flex-col">
-        {order.map((s, i) => (
-          <li key={s} className="flex items-center justify-between gap-3 border-t border-filet py-2.5">
-            <span className="min-w-0 truncate text-lg font-black uppercase italic">
-              <span className={state.winners.includes(s) ? "text-cyan" : "text-gris"}>{i + 1}</span> {sides[s].name}
-            </span>
-            <span className="font-num text-2xl">{state.scores[s]}</span>
-          </li>
-        ))}
-      </ol>
-      {best && (
-        <div className="mt-3 flex items-end justify-between border-t border-filet pt-2.5">
-          <div>
-            <small className="block text-[9px] font-bold uppercase tracking-[0.18em] text-gris">Volée de la partie</small>
-            <span className="text-[13px] font-black uppercase italic">
-              {best.member} · Volée {best.turn}
-            </span>
-          </div>
-          <div className="font-num text-4xl leading-none text-chartreuse">{best.points}</div>
-        </div>
-      )}
-      <div className="mt-auto grid grid-cols-2 gap-1.5">
-        <button
-          type="button"
-          onClick={onRevanche}
-          className="btn-18 h-14 bg-cyan text-base font-black uppercase italic text-noir"
-          style={{ "--h": "56px" } as React.CSSProperties}
-        >
-          Revanche
-        </button>
-        <Link
-          href="/nouvelle"
-          onClick={onQuit}
-          className="btn-18 grid h-14 place-items-center bg-blanc text-[15px] font-black uppercase italic text-noir"
-          style={{ "--h": "56px" } as React.CSSProperties}
-        >
-          Nouvelle partie
-        </Link>
-      </div>
-    </div>
-  );
+  const tie = state.winners.length > 1;
+  return {
+    title: tie ? ["Égalité", "au", "Plus gros score"] : [sides[state.winners[0]].name, "gagne", "le Plus gros score"],
+    ranking: rankingHigh(state).map((s) => ({ name: sides[s].name, value: `${state.scores[s]} pts` })),
+    highlight: best ? { label: "Volée de la partie", who: `${best.member} · Volée ${best.turn}`, value: String(best.points) } : undefined,
+  };
 }

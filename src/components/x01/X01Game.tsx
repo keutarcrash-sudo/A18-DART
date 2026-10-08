@@ -3,7 +3,6 @@
  * Écran de partie du 301 / 501 (référence : docs/parcours.html, écran « Partie »).
  * L'interface ne connaît pas les règles : elle affiche l'état du moteur et joue ses événements.
  */
-import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Celebration, type CeleSpec, Wink } from "@/components/Celebration";
@@ -18,9 +17,11 @@ import {
   volleyScore,
 } from "@/engine/x01";
 import { useFlatPhone, useWakeLock } from "@/lib/device";
-import { clearPartie, useX01Partie } from "@/lib/partie";
+import { useX01Partie } from "@/lib/partie";
 import { fitFont } from "@/lib/fit";
 import { sounds } from "@/lib/sound";
+import { FinDePartie } from "@/components/podium/FinDePartie";
+import type { PodiumData } from "@/components/podium/PodiumScene";
 import { GameMenu, MenuButton } from "@/components/GameMenu";
 import { Pad } from "./Pad";
 import { Tableau } from "./Tableau";
@@ -386,11 +387,7 @@ export function X01Game() {
       <Celebration spec={cele} onDone={() => celeDone.current?.()} />
 
       {over && state.winner !== null && (
-        <FinDePartie
-          state={state}
-          onRevanche={() => restart(order[order.length - 1])}
-          onQuit={() => clearPartie()}
-        />
+        <FinDePartie data={podiumX01(state)} onRevanche={() => restart(order[order.length - 1])} />
       )}
     </main>
   );
@@ -414,62 +411,16 @@ function countTo(from: number, to: number, ms: number, set: (v: number) => void)
   });
 }
 
-/** Fin de partie provisoire (le podium complet et le partage arrivent à l'étape suivante). */
-function FinDePartie({ state, onRevanche, onQuit }: { state: X01State; onRevanche: () => void; onQuit: () => void }) {
-  const winner = state.setup.sides[state.winner!].name;
+function podiumX01(state: X01State): PodiumData {
+  const sides = state.setup.sides;
+  const multi = state.setup.options.legs > 1;
   const best = bestVolley(state);
-  const order = rankingX01(state);
-  return (
-    <div className="absolute inset-0 z-50 flex flex-col bg-noir px-[18px] pb-[calc(18px+env(safe-area-inset-bottom))] pt-[calc(22px+env(safe-area-inset-top))]">
-      {/* eslint-disable-next-line @next/next/no-img-element -- logo fixe, pas besoin d'optimisation */}
-      <img src="/logo-a18.png" alt="Arena18" className="h-[30px] w-auto self-start" />
-      <div className="mt-[18px] text-[52px] font-black uppercase italic leading-[0.86] tracking-tight">
-        <span className="block whitespace-nowrap" style={{ fontSize: fitFont(winner, 52, 40) }}>
-          {winner}
-        </span>
-        <span className="text-cyan">gagne</span>
-        <br />
-        le {state.setup.options.start}
-      </div>
-      <ol className="mt-6 flex flex-col">
-        {order.map((s, i) => (
-          <li key={s} className="flex items-center justify-between border-t border-filet py-2.5">
-            <span className="text-lg font-black uppercase italic">
-              <span className={i === 0 ? "text-cyan" : "text-gris"}>{i + 1}</span> {state.setup.sides[s].name}
-            </span>
-            <span className="font-num text-2xl">{state.scores[s]}</span>
-          </li>
-        ))}
-      </ol>
-      {best && (
-        <div className="mt-3 flex items-end justify-between border-t border-filet pt-2.5">
-          <div>
-            <small className="block text-[9px] font-bold uppercase tracking-[0.18em] text-gris">Volée de la partie</small>
-            <span className="text-[13px] font-black uppercase italic">
-              {best.member} · Tour {best.turn}
-            </span>
-          </div>
-          <div className="font-num text-4xl leading-none text-chartreuse">{best.points}</div>
-        </div>
-      )}
-      <div className="mt-auto grid grid-cols-2 gap-1.5">
-        <button
-          type="button"
-          onClick={onRevanche}
-          className="btn-18 h-14 bg-cyan text-base font-black uppercase italic text-noir"
-          style={{ "--h": "56px" } as React.CSSProperties}
-        >
-          Revanche
-        </button>
-        <Link
-          href="/nouvelle"
-          onClick={onQuit}
-          className="btn-18 grid h-14 place-items-center bg-blanc text-[15px] font-black uppercase italic text-noir"
-          style={{ "--h": "56px" } as React.CSSProperties}
-        >
-          Nouvelle partie
-        </Link>
-      </div>
-    </div>
-  );
+  return {
+    title: [sides[state.winner!].name, "gagne", `le ${state.setup.options.start}`],
+    ranking: rankingX01(state).map((s) => ({
+      name: sides[s].name,
+      value: multi ? `${state.legsWon[s]} manche${state.legsWon[s] > 1 ? "s" : ""}` : s === state.winner ? undefined : `Reste ${state.scores[s]}`,
+    })),
+    highlight: best ? { label: "Volée de la partie", who: `${best.member} · Tour ${best.turn}`, value: String(best.points) } : undefined,
+  };
 }

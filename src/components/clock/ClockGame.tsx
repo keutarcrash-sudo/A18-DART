@@ -4,7 +4,6 @@
  * Le numéro visé en géant, deux énormes boutons TOUCHÉ / RATÉ (en Bonus : Simple / Double / Triple).
  * La volée passe toute seule après la 3e fléchette.
  */
-import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Celebration, type CeleSpec, Wink } from "@/components/Celebration";
@@ -22,8 +21,10 @@ import {
 } from "@/engine/clock";
 import { useWakeLock } from "@/lib/device";
 import { fitFont } from "@/lib/fit";
-import { clearPartie, useClockPartie } from "@/lib/partie";
+import { useClockPartie } from "@/lib/partie";
 import { sounds } from "@/lib/sound";
+import { FinDePartie } from "@/components/podium/FinDePartie";
+import type { PodiumData } from "@/components/podium/PodiumScene";
 
 const targetText = (n: number) => (n === 25 ? "BULL" : String(n));
 
@@ -309,69 +310,22 @@ export function ClockGame() {
       <Celebration spec={cele} onDone={() => celeDone.current?.()} />
 
       {over && state.winner !== null && (
-        <FinClock state={state} onRevanche={() => restart(rankingClock(state)[sides.length - 1])} onQuit={() => clearPartie()} />
+        <FinDePartie data={podiumClock(state)} onRevanche={() => restart(rankingClock(state)[sides.length - 1])} />
       )}
     </main>
   );
 }
 
-function FinClock({ state, onRevanche, onQuit }: { state: ClockState; onRevanche: () => void; onQuit: () => void }) {
+function podiumClock(state: ClockState): PodiumData {
   const sides = state.setup.sides;
-  const winner = sides[state.winner!].name;
-  const order = rankingClock(state);
   const end = clockLength(state.setup);
-  return (
-    <div className="absolute inset-0 z-50 flex flex-col bg-noir px-[18px] pb-[calc(18px+env(safe-area-inset-bottom))] pt-[calc(22px+env(safe-area-inset-top))]">
-      {/* eslint-disable-next-line @next/next/no-img-element -- logo fixe */}
-      <img src="/logo-a18.png" alt="Arena18" className="h-[30px] w-auto self-start" />
-      <div className="mt-[18px] text-[52px] font-black uppercase italic leading-[0.86] tracking-tight">
-        <span className="block whitespace-nowrap" style={{ fontSize: fitFont(winner, 52, 40) }}>
-          {winner}
-        </span>
-        <span className="text-cyan">gagne</span>
-        <br />
-        <span className="text-[30px]">le Tour de l&apos;horloge</span>
-      </div>
-      <ol className="mt-6 flex flex-col">
-        {order.map((s, i) => (
-          <li key={s} className="flex items-center justify-between gap-3 border-t border-filet py-2.5">
-            <span className="min-w-0 truncate text-lg font-black uppercase italic">
-              <span className={i === 0 ? "text-cyan" : "text-gris"}>{i + 1}</span> {sides[s].name}
-            </span>
-            <span className="shrink-0 text-right text-[10px] font-bold uppercase tracking-[0.14em] text-gris">
-              {state.pos[s] >= end ? "Arrivé" : "Visait le"}
-              {state.pos[s] < end && (
-                <b className="ml-2 font-num text-2xl font-normal tracking-normal text-blanc">{targetText(targetAt(state.pos[s]))}</b>
-              )}
-            </span>
-          </li>
-        ))}
-      </ol>
-      <div className="mt-3 flex items-end justify-between border-t border-filet pt-2.5">
-        <div>
-          <small className="block text-[9px] font-bold uppercase tracking-[0.18em] text-gris">Tours pour finir</small>
-          <span className="text-[13px] font-black uppercase italic">{winner}</span>
-        </div>
-        <div className="font-num text-4xl leading-none text-chartreuse">{state.winTurn}</div>
-      </div>
-      <div className="mt-auto grid grid-cols-2 gap-1.5">
-        <button
-          type="button"
-          onClick={onRevanche}
-          className="btn-18 h-14 bg-cyan text-base font-black uppercase italic text-noir"
-          style={{ "--h": "56px" } as React.CSSProperties}
-        >
-          Revanche
-        </button>
-        <Link
-          href="/nouvelle"
-          onClick={onQuit}
-          className="btn-18 grid h-14 place-items-center bg-blanc text-[15px] font-black uppercase italic text-noir"
-          style={{ "--h": "56px" } as React.CSSProperties}
-        >
-          Nouvelle partie
-        </Link>
-      </div>
-    </div>
-  );
+  const winner = sides[state.winner!].name;
+  return {
+    title: [winner, "gagne", "le Tour de l'horloge"],
+    ranking: rankingClock(state).map((s) => ({
+      name: sides[s].name,
+      value: state.pos[s] >= end ? "Arrivé" : `Au ${targetText(targetAt(state.pos[s]))}`,
+    })),
+    highlight: { label: "Tours pour finir", who: winner, value: String(state.winTurn) },
+  };
 }

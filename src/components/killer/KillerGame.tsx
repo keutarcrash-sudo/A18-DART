@@ -4,7 +4,6 @@
  * 1. « Main faible ! » : chacun lance de sa main faible, on touche le numéro obtenu.
  * 2. Les joueurs sont le pavé : une tape sur un joueur = son double touché (seuls les doubles comptent).
  */
-import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Celebration, type CeleSpec, Wink } from "@/components/Celebration";
@@ -21,8 +20,10 @@ import {
 } from "@/engine/killer";
 import { useWakeLock } from "@/lib/device";
 import { fitFont } from "@/lib/fit";
-import { clearPartie, useKillerPartie } from "@/lib/partie";
+import { useKillerPartie } from "@/lib/partie";
 import { sounds } from "@/lib/sound";
+import { FinDePartie } from "@/components/podium/FinDePartie";
+import type { PodiumData } from "@/components/podium/PodiumScene";
 
 type Ev<T extends KillerEvent["type"]> = Extract<KillerEvent, { type: T }>;
 
@@ -189,7 +190,7 @@ export function KillerGame() {
       <Celebration spec={cele} onDone={() => celeDone.current?.()} />
 
       {over && state.winner !== null && (
-        <FinKiller state={state} name={name} onRevanche={() => restart(rankingKiller(state)[sides.length - 1])} onQuit={() => clearPartie()} />
+        <FinDePartie data={podiumKiller(state, name)} onRevanche={() => restart(rankingKiller(state)[sides.length - 1])} />
       )}
     </main>
   );
@@ -443,62 +444,12 @@ function Board({
 
 /* ---------- Fin de partie ---------- */
 
-function FinKiller({
-  state,
-  name,
-  onRevanche,
-  onQuit,
-}: {
-  state: KillerState;
-  name: (i: number) => string;
-  onRevanche: () => void;
-  onQuit: () => void;
-}) {
-  const winner = name(state.winner!);
-  const order = rankingKiller(state);
-  return (
-    <div className="absolute inset-0 z-50 flex flex-col bg-noir px-[18px] pb-[calc(18px+env(safe-area-inset-bottom))] pt-[calc(22px+env(safe-area-inset-top))]">
-      {/* eslint-disable-next-line @next/next/no-img-element -- logo fixe */}
-      <img src="/logo-a18.png" alt="Arena18" className="h-[30px] w-auto self-start" />
-      <div className="mt-[18px] text-[52px] font-black uppercase italic leading-[0.86] tracking-tight">
-        <span className="block whitespace-nowrap" style={{ fontSize: fitFont(winner, 52, 40) }}>
-          {winner}
-        </span>
-        <span className="text-cyan">gagne</span>
-        <br />
-        le Killer
-      </div>
-      <ol className="mt-6 flex flex-col">
-        {order.map((s, i) => (
-          <li key={s} className="flex items-center justify-between gap-3 border-t border-filet py-2.5">
-            <span className="min-w-0 truncate text-lg font-black uppercase italic">
-              <span className={i === 0 ? "text-cyan" : "text-gris"}>{i + 1}</span> {name(s)}
-            </span>
-            <span className="shrink-0 text-right text-[10px] font-bold uppercase tracking-[0.14em] text-gris">
-              {isOut(state, s) ? "Éliminé" : `${state.lives[s]} vie${state.lives[s] > 1 ? "s" : ""}`}
-              <b className="ml-2 font-num text-2xl font-normal tracking-normal text-blanc">{state.numbers[s]}</b>
-            </span>
-          </li>
-        ))}
-      </ol>
-      <div className="mt-auto grid grid-cols-2 gap-1.5">
-        <button
-          type="button"
-          onClick={onRevanche}
-          className="btn-18 h-14 bg-cyan text-base font-black uppercase italic text-noir"
-          style={{ "--h": "56px" } as React.CSSProperties}
-        >
-          Revanche
-        </button>
-        <Link
-          href="/nouvelle"
-          onClick={onQuit}
-          className="btn-18 grid h-14 place-items-center bg-blanc text-[15px] font-black uppercase italic text-noir"
-          style={{ "--h": "56px" } as React.CSSProperties}
-        >
-          Nouvelle partie
-        </Link>
-      </div>
-    </div>
-  );
+function podiumKiller(state: KillerState, name: (i: number) => string): PodiumData {
+  const w = state.winner!;
+  const lives = state.lives[w];
+  return {
+    title: [name(w), "gagne", "le Killer"],
+    ranking: rankingKiller(state).map((s) => ({ name: name(s), value: `N° ${state.numbers[s]}` })),
+    highlight: { label: "Dernier debout", who: `${name(w)} · Tour ${state.turn}`, value: String(lives), unit: lives > 1 ? "vies" : "vie" },
+  };
 }
