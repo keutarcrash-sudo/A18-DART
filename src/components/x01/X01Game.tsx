@@ -6,7 +6,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Celebration, type CeleSpec, Wink } from "@/components/Celebration";
 import { type Dart, type Mult, dartLabel } from "@/engine/types";
 import {
@@ -21,12 +21,12 @@ import {
 import { useFlatPhone, useWakeLock } from "@/lib/device";
 import { clearPartie, useX01Partie } from "@/lib/partie";
 import { fitFont } from "@/lib/fit";
-import { isMuted, setMuted, sounds } from "@/lib/sound";
+import { sounds } from "@/lib/sound";
+import { GameMenu, MenuButton } from "@/components/GameMenu";
 import { Pad } from "./Pad";
 import { Tableau } from "./Tableau";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-const noopSubscribe = () => () => {};
 
 export function X01Game() {
   const router = useRouter();
@@ -38,9 +38,7 @@ export function X01Game() {
   const [wink, setWink] = useState<string | null>(null);
   const [multFor, setMultFor] = useState<number | null>(null);
   const [view, setView] = useState<"saisie" | "tableau">("saisie");
-  const [mutedChoice, setMutedState] = useState<boolean | null>(null);
-  const mutedStored = useSyncExternalStore(noopSubscribe, isMuted, () => false);
-  const muted = mutedChoice ?? mutedStored;
+  const [menu, setMenu] = useState(false);
   const celeDone = useRef<(() => void) | null>(null);
   const winkTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { flat, askPermission } = useFlatPhone();
@@ -233,22 +231,12 @@ export function X01Game() {
             Tour <b className="text-blanc">{state.turn}</b>
             <button
               type="button"
-              onClick={() => {
-                const v = !muted;
-                setMuted(v);
-                setMutedState(v);
-              }}
-              className="h-[30px] border-[1.5px] border-[#3a3a3a] px-2.5 text-[10px] font-bold tracking-[0.14em] text-[#cfcfcf]"
-            >
-              {muted ? "SON" : "MUET"}
-            </button>
-            <button
-              type="button"
               onClick={() => setView("tableau")}
               className="h-[30px] border-[1.5px] border-[#3a3a3a] px-2.5 text-[10px] font-bold tracking-[0.14em] text-[#cfcfcf]"
             >
               TABLEAU
             </button>
+            <MenuButton onClick={() => setMenu(true)} />
           </span>
         </div>
 
@@ -374,6 +362,7 @@ export function X01Game() {
         )}
       </AnimatePresence>
 
+      <GameMenu open={menu} onClose={() => setMenu(false)} onRestart={() => restart(state.setup.firstSide)} label={String(start)} />
       <Wink text={wink} />
       <Celebration spec={cele} onDone={() => celeDone.current?.()} />
 

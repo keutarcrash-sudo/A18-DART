@@ -14,6 +14,7 @@ export function JouerButton() {
   }, []);
 
   return (
+    <>
     <Link href={resume ? "/partie" : "/nouvelle"} className="group relative -ml-[30px] -mr-3.5 mt-3.5 block h-[190px]" aria-label={resume ? "Reprendre la partie" : "Jouer"}>
       <span className="skew-18 absolute inset-y-0 left-0 right-[26px] bg-cyan transition-transform duration-150 group-active:scale-[0.97]" />
       <span
@@ -34,5 +35,15 @@ export function JouerButton() {
       </span>
       <span className="absolute bottom-4 right-[52px] text-[40px] font-black text-noir">→</span>
     </Link>
+    {resume && (
+      <Link
+        href="/nouvelle"
+        style={{ "--h": "58px" } as React.CSSProperties}
+        className="btn-18 mt-3 grid h-[58px] place-items-center bg-blanc text-[17px] font-black uppercase italic text-noir active:bg-cyan"
+      >
+        Nouvelle partie
+      </Link>
+    )}
+    </>
   );
 }

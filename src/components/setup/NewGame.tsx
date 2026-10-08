@@ -31,6 +31,13 @@ export function NewGame() {
   const [opts, setOpts] = useState<X01Options>(DEFAULT_X01_OPTIONS);
   const [cricketMode, setCricketMode] = useState<CricketMode>(DEFAULT_CRICKET_OPTIONS.mode);
 
+  // Next garde cet écran en mémoire entre deux visites : on repart toujours de « Qui joue ? »,
+  // en gardant les prénoms (pratique quand le même groupe enchaîne sur un autre jeu).
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- remise à zéro à chaque visite de l'écran
+    setStep("players");
+  }, []);
+
   const sides: Side[] = teams
     ? (["A", "B"] as const)
         .map((t) => ({ name: `Équipe ${t}`, members: players.filter((p) => p.team === t).map((p) => p.name) }))

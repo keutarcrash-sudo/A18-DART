@@ -7,7 +7,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Celebration, type CeleSpec, Wink } from "@/components/Celebration";
 import type { Dart, Mult } from "@/engine/types";
 import {
@@ -24,10 +24,10 @@ import {
 import { useWakeLock } from "@/lib/device";
 import { fitFont } from "@/lib/fit";
 import { clearPartie, useCricketPartie } from "@/lib/partie";
-import { isMuted, setMuted, sounds } from "@/lib/sound";
+import { sounds } from "@/lib/sound";
+import { GameMenu, MenuButton } from "@/components/GameMenu";
 
 const MODE_LABEL = { classic: "Classique", none: "Sans points", cut: "Cut-throat" } as const;
-const noopSubscribe = () => () => {};
 const label = (n: number) => (n === 25 ? "B" : String(n));
 
 function dartText(d: Dart): string {
@@ -42,9 +42,7 @@ export function CricketGame() {
   const [cele, setCele] = useState<CeleSpec | null>(null);
   const [wink, setWink] = useState<string | null>(null);
   const [multFor, setMultFor] = useState<number | null>(null);
-  const [mutedChoice, setMutedChoice] = useState<boolean | null>(null);
-  const mutedStored = useSyncExternalStore(noopSubscribe, isMuted, () => false);
-  const muted = mutedChoice ?? mutedStored;
+  const [menu, setMenu] = useState(false);
   const celeDone = useRef<(() => void) | null>(null);
   const winkTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -175,16 +173,7 @@ export function CricketGame() {
           </span>
           <span className="flex items-center gap-2">
             Tour <b className="text-blanc">{state.turn}</b>
-            <button
-              type="button"
-              onClick={() => {
-                setMuted(!muted);
-                setMutedChoice(!muted);
-              }}
-              className="h-[30px] border-[1.5px] border-[#3a3a3a] px-2.5 text-[10px] font-bold tracking-[0.14em] text-[#cfcfcf]"
-            >
-              {muted ? "SON" : "MUET"}
-            </button>
+            <MenuButton onClick={() => setMenu(true)} />
           </span>
         </div>
 
@@ -324,6 +313,7 @@ export function CricketGame() {
         </div>
       </div>
 
+      <GameMenu open={menu} onClose={() => setMenu(false)} onRestart={() => restart(state.setup.firstSide)} label="Cricket" />
       <Wink text={wink} />
       <Celebration spec={cele} onDone={() => celeDone.current?.()} />
 
