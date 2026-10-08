@@ -10,6 +10,7 @@ import { type X01Setup, replayX01 } from "@/engine/x01";
 import { type CricketSetup, replayCricket } from "@/engine/cricket";
 import { type KillerSetup, replayKiller } from "@/engine/killer";
 import { type ClockSetup, replayClock } from "@/engine/clock";
+import { type HighSetup, replayHigh } from "@/engine/high";
 import { readJSON, removeKey, writeJSON } from "./storage";
 
 const KEY = "a18:partie";
@@ -38,7 +39,13 @@ export interface SavedClock {
   actions: Action[];
 }
 
-export type SavedPartie = SavedX01 | SavedCricket | SavedKiller | SavedClock;
+export interface SavedHigh {
+  kind: "high";
+  setup: HighSetup;
+  actions: Action[];
+}
+
+export type SavedPartie = SavedX01 | SavedCricket | SavedKiller | SavedClock | SavedHigh;
 
 export function loadPartie(): SavedPartie | null {
   return readJSON<SavedPartie>(KEY);
@@ -62,7 +69,9 @@ export function partieEnCours(p: SavedPartie | null): boolean {
         ? replayKiller(p.setup, p.actions)
         : p.kind === "clock"
           ? replayClock(p.setup, p.actions)
-          : replayX01(p.setup, p.actions);
+          : p.kind === "high"
+            ? replayHigh(p.setup, p.actions)
+            : replayX01(p.setup, p.actions);
   return st.status !== "match";
 }
 
@@ -70,6 +79,7 @@ export function partieLabel(p: SavedPartie): string {
   if (p.kind === "cricket") return "Cricket";
   if (p.kind === "killer") return "Killer";
   if (p.kind === "clock") return "Horloge";
+  if (p.kind === "high") return "Plus gros score";
   return String(p.setup.options.start);
 }
 
@@ -136,4 +146,8 @@ export function useKillerPartie() {
 
 export function useClockPartie() {
   return useGamePartie<SavedClock, ReturnType<typeof replayClock>>("clock", replayClock);
+}
+
+export function useHighPartie() {
+  return useGamePartie<SavedHigh, ReturnType<typeof replayHigh>>("high", replayHigh);
 }

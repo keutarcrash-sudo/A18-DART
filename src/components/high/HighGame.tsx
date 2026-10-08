@@ -1,39 +1,32 @@
 "use client";
 /**
- * Écran de partie du 301 / 501 (référence : docs/parcours.html, écran « Partie »).
- * L'interface ne connaît pas les règles : elle affiche l'état du moteur et joue ses événements.
+ * Écran de partie du Plus gros score (référence : docs/parcours.html, écran « Plus gros score »).
+ * Même pavé qu'au 501, mais le score monte. « Volée 3/8 » remplace le tour.
+ * La partie s'arrête toute seule après la dernière volée du dernier joueur.
  */
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Celebration, type CeleSpec, Wink } from "@/components/Celebration";
-import { type Dart, type Mult, dartLabel } from "@/engine/types";
-import {
-  type X01Event,
-  type X01State,
-  bestVolley,
-  currentMember,
-  rankingX01,
-  suggestCheckout,
-  volleyScore,
-} from "@/engine/x01";
-import { useFlatPhone, useWakeLock } from "@/lib/device";
-import { clearPartie, useX01Partie } from "@/lib/partie";
-import { fitFont } from "@/lib/fit";
-import { sounds } from "@/lib/sound";
 import { GameMenu, MenuButton } from "@/components/GameMenu";
-import { Pad } from "./Pad";
-import { Tableau } from "./Tableau";
+import { Pad } from "@/components/x01/Pad";
+import { Tableau } from "@/components/x01/Tableau";
+import { type Dart, type Mult, dartLabel } from "@/engine/types";
+import { type HighEvent, type HighState, bestHighVolley, currentMemberHigh, highRounds, rankingHigh } from "@/engine/high";
+import { useFlatPhone, useWakeLock } from "@/lib/device";
+import { fitFont } from "@/lib/fit";
+import { clearPartie, useHighPartie } from "@/lib/partie";
+import { sounds } from "@/lib/sound";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-export function X01Game() {
-  const { state, push, setLastMult, undo, restart } = useX01Partie();
+export function HighGame() {
+  const { state, push, setLastMult, undo, restart } = useHighPartie();
   const [busy, setBusy] = useState(false);
   // L'écran de fin n'apparaît qu'après la célébration de la victoire.
   const [wonShown, setWonShown] = useState(false);
   const [animScore, setAnimScore] = useState<number | null>(null);
-  const [minus, setMinus] = useState<{ id: number; text: string } | null>(null);
+  const [plus, setPlus] = useState<{ id: number; text: string } | null>(null);
   const [cele, setCele] = useState<CeleSpec | null>(null);
   const [wink, setWink] = useState<string | null>(null);
   const [multFor, setMultFor] = useState<number | null>(null);
@@ -54,7 +47,6 @@ export function X01Game() {
   const celebrate = useCallback(
     (spec: CeleSpec) =>
       new Promise<void>((resolve) => {
-        const ms = spec.level === "max" ? 2000 : 1100;
         let done = false;
         const finish = () => {
           if (done) return;
@@ -65,7 +57,7 @@ export function X01Game() {
         };
         celeDone.current = finish;
         setCele(spec);
-        setTimeout(finish, ms);
+        setTimeout(finish, spec.level === "max" ? 2000 : 1100);
       }),
     [],
   );
@@ -76,58 +68,48 @@ export function X01Game() {
     winkTimer.current = setTimeout(() => setWink(null), 2400);
   }, []);
 
-  /** Fin de volée : raconte la soustraction, joue les célébrations, puis passe au suivant. */
+  /** Fin de volée : le score monte, les célébrations, puis joueur suivant (ou fin de partie). */
   const finishVolley = useCallback(
-    async (st: X01State) => {
+    async (st: HighState) => {
       setBusy(true);
       setMultFor(null);
       const side = st.current;
-      const who = currentMember(st);
-      const ev = new Set<X01Event["type"]>(st.events.map((e) => e.type));
-
-      if (st.status === "bust") {
-        sounds.bust();
-        await celebrate({ level: "max", tone: "bust", kicker: who, big: "Bust", numeric: false, sub: `On revient à ${st.volleyStart}`, slot: "bust" });
-        showWink("Trop fort, littéralement.");
-        push({ type: "next" });
-        setBusy(false);
-        return;
-      }
-
-      const { points } = volleyScore(st);
+      const who = currentMemberHigh(st);
+      const find = <T extends HighEvent["type"]>(t: T) => st.events.find((e): e is Extract<HighEvent, { type: T }> => e.type === t);
       const from = st.volleyStart;
       const to = st.scores[side];
+      const points = to - from;
+
       if (points > 0) {
-        setMinus({ id: Date.now(), text: `−${points}` });
+        setPlus({ id: Date.now(), text: `+${points}` });
         await sleep(250);
         await countTo(from, to, 520, setAnimScore);
       }
       sounds.validate();
 
-      if (ev.has("oneEighty")) {
+      if (find("oneEighty")) {
         sounds.oneEighty();
         await celebrate({ level: "max", tone: "cyan", kicker: who, big: "180", numeric: true, sub: "Le maximum. Rien que ça.", slot: "180" });
-      } else if (ev.has("ton")) {
+      } else if (find("ton")) {
         sounds.ton();
         await celebrate({ level: "mid", word: "Ton-up", num: String(points) });
-      } else if (ev.has("twentySix")) showWink("26… le classique.");
-      else if (ev.has("threeMisses")) showWink("Trois à côté. Ça arrive aux meilleurs.");
+      } else if (find("twentySix")) showWink("26… le classique.");
+      else if (find("threeMisses")) showWink("Trois à côté. Ça arrive aux meilleurs.");
+      else if (find("takesLead") && st.status !== "match") showWink(`${st.setup.sides[side].name} passe devant.`);
 
-      if (st.status === "leg" || st.status === "match") {
+      const won = find("matchWon");
+      if (won) {
         sounds.win();
-        await celebrate({
-          level: "max",
-          tone: "cyan",
-          kicker: from >= 100 ? `Game shot · checkout ${from}` : "Game shot",
-          big: who,
-          numeric: false,
-          sub: st.setup.sides[side].members.length > 1 ? st.setup.sides[side].name : undefined,
-          slot: "victoire",
-        });
+        const names = won.sides.map((i) => st.setup.sides[i].name);
+        await celebrate(
+          names.length > 1
+            ? { level: "max", tone: "cyan", kicker: `${st.scores[won.sides[0]]} points chacun`, big: "Égalité", numeric: false, sub: names.join(" · "), slot: "victoire" }
+            : { level: "max", tone: "cyan", kicker: `Plus gros score · ${st.scores[won.sides[0]]}`, big: names[0], numeric: false, slot: "victoire" },
+        );
       }
 
       setAnimScore(null);
-      setMinus(null);
+      setPlus(null);
       if (st.status !== "match") push({ type: "next" });
       else setWonShown(true);
       setBusy(false);
@@ -135,8 +117,8 @@ export function X01Game() {
     [celebrate, push, showWink],
   );
 
-  // Une partie déjà terminée qu'on recharge ne rejoue pas sa célébration.
-  const handled = useRef<X01State | null>(null);
+  // Une partie déjà finie qu'on recharge ne rejoue pas sa célébration.
+  const handled = useRef<HighState | null>(null);
   const firstSeen = useRef(false);
   useEffect(() => {
     if (!state || firstSeen.current) return;
@@ -147,13 +129,12 @@ export function X01Game() {
       setWonShown(true);
     }
   }, [state]);
-  // Annuler ou recommencer après une victoire : on revient en jeu.
+  // Annuler ou recommencer après la fin : on revient en jeu.
   if (wonShown && state && state.status !== "match") setWonShown(false);
 
-  // Victoire et bust terminent la volée d'eux-mêmes (après un court délai pour pouvoir corriger Double / Triple).
+  // La dernière volée termine la partie d'elle-même (court délai pour corriger Double / Triple).
   useEffect(() => {
-    if (!state || busy || handled.current === state) return;
-    if (state.status !== "bust" && state.status !== "leg" && state.status !== "match") return;
+    if (!state || busy || handled.current === state || state.status !== "match") return;
     const t = setTimeout(() => {
       handled.current = state;
       void finishVolley(state);
@@ -163,12 +144,15 @@ export function X01Game() {
 
   if (!state) return <div className="h-dvh bg-noir" />;
 
+  const sides = state.setup.sides;
   const side = state.current;
-  const opts = state.setup.options;
-  const who = currentMember(state);
-  const { points } = volleyScore(state);
-  const doubleOut = opts.finish === "double";
+  const who = currentMemberHigh(state);
+  const rounds = highRounds(state.setup);
+  const points = state.volley.reduce((a, d) => a + d.n * d.m, 0);
   const over = state.status === "match" && wonShown && !busy && !cele;
+  const order = rankingHigh(state);
+  const top = Math.max(...state.scores);
+  const shownScore = animScore ?? state.volleyStart;
 
   const onNumber = (n: number, m: Mult = 1) => {
     if (busy || state.status !== "open") return;
@@ -188,38 +172,30 @@ export function X01Game() {
     setMultFor(null);
   };
 
-  const onUndo = () => {
-    if (busy) return;
-    undo();
-    setMultFor(null);
-  };
-
   const hint = (() => {
     if (state.volley.length) {
-      const rest = state.volleyStart - points;
-      if (state.status === "bust") return <b>Bust · trop haut</b>;
       return (
         <>
-          Reste après la volée : <b className="text-blanc">{rest}</b>
+          Total après la volée : <b className="text-blanc">{state.volleyStart + points}</b>
         </>
       );
     }
-    if (!state.opened[side]) return "Double in : cherche un double pour démarrer";
-    const route = state.volleyStart <= 170 ? suggestCheckout(state.volleyStart, opts.finish) : null;
-    if (route && (doubleOut || route.length < 3)) {
+    const others = Math.max(...state.scores.filter((_, i) => i !== side));
+    const mine = state.scores[side];
+    if (sides.length < 2 || top === 0) return `Volée ${state.turn} sur ${rounds}`;
+    if (mine === others) return "À égalité avec le premier";
+    if (mine > others)
       return (
         <>
-          Pour finir : <b className="text-cyan">{route.map(dartLabel).join(" · ")}</b>
+          Tu mènes de <b className="text-cyan">{mine - others}</b>
         </>
       );
-    }
-    return "Volée en cours";
+    return (
+      <>
+        Pour passer devant : <b className="text-cyan">{others - mine + 1}</b>
+      </>
+    );
   })();
-
-  const order = rankingX01(state);
-  const leader = order[0];
-  const start = opts.start;
-  const shownScore = animScore ?? state.volleyStart;
 
   return (
     <main className="relative mx-auto h-dvh max-w-[460px] overflow-hidden bg-noir">
@@ -227,11 +203,11 @@ export function X01Game() {
         {/* Barre du haut */}
         <div className="flex min-h-6 items-center justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-gris">
           <span>
-            <b className="text-blanc">{start}</b> · {doubleOut ? "Double out" : "Fin simple"}
-            {opts.legs > 1 && ` · M${state.leg}`}
+            <b className="text-blanc">Plus gros score</b>
+            <br />
+            Volée <b className="text-blanc">{state.turn}</b>/{rounds}
           </span>
           <span className="flex items-center gap-2">
-            Tour <b className="text-blanc">{state.turn}</b>
             <button
               type="button"
               onClick={() => setView("tableau")}
@@ -243,17 +219,16 @@ export function X01Game() {
           </span>
         </div>
 
-        {/* Mini-piste : qui mène */}
+        {/* Mini-piste : qui mène (le meilleur score tout à droite) */}
         <div className="relative mt-1.5 h-[30px] shrink-0">
           <div className="absolute left-0 right-3.5 top-3.5 h-0.5 bg-filet" />
-          <div className="absolute right-0 top-1 text-[9px] font-black text-gris">0</div>
-          {state.setup.sides.map((s, i) => (
+          {sides.map((s, i) => (
             <motion.div
               key={i}
               className={`skew-18 absolute top-[5px] -ml-[11px] grid h-5 w-[22px] place-items-center text-[10px] font-black italic ${
-                i === side ? "z-10 bg-cyan text-noir" : i === leader ? "bg-blanc text-noir" : "bg-[#3a3a3a] text-blanc"
+                i === side ? "z-10 bg-cyan text-noir" : i === order[0] && top > 0 ? "bg-blanc text-noir" : "bg-[#3a3a3a] text-blanc"
               }`}
-              animate={{ left: `calc(${((start - state.scores[i]) / start) * 92}% + 11px)` }}
+              animate={{ left: `calc(${top > 0 ? (state.scores[i] / top) * 92 : 0}% + 11px)` }}
               transition={{ type: "spring", stiffness: 160, damping: 24 }}
             >
               <span className="unskew-18">{s.members.length > 1 ? s.name.slice(-1) : s.name.charAt(0)}</span>
@@ -261,9 +236,7 @@ export function X01Game() {
           ))}
         </div>
 
-        {state.setup.sides[side].members.length > 1 && (
-          <div className="mt-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-cyan">{state.setup.sides[side].name}</div>
-        )}
+        {sides[side].members.length > 1 && <div className="mt-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-cyan">{sides[side].name}</div>}
 
         {/* Joueur actif */}
         <div className="relative mt-2 h-11 shrink-0">
@@ -286,24 +259,20 @@ export function X01Game() {
           </div>
         </div>
 
-        {/* Bandeau du score */}
+        {/* Bandeau du score : il monte */}
         <div className="relative z-10 ml-1.5 mt-2 h-[104px] shrink-0">
           <div className="skew-18 absolute left-0 right-5 top-5 h-[66px] bg-cyan" />
-          <div
-            className={`absolute left-[18px] top-0 font-num text-[96px] leading-none text-noir ${state.status === "bust" ? "line-through decoration-[8px]" : ""}`}
-          >
-            {shownScore}
-          </div>
+          <div className="absolute left-[18px] top-0 font-num text-[96px] leading-none text-noir">{shownScore}</div>
           <AnimatePresence>
-            {minus && (
+            {plus && (
               <motion.div
-                key={minus.id}
+                key={plus.id}
                 className="absolute right-[30px] top-9 font-num text-[34px] text-noir"
                 initial={{ opacity: 0, y: -30 }}
                 animate={{ opacity: [0, 1, 1, 0], y: [-30, 0, 0, 0], x: [0, 0, -90, -140], scale: [1, 1, 0.9, 0.6] }}
                 transition={{ duration: 0.7, times: [0, 0.35, 0.75, 1], ease: [0.2, 0.8, 0.2, 1] }}
               >
-                {minus.text}
+                {plus.text}
               </motion.div>
             )}
           </AnimatePresence>
@@ -343,7 +312,11 @@ export function X01Game() {
             canUndo={!busy && state.history.length + state.volley.length > 0}
             onNumber={onNumber}
             onMult={onMult}
-            onUndo={onUndo}
+            onUndo={() => {
+              if (busy) return;
+              undo();
+              setMultFor(null);
+            }}
             onValidate={() => void finishVolley(state)}
           />
         </div>
@@ -363,35 +336,32 @@ export function X01Game() {
             <Tableau
               title={
                 <>
-                  <b className="text-blanc">{start}</b> · Course vers zéro
+                  <b className="text-blanc">Plus gros score</b> · Volée {state.turn}/{rounds}
                 </>
               }
               who={who}
               current={side}
-              rows={order.map((i) => ({
-                side: i,
-                name: state.setup.sides[i].name,
-                value: state.scores[i],
-                fill: (start - state.scores[i]) / start,
-                sub: `${opts.legs > 1 ? `${state.legsWon[i]} manche${state.legsWon[i] > 1 ? "s" : ""} · ` : ""}${start - state.scores[i]} points marqués`,
-              }))}
+              rows={order.map((i) => {
+                const n = state.history.filter((v) => v.side === i).length;
+                return {
+                  side: i,
+                  name: sides[i].name,
+                  value: state.scores[i],
+                  fill: top > 0 ? state.scores[i] / top : 0,
+                  sub: `${n} volée${n > 1 ? "s" : ""} sur ${rounds}${n ? ` · moyenne ${Math.round(state.scores[i] / n)}` : ""}`,
+                };
+              })}
               onClose={() => setView("saisie")}
             />
           </motion.div>
         )}
       </AnimatePresence>
 
-      <GameMenu open={menu} onClose={() => setMenu(false)} onRestart={() => restart(state.setup.firstSide)} label={String(start)} />
+      <GameMenu open={menu} onClose={() => setMenu(false)} onRestart={() => restart(state.setup.firstSide)} label="Plus gros score" />
       <Wink text={wink} />
       <Celebration spec={cele} onDone={() => celeDone.current?.()} />
 
-      {over && state.winner !== null && (
-        <FinDePartie
-          state={state}
-          onRevanche={() => restart(order[order.length - 1])}
-          onQuit={() => clearPartie()}
-        />
-      )}
+      {over && <FinHigh state={state} onRevanche={() => restart(order[order.length - 1])} onQuit={() => clearPartie()} />}
     </main>
   );
 }
@@ -414,28 +384,37 @@ function countTo(from: number, to: number, ms: number, set: (v: number) => void)
   });
 }
 
-/** Fin de partie provisoire (le podium complet et le partage arrivent à l'étape suivante). */
-function FinDePartie({ state, onRevanche, onQuit }: { state: X01State; onRevanche: () => void; onQuit: () => void }) {
-  const winner = state.setup.sides[state.winner!].name;
-  const best = bestVolley(state);
-  const order = rankingX01(state);
+function FinHigh({ state, onRevanche, onQuit }: { state: HighState; onRevanche: () => void; onQuit: () => void }) {
+  const sides = state.setup.sides;
+  const tie = state.winners.length > 1;
+  const winner = tie ? "Égalité" : sides[state.winners[0]].name;
+  const order = rankingHigh(state);
+  const best = bestHighVolley(state);
   return (
     <div className="absolute inset-0 z-50 flex flex-col bg-noir px-[18px] pb-[calc(18px+env(safe-area-inset-bottom))] pt-[calc(22px+env(safe-area-inset-top))]">
-      {/* eslint-disable-next-line @next/next/no-img-element -- logo fixe, pas besoin d'optimisation */}
+      {/* eslint-disable-next-line @next/next/no-img-element -- logo fixe */}
       <img src="/logo-a18.png" alt="Arena18" className="h-[30px] w-auto self-start" />
       <div className="mt-[18px] text-[52px] font-black uppercase italic leading-[0.86] tracking-tight">
         <span className="block whitespace-nowrap" style={{ fontSize: fitFont(winner, 52, 40) }}>
           {winner}
         </span>
-        <span className="text-cyan">gagne</span>
-        <br />
-        le {state.setup.options.start}
+        {tie ? (
+          <span className="text-[30px]">
+            au <span className="text-cyan">Plus gros score</span>
+          </span>
+        ) : (
+          <>
+            <span className="text-cyan">gagne</span>
+            <br />
+            <span className="text-[30px]">le Plus gros score</span>
+          </>
+        )}
       </div>
       <ol className="mt-6 flex flex-col">
         {order.map((s, i) => (
-          <li key={s} className="flex items-center justify-between border-t border-filet py-2.5">
-            <span className="text-lg font-black uppercase italic">
-              <span className={i === 0 ? "text-cyan" : "text-gris"}>{i + 1}</span> {state.setup.sides[s].name}
+          <li key={s} className="flex items-center justify-between gap-3 border-t border-filet py-2.5">
+            <span className="min-w-0 truncate text-lg font-black uppercase italic">
+              <span className={state.winners.includes(s) ? "text-cyan" : "text-gris"}>{i + 1}</span> {sides[s].name}
             </span>
             <span className="font-num text-2xl">{state.scores[s]}</span>
           </li>
@@ -446,7 +425,7 @@ function FinDePartie({ state, onRevanche, onQuit }: { state: X01State; onRevanch
           <div>
             <small className="block text-[9px] font-bold uppercase tracking-[0.18em] text-gris">Volée de la partie</small>
             <span className="text-[13px] font-black uppercase italic">
-              {best.member} · Tour {best.turn}
+              {best.member} · Volée {best.turn}
             </span>
           </div>
           <div className="font-num text-4xl leading-none text-chartreuse">{best.points}</div>

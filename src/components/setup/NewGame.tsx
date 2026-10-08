@@ -11,6 +11,7 @@ import { DEFAULT_X01_OPTIONS, type X01Options } from "@/engine/x01";
 import { type CricketMode, DEFAULT_CRICKET_OPTIONS } from "@/engine/cricket";
 import { DEFAULT_KILLER_OPTIONS } from "@/engine/killer";
 import { type ClockOptions, DEFAULT_CLOCK_OPTIONS } from "@/engine/clock";
+import { DEFAULT_HIGH_OPTIONS } from "@/engine/high";
 import type { Side } from "@/engine/types";
 import { GAMES, type GameInfo, estimateMinutes } from "@/lib/games";
 import { savePartie } from "@/lib/partie";
@@ -34,6 +35,7 @@ export function NewGame() {
   const [cricketMode, setCricketMode] = useState<CricketMode>(DEFAULT_CRICKET_OPTIONS.mode);
   const [lives, setLives] = useState(DEFAULT_KILLER_OPTIONS.lives);
   const [clockOpts, setClockOpts] = useState<ClockOptions>(DEFAULT_CLOCK_OPTIONS);
+  const [rounds, setRounds] = useState(DEFAULT_HIGH_OPTIONS.rounds);
 
   // Next garde cet écran en mémoire entre deux visites : on repart toujours de « Qui joue ? »,
   // en gardant les prénoms (pratique quand le même groupe enchaîne sur un autre jeu).
@@ -53,7 +55,9 @@ export function NewGame() {
       i === firstSide && firstMember ? { ...s, members: [firstMember, ...s.members.filter((m) => m !== firstMember)] } : s,
     );
     rememberNames(players.map((p) => p.name));
-    if (game.id === "clock") {
+    if (game.id === "high") {
+      savePartie({ kind: "high", setup: { sides: ordered, options: { rounds }, firstSide }, actions: [] });
+    } else if (game.id === "clock") {
       savePartie({ kind: "clock", setup: { sides: ordered, options: clockOpts, firstSide }, actions: [] });
     } else if (game.id === "killer") {
       savePartie({ kind: "killer", setup: { sides: ordered, options: { lives }, firstSide }, actions: [] });
@@ -110,6 +114,8 @@ export function NewGame() {
             setLives={setLives}
             clockOpts={clockOpts}
             setClockOpts={setClockOpts}
+            rounds={rounds}
+            setRounds={setRounds}
             onBack={() => setStep("game")}
             onNext={() => setStep("bull")}
           />
@@ -355,6 +361,8 @@ function Options({
   setLives,
   clockOpts,
   setClockOpts,
+  rounds,
+  setRounds,
   onBack,
   onNext,
 }: {
@@ -367,6 +375,8 @@ function Options({
   setLives: (n: number) => void;
   clockOpts: ClockOptions;
   setClockOpts: (o: ClockOptions) => void;
+  rounds: number;
+  setRounds: (n: number) => void;
   onBack: () => void;
   onNext: () => void;
 }) {
@@ -382,7 +392,15 @@ function Options({
         right="Réglages"
       />
       <Title numeric={game.numeric}>{game.name}</Title>
-      {game.id === "clock" ? (
+      {game.id === "high" ? (
+        <Seg
+          label="Volées"
+          value={rounds}
+          options={[3, 5, 8, 10].map((v) => ({ value: v, label: String(v) }))}
+          help={`${rounds} volées de 3 fléchettes chacun. Le plus gros total gagne.`}
+          onChange={setRounds}
+        />
+      ) : game.id === "clock" ? (
         <>
           <Seg
             label="Avance"

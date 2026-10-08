@@ -34,6 +34,6 @@ Chaque jeu est un module du moteur (voir `02-principes-ux.md`, section « Moteur
 
 | Sujet | Décision |
 |---|---|
-| Nombre de volées | **Réglable** de 3 à 10, **8 par défaut**. |
+| Nombre de volées | **Réglable** : 3, 5, 8 ou 10, **8 par défaut**. |
 | Saisie | Le **même pavé qu'au 501** (numéro d'abord, Double / Triple sans chrono) : il faut connaître chaque fléchette pour détecter les 180 et les records. |
-| Affichage | La course monte au lieu de descendre : le score grimpe dans le bandeau cyan, et la vue Tableau montre qui mène. Un compteur « Volée 5/8 » remplace le numéro de tour. |
+| Affichage | La course monte au lieu de descendre : le score grimpe dans le bandeau cyan, et la vue Tableau montre qui mène. Un compteur « Volée 5/8 » remplace le numéro de tour. La partie s'arrête toute seule après la dernière volée du dernier joueur ; égalité possible (plusieurs gagnants). |
