@@ -7,13 +7,15 @@
  * - L'accueil lit un résumé (jour ou semaine) : meilleure volée, plus gros checkout, les 180, le nombre de parties.
  * - Modération : filtre automatique (gros mots, scores impossibles) ; le reste se supprime à la main dans Supabase.
  *
- * Sans les deux clés Supabase (fichier .env.local ou réglages Vercel), l'app marche normalement, sans records.
+ * Les clés du projet Supabase « arena18-darts » sont publiques (faites pour être dans l'app) : elles sont écrites ici.
+ * On peut les remplacer par les variables NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY (Vercel ou .env.local).
+ * Ne JAMAIS mettre ici la clé « secret » ou « service_role ».
  */
 import { useCallback, useEffect, useState } from "react";
 import { readJSON, writeJSON } from "./storage";
 
-const URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://fsmwxtbcqdvqleydrjmg.supabase.co";
+const KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "sb_publishable_uqTm0HL-qfRT5Jll9mVtmw_AU3J2n4P";
 export const recordsEnabled = !!URL && !!KEY;
 
 export type RecordGame = "301" | "501" | "701" | "cricket" | "killer" | "clock" | "high";
@@ -33,7 +35,12 @@ export interface RecordsSummary {
 
 const QUEUE = "a18:records-attente";
 
-const headers = () => ({ apikey: KEY!, Authorization: `Bearer ${KEY}`, "Content-Type": "application/json" });
+// Nouvelle clé « publishable » : l'en-tête apikey suffit. Ancienne clé « anon » (un jeton eyJ…) : on l'envoie aussi en Authorization.
+const headers = (): Record<string, string> => ({
+  apikey: KEY!,
+  ...(KEY!.startsWith("eyJ") ? { Authorization: `Bearer ${KEY}` } : {}),
+  "Content-Type": "application/json",
+});
 
 /* ---------- Modération ---------- */
 
