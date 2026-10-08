@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Montserrat } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Pwa } from "@/components/Pwa";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -26,6 +27,8 @@ export const metadata: Metadata = {
   title: "A18 Darts",
   description: "Les fléchettes d'Arena18. À vous de jouer.",
   applicationName: "A18 Darts",
+  // Ajoutée à l'écran d'accueil d'un iPhone : plein écran, barre d'état sur fond noir.
+  appleWebApp: { capable: true, title: "A18 Darts", statusBarStyle: "black-translucent" },
 };
 
 export const viewport: Viewport = {
@@ -38,7 +41,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="fr" className={`${montserrat.variable} ${a18.variable} h-full`}>
-      <body className="min-h-full bg-noir text-blanc">{children}</body>
+      <body className="min-h-full bg-noir text-blanc">
+        {children}
+        <Pwa />
+      </body>
     </html>
   );
 }

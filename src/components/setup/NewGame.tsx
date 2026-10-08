@@ -15,6 +15,7 @@ import { DEFAULT_HIGH_OPTIONS } from "@/engine/high";
 import type { Side } from "@/engine/types";
 import { GAMES, type GameInfo, estimateMinutes } from "@/lib/games";
 import { savePartie } from "@/lib/partie";
+import { enterFullscreen } from "@/lib/pwa";
 import { cleanName, loadRecents, rememberNames, uniqueName } from "@/lib/recents";
 
 type Step = "players" | "game" | "options" | "bull";
@@ -51,6 +52,8 @@ export function NewGame() {
     : players.map((p) => ({ name: p.name, members: [p.name] }));
 
   const start = (firstSide: number, firstMember?: string) => {
+    // Lancement de la partie (une tape du joueur) : plein écran sur Android.
+    enterFullscreen();
     const ordered = sides.map((s, i) =>
       i === firstSide && firstMember ? { ...s, members: [firstMember, ...s.members.filter((m) => m !== firstMember)] } : s,
     );

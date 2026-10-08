@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { loadPartie, partieEnCours, partieLabel } from "@/lib/partie";
+import { enterFullscreen } from "@/lib/pwa";
 
 export function JouerButton() {
   const [resume, setResume] = useState<string | null>(null);
@@ -15,7 +16,7 @@ export function JouerButton() {
 
   return (
     <>
-    <Link href={resume ? "/partie" : "/nouvelle"} className="group relative -ml-[30px] -mr-3.5 mt-3.5 block h-[190px]" aria-label={resume ? "Reprendre la partie" : "Jouer"}>
+    <Link href={resume ? "/partie" : "/nouvelle"} onClick={resume ? enterFullscreen : undefined} className="group relative -ml-[30px] -mr-3.5 mt-3.5 block h-[190px]" aria-label={resume ? "Reprendre la partie" : "Jouer"}>
       <span className="skew-18 absolute inset-y-0 left-0 right-[26px] bg-cyan transition-transform duration-150 group-active:scale-[0.97]" />
       <span
         className={`absolute left-10 font-black italic leading-[0.82] tracking-tighter text-noir ${resume ? "top-[26px] text-[50px]" : "top-[38px] text-[78px]"}`}
