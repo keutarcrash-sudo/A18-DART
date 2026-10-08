@@ -5,7 +5,6 @@
  * sous le pouce, sans chrono. « Raté / Autre » pour les fléchettes hors 15-20 et centre.
  */
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Celebration, type CeleSpec, Wink } from "@/components/Celebration";
@@ -36,8 +35,7 @@ function dartText(d: Dart): string {
 }
 
 export function CricketGame() {
-  const router = useRouter();
-  const { loaded, state, push, setLastMult, undo, restart } = useCricketPartie();
+  const { state, push, setLastMult, undo, restart } = useCricketPartie();
   const [busy, setBusy] = useState(false);
   const [cele, setCele] = useState<CeleSpec | null>(null);
   const [wink, setWink] = useState<string | null>(null);
@@ -47,9 +45,6 @@ export function CricketGame() {
   const winkTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useWakeLock(true);
-  useEffect(() => {
-    if (loaded && !state) router.replace("/nouvelle");
-  }, [loaded, state, router]);
 
   const celebrate = useCallback(
     (spec: CeleSpec) =>

@@ -4,7 +4,7 @@
  * On ne stocke que le jeu, la configuration et la liste des actions : l'état est recalculé
  * par le moteur (replay). Annuler = retirer la dernière action.
  */
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { type Action, type Mult, undoLastDart } from "@/engine/types";
 import { type X01Setup, replayX01 } from "@/engine/x01";
 import { type CricketSetup, replayCricket } from "@/engine/cricket";
@@ -52,17 +52,25 @@ export function partieLabel(p: SavedPartie): string {
 function useGamePartie<P extends SavedPartie, S>(kind: P["kind"], replay: (setup: P["setup"], actions: Action[]) => S) {
   const [partie, setPartie] = useState<P | null>(null);
   const [loaded, setLoaded] = useState(false);
+  // Dernière version lue ou écrite : on n'écrit que ce qui a vraiment changé ici,
+  // pour ne jamais écraser une nouvelle partie avec un écran resté en mémoire.
+  const synced = useRef<P | null>(null);
 
   // Lecture au montage seulement (le stockage n'existe pas côté serveur).
   useEffect(() => {
     const p = loadPartie();
+    const mine = p && p.kind === kind ? (p as P) : null;
+    synced.current = mine;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- lecture unique du stockage du téléphone
-    setPartie(p && p.kind === kind ? (p as P) : null);
+    setPartie(mine);
     setLoaded(true);
   }, [kind]);
 
   useEffect(() => {
-    if (partie) savePartie(partie);
+    if (partie && partie !== synced.current) {
+      savePartie(partie);
+      synced.current = partie;
+    }
   }, [partie]);
 
   const state = useMemo(() => (partie ? replay(partie.setup, partie.actions) : null), [partie, replay]);

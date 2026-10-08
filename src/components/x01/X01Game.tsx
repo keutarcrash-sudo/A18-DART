@@ -4,7 +4,6 @@
  * L'interface ne connaît pas les règles : elle affiche l'état du moteur et joue ses événements.
  */
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Celebration, type CeleSpec, Wink } from "@/components/Celebration";
@@ -29,8 +28,7 @@ import { Tableau } from "./Tableau";
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export function X01Game() {
-  const router = useRouter();
-  const { loaded, state, push, setLastMult, undo, restart } = useX01Partie();
+  const { state, push, setLastMult, undo, restart } = useX01Partie();
   const [busy, setBusy] = useState(false);
   const [animScore, setAnimScore] = useState<number | null>(null);
   const [minus, setMinus] = useState<{ id: number; text: string } | null>(null);
@@ -44,10 +42,6 @@ export function X01Game() {
   const { flat, askPermission } = useFlatPhone();
 
   useWakeLock(true);
-  // Pas de partie en cours : on part créer la partie.
-  useEffect(() => {
-    if (loaded && !state) router.replace("/nouvelle");
-  }, [loaded, state, router]);
   // Téléphone posé à plat → vue Tableau ; repris en main → vue Saisie. Le bouton reste prioritaire jusqu'au prochain changement.
   const [prevFlat, setPrevFlat] = useState(flat);
   if (flat !== prevFlat) {
