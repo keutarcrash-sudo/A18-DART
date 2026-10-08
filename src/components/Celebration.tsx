@@ -6,6 +6,7 @@
  * - wink : bulle du personnage, ne bloque pas la saisie (26, trois ratés…).
  */
 import { AnimatePresence, motion } from "motion/react";
+import { fitFont } from "@/lib/fit";
 
 export type CeleSpec =
   | { level: "max"; tone: "cyan" | "chartreuse" | "bust"; kicker: string; big: string; numeric: boolean; sub?: string; slot: string }
@@ -35,8 +36,9 @@ export function Celebration({ spec, onDone }: { spec: CeleSpec | null; onDone: (
             className={
               spec.numeric
                 ? "mt-1.5 font-num text-[150px] leading-[0.9]"
-                : "mt-1.5 break-all text-[64px] font-black uppercase italic leading-[0.86] tracking-tight"
+                : "mt-1.5 whitespace-nowrap font-black uppercase italic leading-[0.9] tracking-tight"
             }
+            style={spec.numeric ? undefined : { fontSize: fitFont(spec.big, 64, 44) }}
           >
             {spec.big}
           </motion.span>

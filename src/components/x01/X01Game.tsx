@@ -20,6 +20,7 @@ import {
 } from "@/engine/x01";
 import { useFlatPhone, useWakeLock } from "@/lib/device";
 import { clearPartie, useX01Partie } from "@/lib/partie";
+import { fitFont } from "@/lib/fit";
 import { isMuted, setMuted, sounds } from "@/lib/sound";
 import { Pad } from "./Pad";
 import { Tableau } from "./Tableau";
@@ -282,7 +283,8 @@ export function X01Game() {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: -60, opacity: 0 }}
               transition={{ duration: 0.3, ease: [0.2, 0.8, 0.2, 1] }}
-              className="absolute left-0 z-10 whitespace-nowrap text-[40px] font-black uppercase italic leading-[44px] tracking-tight"
+              className="absolute bottom-0 left-0 z-10 whitespace-nowrap font-black uppercase italic leading-none tracking-tight"
+              style={{ fontSize: fitFont(who, 40, 34) }}
             >
               {who}
             </motion.div>
@@ -414,8 +416,9 @@ function FinDePartie({ state, onRevanche, onQuit }: { state: X01State; onRevanch
       {/* eslint-disable-next-line @next/next/no-img-element -- logo fixe, pas besoin d'optimisation */}
       <img src="/logo-a18.png" alt="Arena18" className="h-[30px] w-auto self-start" />
       <div className="mt-[18px] text-[52px] font-black uppercase italic leading-[0.86] tracking-tight">
-        {winner}
-        <br />
+        <span className="block whitespace-nowrap" style={{ fontSize: fitFont(winner, 52, 40) }}>
+          {winner}
+        </span>
         <span className="text-cyan">gagne</span>
         <br />
         le {state.setup.options.start}

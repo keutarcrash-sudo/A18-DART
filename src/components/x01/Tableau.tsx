@@ -1,6 +1,7 @@
 "use client";
 /** Vue Tableau (téléphone posé à plat) : la course vers zéro, « qui mène » en premier. */
 import { motion } from "motion/react";
+import { fitFont } from "@/lib/fit";
 import { type X01State, currentMember, rankingX01 } from "@/engine/x01";
 
 interface Props {
@@ -34,7 +35,9 @@ export function Tableau({ state, onClose }: Props) {
         <div className="skew-18 absolute -left-5 bottom-0 right-8 top-0 bg-cyan" />
         <div className="absolute inset-y-0 left-5 flex items-center gap-2.5 whitespace-nowrap font-black uppercase italic text-noir">
           <small className="text-[12px] tracking-[0.14em]">À toi</small>
-          <span className="text-[28px] tracking-tight">{currentMember(state)}</span>
+          <span className="tracking-tight" style={{ fontSize: fitFont(currentMember(state), 28, 130) }}>
+            {currentMember(state)}
+          </span>
         </div>
       </div>
 
