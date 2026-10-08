@@ -45,3 +45,12 @@ Bascule automatique selon la position du téléphone, plus un bouton pour forcer
 - La lisibilité du score à 2 m (taille, contraste du noir sur cyan).
 - La vue Tableau à 6 joueurs ou plus (lignes plus serrées, ou défilement ?).
 - Le dessin des chiffres sur mesure (à faire dessiner par un typographe, ou à dessiner nous-mêmes en SVG).
+
+## Évolution « pop art » (décision du client, en cours de précision)
+
+- **L'écran de jeu ne change pas** : la direction « 18° » reste la base (noir, cyan, chartreuse, angle de 18°, chiffres A18).
+- **On ajoute des touches pop art, fun et colorées** : plus d'animations, et des **célébrations pop art** (180, victoire, records…), avec des couleurs vives au-delà du cyan et du chartreuse **pendant ces moments**.
+- **Les personnages 3D (pas encore faits) seront probablement remplacés** par cet univers pop art (référence : le visuel pop art de Pierre, avec smileys et couleurs vives).
+- Au bar, derrière les deux cibles : panneaux en **OSB** (bois aggloméré) habillés de stickers.
+- **Icône de l'app** : une fléchette plantée dans le 18, sans le logo A18 (réservé à l'app de réservation d'Arena18, pour éviter toute confusion).
+- À préciser avec le visuel de Pierre : palette pop art exacte, motifs (trames de points, contours noirs, smileys…), et où ils apparaissent.

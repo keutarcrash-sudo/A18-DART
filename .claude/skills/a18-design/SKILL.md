@@ -79,6 +79,14 @@ Célébrations sur 3 niveaux, toujours passables d'une tape : **Max** (180, vict
 - **Pas de voix en V1** (le client préfère rien à une voix médiocre ; voix pro = option future VIP). Prévoir un emplacement « annonce » par événement.
 - Effets sonores **sobres** : petit son par fléchette, sons marqués pour les célébrations. Bouton muet toujours accessible.
 
+## Évolution pop art (décision client, en cours)
+
+- **Écran de saisie inchangé** : les règles ci-dessus restent la base.
+- **Célébrations et animations : touches pop art, fun et colorées.** Pendant ces moments seulement, des couleurs vives au-delà du cyan et du chartreuse sont permises (palette exacte à fixer d'après le visuel pop art de Pierre : smileys, couleurs vives). Toujours en aplats, sans néon ni dégradé.
+- **Les emplacements « Perso 3D » seront probablement remplacés** par cet univers pop art : demander au client avant de dessiner un personnage.
+- **Icône de l'app** : jamais le logo A18 (c'est celui de l'app de réservation d'Arena18). Piste retenue : une fléchette plantée dans le 18.
+- Voir `docs/04-direction-18.md`, section « Évolution pop art ».
+
 ## Interdits
 
 Néons, glow, glassmorphism, dégradés décoratifs (surtout bleu/violet), esthétique cyberpunk ou crypto, interfaces « gaming » génériques, cartes arrondies partout, ombres, **emojis**, cliparts, illustrations 3D génériques, dashboards SaaS, tout angle autre que 18°, rouge pour l'erreur, textes colorés autres que blanc / cyan (hors chartreuse pour Triple et records), timers qui pressent l'utilisateur.
