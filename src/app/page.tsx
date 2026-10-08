@@ -17,7 +17,7 @@ export default function Home() {
       <JouerButton />
 
       <p className="mt-10 max-w-[30ch] text-sm leading-relaxed text-[#bdbdbd]">
-        À Arena18, le 180 joue à domicile.
+        À l&apos;Arena18, le 180 joue à domicile.
       </p>
 
       <Records />

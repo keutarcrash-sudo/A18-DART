@@ -113,7 +113,7 @@ export function X01Game() {
       if (record) {
         beatDay(points);
         sounds.oneEighty();
-        await celebrate({ level: "max", tone: "chartreuse", kicker: "Record du jour à Arena18", big: String(points), numeric: true, sub: who, slot: "record" });
+        await celebrate({ level: "max", tone: "chartreuse", kicker: "Record du jour à l'Arena18", big: String(points), numeric: true, sub: who, slot: "record" });
       } else if (ev.has("oneEighty")) {
         sounds.oneEighty();
         await celebrate({ level: "max", tone: "cyan", kicker: who, big: "180", numeric: true, sub: "Le maximum. Rien que ça.", slot: "180" });

@@ -54,7 +54,7 @@ export function Records() {
           />
           <Row
             label={`Parties ${day ? "aujourd'hui" : "cette semaine"}`}
-            who="À Arena18"
+            who="À l'Arena18"
             value={data ? String(data.games) : wait}
             white
           />

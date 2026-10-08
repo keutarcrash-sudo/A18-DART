@@ -152,7 +152,7 @@ export function useRecordsSummary(p: Period): RecordsState {
 }
 
 /**
- * Meilleure volée du jour à Arena18, pour fêter un record battu pendant la partie.
+ * Meilleure volée du jour à l'Arena18, pour fêter un record battu pendant la partie.
  * Renvoie null tant qu'on ne sait pas (pas de réseau, pas de records) : on ne fête rien au hasard.
  */
 export function useDayBest(): { best: number | null; beat: (points: number) => void } {
