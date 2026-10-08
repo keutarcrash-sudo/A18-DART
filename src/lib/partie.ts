@@ -8,6 +8,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { type Action, type Mult, undoLastDart } from "@/engine/types";
 import { type X01Setup, replayX01 } from "@/engine/x01";
 import { type CricketSetup, replayCricket } from "@/engine/cricket";
+import { type KillerSetup, replayKiller } from "@/engine/killer";
 import { readJSON, removeKey, writeJSON } from "./storage";
 
 const KEY = "a18:partie";
@@ -24,7 +25,13 @@ export interface SavedCricket {
   actions: Action[];
 }
 
-export type SavedPartie = SavedX01 | SavedCricket;
+export interface SavedKiller {
+  kind: "killer";
+  setup: KillerSetup;
+  actions: Action[];
+}
+
+export type SavedPartie = SavedX01 | SavedCricket | SavedKiller;
 
 export function loadPartie(): SavedPartie | null {
   return readJSON<SavedPartie>(KEY);
@@ -41,12 +48,15 @@ export function clearPartie(): void {
 /** La partie enregistrée est-elle commencée et pas encore terminée ? (pour « Reprendre ») */
 export function partieEnCours(p: SavedPartie | null): boolean {
   if (!p || p.actions.length === 0) return false;
-  const st = p.kind === "cricket" ? replayCricket(p.setup, p.actions) : replayX01(p.setup, p.actions);
+  const st =
+    p.kind === "cricket" ? replayCricket(p.setup, p.actions) : p.kind === "killer" ? replayKiller(p.setup, p.actions) : replayX01(p.setup, p.actions);
   return st.status !== "match";
 }
 
 export function partieLabel(p: SavedPartie): string {
-  return p.kind === "cricket" ? "Cricket" : String(p.setup.options.start);
+  if (p.kind === "cricket") return "Cricket";
+  if (p.kind === "killer") return "Killer";
+  return String(p.setup.options.start);
 }
 
 function useGamePartie<P extends SavedPartie, S>(kind: P["kind"], replay: (setup: P["setup"], actions: Action[]) => S) {
@@ -104,4 +114,8 @@ export function useX01Partie() {
 
 export function useCricketPartie() {
   return useGamePartie<SavedCricket, ReturnType<typeof replayCricket>>("cricket", replayCricket);
+}
+
+export function useKillerPartie() {
+  return useGamePartie<SavedKiller, ReturnType<typeof replayKiller>>("killer", replayKiller);
 }

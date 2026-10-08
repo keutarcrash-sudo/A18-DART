@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { Cta, Screen, Seg, Title, TopBar } from "@/components/ui";
 import { DEFAULT_X01_OPTIONS, type X01Options } from "@/engine/x01";
 import { type CricketMode, DEFAULT_CRICKET_OPTIONS } from "@/engine/cricket";
+import { DEFAULT_KILLER_OPTIONS } from "@/engine/killer";
 import type { Side } from "@/engine/types";
 import { GAMES, type GameInfo, estimateMinutes } from "@/lib/games";
 import { savePartie } from "@/lib/partie";
@@ -30,6 +31,7 @@ export function NewGame() {
   const [game, setGame] = useState<GameInfo>(GAMES[0]);
   const [opts, setOpts] = useState<X01Options>(DEFAULT_X01_OPTIONS);
   const [cricketMode, setCricketMode] = useState<CricketMode>(DEFAULT_CRICKET_OPTIONS.mode);
+  const [lives, setLives] = useState(DEFAULT_KILLER_OPTIONS.lives);
 
   // Next garde cet écran en mémoire entre deux visites : on repart toujours de « Qui joue ? »,
   // en gardant les prénoms (pratique quand le même groupe enchaîne sur un autre jeu).
@@ -49,7 +51,9 @@ export function NewGame() {
       i === firstSide && firstMember ? { ...s, members: [firstMember, ...s.members.filter((m) => m !== firstMember)] } : s,
     );
     rememberNames(players.map((p) => p.name));
-    if (game.id === "cricket") {
+    if (game.id === "killer") {
+      savePartie({ kind: "killer", setup: { sides: ordered, options: { lives }, firstSide }, actions: [] });
+    } else if (game.id === "cricket") {
       savePartie({ kind: "cricket", setup: { sides: ordered, options: { mode: cricketMode }, firstSide }, actions: [] });
     } else {
       savePartie({
@@ -98,6 +102,8 @@ export function NewGame() {
             setOpts={setOpts}
             cricketMode={cricketMode}
             setCricketMode={setCricketMode}
+            lives={lives}
+            setLives={setLives}
             onBack={() => setStep("game")}
             onNext={() => setStep("bull")}
           />
@@ -339,6 +345,8 @@ function Options({
   setOpts,
   cricketMode,
   setCricketMode,
+  lives,
+  setLives,
   onBack,
   onNext,
 }: {
@@ -347,6 +355,8 @@ function Options({
   setOpts: (o: X01Options) => void;
   cricketMode: CricketMode;
   setCricketMode: (m: CricketMode) => void;
+  lives: number;
+  setLives: (n: number) => void;
   onBack: () => void;
   onNext: () => void;
 }) {
@@ -362,7 +372,19 @@ function Options({
         right="Réglages"
       />
       <Title numeric={game.numeric}>{game.name}</Title>
-      {game.id === "cricket" ? (
+      {game.id === "killer" ? (
+        <Seg
+          label="Vies"
+          value={lives}
+          options={[1, 2, 3, 4, 5].map((v) => ({ value: v, label: String(v) }))}
+          help={
+            lives === 1
+              ? "Une seule vie : un double et c'est fini. Partie express."
+              : `Chacun a ${lives} vies. Touche ton double pour devenir tueur, puis vise le double des autres.`
+          }
+          onChange={setLives}
+        />
+      ) : game.id === "cricket" ? (
         <Seg
           label="Règle"
           value={cricketMode}

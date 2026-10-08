@@ -28,7 +28,7 @@ Chaque jeu est un module du moteur (voir `02-principes-ux.md`, section « Moteur
 | Devenir tueur | **Règle classique** : toucher le double de son propre numéro. Ensuite, chaque double touché sur le numéro d'un adversaire lui enlève une vie. |
 | Tueur qui touche son propre double | **Il perd une vie** (règle traditionnelle). Moment « clin d'œil » idéal pour le personnage. |
 | Vies | **Réglable** de 1 à 5, **3 par défaut**. |
-| Saisie | **Les joueurs servent de pavé.** Chaque ligne affiche le prénom, son numéro (chiffres Arena18), ses vies (barres à 18°) et un badge « TUEUR » une fois le statut gagné. Une tape sur la ligne = touché ce numéro en simple, puis Double / Triple sous le pouce (sans chrono). « Raté / Autre » sous la liste. Les joueurs éliminés restent visibles, barrés. |
+| Saisie | **Les joueurs servent de pavé.** Chaque ligne affiche le prénom, son numéro (chiffres Arena18), ses vies (barres à 18°) et un badge « TUEUR » une fois le statut gagné. Seuls les doubles comptent : une tape sur la ligne = **double de ce joueur touché** (comme sur la maquette du parcours). « Raté / Autre » pour tout le reste. La revanche refait le tirage des numéros, et c'est le dernier qui commence. Les joueurs éliminés restent visibles, barrés. |
 
 ## Plus gros score
 
