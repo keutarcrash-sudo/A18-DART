@@ -37,3 +37,8 @@ Chaque jeu est un module du moteur (voir `02-principes-ux.md`, section « Moteur
 | Nombre de volées | **Réglable** : 3, 5, 8 ou 10, **8 par défaut**. |
 | Saisie | Le **même pavé qu'au 501** (numéro d'abord, Double / Triple sans chrono) : il faut connaître chaque fléchette pour détecter les 180 et les records. |
 | Affichage | La course monte au lieu de descendre : le score grimpe dans le bandeau cyan, et la vue Tableau montre qui mène. Un compteur « Volée 5/8 » remplace le numéro de tour. La partie s'arrête toute seule après la dernière volée du dernier joueur ; égalité possible (plusieurs gagnants). |
+
+## Règle commune : rien ne se termine tout seul
+
+Décision du client après une partie test : une victoire (ou un bust) n'est **jamais** déclarée automatiquement. L'app attend « Valider la volée » ; d'ici là, on peut encore corriger la dernière fléchette (Double / Triple restent affichés, Annuler aussi). Exemple : il reste 18, on tape 18 (simple, ça finirait pile), puis on corrige en Triple 18 : c'est un bust, pas une victoire. Au Tour de l'horloge, un bouton « Valider la volée » apparaît à la place de « Touché » quand le dernier numéro est atteint.
+

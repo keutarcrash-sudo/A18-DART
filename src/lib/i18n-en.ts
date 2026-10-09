@@ -147,6 +147,7 @@ export const EN: Record<string, string> = {
   "Le maximum. Rien que ça.": "The maximum. No big deal.",
   "26… le classique.": "26… the classic.",
   "Bust · trop haut": "Bust · too high",
+  "Pile ! Valide la volée.": "Spot on! Confirm the round.",
   Reste: "Left",
   "pour finir :": "to finish:",
   "Reste après la volée :": "Left after this round:",

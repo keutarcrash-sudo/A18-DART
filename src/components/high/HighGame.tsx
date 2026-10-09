@@ -146,15 +146,7 @@ export function HighGame() {
   // Annuler ou recommencer après la fin : on revient en jeu.
   if (wonShown && state && state.status !== "match") setWonShown(false);
 
-  // La dernière volée termine la partie d'elle-même (court délai pour corriger Double / Triple).
-  useEffect(() => {
-    if (!state || busy || handled.current === state || state.status !== "match") return;
-    const t = setTimeout(() => {
-      handled.current = state;
-      void finishVolley(state);
-    }, 700);
-    return () => clearTimeout(t);
-  }, [state, busy, finishVolley]);
+  // Rien ne se termine tout seul : victoire et bust attendent « Valider la volée » (on peut corriger avant).
 
   if (!state) return <div className="h-dvh bg-noir" />;
 
@@ -317,8 +309,8 @@ export function HighGame() {
         <div className="mt-auto">
           <Pad
             disabled={busy || state.status !== "open"}
-            multFor={!busy && state.status !== "match" ? multFor : null}
-            canValidate={state.status === "full" && !busy}
+            multFor={!busy ? multFor : null}
+            canValidate={(state.status === "full" || state.status === "match") && !busy && !wonShown}
             canUndo={!busy && state.history.length + state.volley.length > 0}
             onNumber={onNumber}
             onMult={onMult}

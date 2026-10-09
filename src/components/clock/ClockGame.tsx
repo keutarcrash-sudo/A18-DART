@@ -91,30 +91,27 @@ export function ClockGame() {
     return () => clearTimeout(t);
   }, [state, busy, push]);
 
-  // Victoire, après un court délai (le temps de corriger avec Annuler).
-  useEffect(() => {
+  // Victoire, confirmée par « Valider la volée » (on peut encore corriger avec Annuler avant).
+  const confirmWin = () => {
     if (!state || busy || handled.current === state || state.status !== "match") return;
-    const timer = setTimeout(() => {
-      handled.current = state;
-      const w = state.winner!;
-      submitRecords([gameEntry(state.setup.sides[w].name, "clock")]);
-      sounds.win();
-      setBusy(true);
-      void celebrate({
-        level: "max",
-        tone: "cyan",
-        kicker: t("Le tour complet · tour {n}", { n: state.winTurn ?? 0 }),
-        big: state.setup.sides[w].members.length > 1 ? state.setup.sides[w].name : currentMemberClock(state, w),
-        numeric: false,
-        sub: t("Tour de l'horloge"),
-        slot: "victoire",
-      }).then(() => {
-        setBusy(false);
-        setWonShown(true);
-      });
-    }, 700);
-    return () => clearTimeout(timer);
-  }, [state, busy, celebrate, t]);
+    handled.current = state;
+    const w = state.winner!;
+    submitRecords([gameEntry(state.setup.sides[w].name, "clock")]);
+    sounds.win();
+    setBusy(true);
+    void celebrate({
+      level: "max",
+      tone: "cyan",
+      kicker: t("Le tour complet · tour {n}", { n: state.winTurn ?? 0 }),
+      big: state.setup.sides[w].members.length > 1 ? state.setup.sides[w].name : currentMemberClock(state, w),
+      numeric: false,
+      sub: t("Tour de l'horloge"),
+      slot: "victoire",
+    }).then(() => {
+      setBusy(false);
+      setWonShown(true);
+    });
+  };
 
   if (!state) return <div className="h-dvh bg-noir" />;
 
@@ -245,7 +242,17 @@ export function ClockGame() {
 
         {/* Deux énormes boutons */}
         <div className="mt-auto flex shrink-0 flex-col gap-2 pt-3">
-          {bonus ? (
+          {state.status === "match" ? (
+            <button
+              type="button"
+              disabled={busy}
+              onClick={confirmWin}
+              style={{ "--h": "84px" } as React.CSSProperties}
+              className="btn-18 h-[84px] bg-blanc text-[24px] font-black uppercase italic text-noir active:bg-cyan disabled:opacity-40"
+            >
+              {t("Valider la volée")}
+            </button>
+          ) : bonus ? (
             <div className={`grid gap-2 ${target === 25 ? "grid-cols-2" : "grid-cols-3"}`} style={{ "--h": "84px" } as React.CSSProperties}>
               <button
                 type="button"

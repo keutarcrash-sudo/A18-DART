@@ -7,7 +7,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Celebration, type CeleSpec, Wink, celeDuration } from "@/components/Celebration";
-import type { Dart, Mult } from "@/engine/types";
+import { type Dart, type Mult } from "@/engine/types";
 import {
   CRICKET_NUMBERS,
   type CricketEvent,
@@ -142,15 +142,7 @@ export function CricketGame() {
   // Annuler ou recommencer après une victoire : on revient en jeu.
   if (wonShown && state && state.status !== "match") setWonShown(false);
 
-  // La victoire termine la volée d'elle-même (court délai pour corriger Double / Triple).
-  useEffect(() => {
-    if (!state || busy || handled.current === state || state.status !== "match") return;
-    const t = setTimeout(() => {
-      handled.current = state;
-      void finishVolley(state);
-    }, 700);
-    return () => clearTimeout(t);
-  }, [state, busy, finishVolley]);
+  // Rien ne se termine tout seul : victoire et bust attendent « Valider la volée » (on peut corriger avant).
 
   if (!state) return <div className="h-dvh bg-noir" />;
 
@@ -303,7 +295,7 @@ export function CricketGame() {
             >
               {t("ANNULER")}
             </button>
-            {multFor !== null && !busy && state.status !== "match" && (
+            {multFor !== null && !busy && (
               // Au-dessus des boutons, par-dessus la rangée des 3 fléchettes : RATÉ / AUTRE et ANNULER restent accessibles.
               <div className={`absolute inset-x-0 bottom-[calc(100%+5px)] grid h-[50px] gap-[5px] bg-noir ${multFor === 25 ? "grid-cols-1" : "grid-cols-2"}`}>
                 <button type="button" onClick={() => onMult(2)} className="h-[50px] bg-cyan text-[15px] font-black italic text-noir active:bg-blanc">
@@ -319,7 +311,7 @@ export function CricketGame() {
           </div>
           <button
             type="button"
-            disabled={state.status !== "full" || busy}
+            disabled={(state.status !== "full" && state.status !== "match") || busy || wonShown}
             onClick={() => void finishVolley(state)}
             style={{ "--h": "56px" } as React.CSSProperties}
             className="btn-18 h-14 bg-blanc text-[17px] font-black uppercase italic text-noir active:bg-cyan disabled:bg-case disabled:text-gris-2"

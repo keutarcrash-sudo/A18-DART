@@ -55,3 +55,9 @@ export function undoLastDart(actions: Action[]): Action[] {
   if (out.length) out.pop();
   return out;
 }
+
+/** Fléchette encore « modifiable » en Double / Triple : un simple de 1 à 20 (le bull et les ratés ne le sont pas). */
+export function canUpgrade(d: Dart | undefined): boolean {
+  return !!d && d.m === 1 && d.n >= 1 && d.n <= 20;
+}
+

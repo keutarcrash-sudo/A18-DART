@@ -164,16 +164,7 @@ export function X01Game() {
   // Annuler ou recommencer après une victoire : on revient en jeu.
   if (wonShown && state && state.status !== "match") setWonShown(false);
 
-  // Victoire et bust terminent la volée d'eux-mêmes (après un court délai pour pouvoir corriger Double / Triple).
-  useEffect(() => {
-    if (!state || busy || handled.current === state) return;
-    if (state.status !== "bust" && state.status !== "leg" && state.status !== "match") return;
-    const t = setTimeout(() => {
-      handled.current = state;
-      void finishVolley(state);
-    }, 700);
-    return () => clearTimeout(t);
-  }, [state, busy, finishVolley]);
+  // Rien ne se termine tout seul : victoire et bust attendent « Valider la volée » (on peut corriger avant).
 
   if (!state) return <div className="h-dvh bg-noir" />;
 
@@ -212,6 +203,7 @@ export function X01Game() {
     if (state.volley.length) {
       const rest = state.volleyStart - points;
       if (state.status === "bust") return <b>{t("Bust · trop haut")}</b>;
+      if (state.status === "leg" || state.status === "match") return <b className="text-cyan">{t("Pile ! Valide la volée.")}</b>;
       // Encore des fléchettes à lancer : on redonne le chemin pour finir avec celles qui restent.
       const left = 3 - state.volley.length;
       const next = state.status === "open" && state.opened[side] && rest <= 170 ? suggestCheckout(rest, opts.finish, left) : null;
@@ -358,8 +350,8 @@ export function X01Game() {
         <div className="mt-auto">
           <Pad
             disabled={busy || state.status !== "open"}
-            multFor={!busy && state.status !== "match" ? multFor : null}
-            canValidate={state.status === "full" && !busy}
+            multFor={!busy ? multFor : null}
+            canValidate={state.status !== "open" && !busy && !wonShown}
             canUndo={!busy && state.history.length + state.volley.length > 0}
             onNumber={onNumber}
             onMult={onMult}

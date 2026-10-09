@@ -88,30 +88,27 @@ export function KillerGame() {
   // Annuler ou recommencer après une victoire : on revient en jeu.
   if (wonShown && state && state.status !== "match") setWonShown(false);
 
-  // Victoire : le dernier en vie, après un court délai (le temps de corriger avec Annuler).
-  useEffect(() => {
+  // Victoire : le dernier en vie, confirmée par « Valider la volée » (on peut encore corriger avant).
+  const confirmWin = () => {
     if (!state || busy || handled.current === state || state.status !== "match") return;
-    const timer = setTimeout(() => {
-      handled.current = state;
-      const w = state.winner!;
-      submitRecords([gameEntry(state.setup.sides[w].name, "killer")]);
-      sounds.win();
-      setBusy(true);
-      void celebrate({
-        level: "max",
-        tone: "cyan",
-        kicker: t("Dernier debout"),
-        big: state.setup.sides[w].members.length > 1 ? state.setup.sides[w].name : currentMemberKiller(state, w),
-        numeric: false,
-        sub: "Killer",
-        slot: "victoire",
-      }).then(() => {
-        setBusy(false);
-        setWonShown(true);
-      });
-    }, 700);
-    return () => clearTimeout(timer);
-  }, [state, busy, celebrate, t]);
+    handled.current = state;
+    const w = state.winner!;
+    submitRecords([gameEntry(state.setup.sides[w].name, "killer")]);
+    sounds.win();
+    setBusy(true);
+    void celebrate({
+      level: "max",
+      tone: "cyan",
+      kicker: t("Dernier debout"),
+      big: state.setup.sides[w].members.length > 1 ? state.setup.sides[w].name : currentMemberKiller(state, w),
+      numeric: false,
+      sub: "Killer",
+      slot: "victoire",
+    }).then(() => {
+      setBusy(false);
+      setWonShown(true);
+    });
+  };
 
   if (!state) return <div className="h-dvh bg-noir" />;
 
@@ -172,6 +169,7 @@ export function KillerGame() {
   };
 
   const finishVolley = async () => {
+    if (state.status === "match") return confirmWin();
     if (busy || state.status !== "full") return;
     sounds.validate();
     // « Raté / Autre » peut être un simple ou un autre numéro : simple bulle, pas de fléchettes dans le bois.
@@ -438,7 +436,7 @@ function Board({
         </div>
         <button
           type="button"
-          disabled={state.status !== "full" || busy}
+          disabled={(state.status !== "full" && state.status !== "match") || busy}
           onClick={onValidate}
           style={{ "--h": "56px" } as React.CSSProperties}
           className="btn-18 h-14 bg-blanc text-[17px] font-black uppercase italic text-noir active:bg-cyan disabled:bg-case disabled:text-gris-2"
