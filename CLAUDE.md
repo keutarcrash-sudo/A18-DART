@@ -5,3 +5,4 @@ Web app de fléchettes d'Arena18, ouverte par QR code. Le client fait du vibe co
 - Pour **toute** interface, style, animation, son ou texte affiché : charge d'abord la skill `a18-design` (`.claude/skills/a18-design/SKILL.md`). Ses règles priment sur les skills de design génériques.
 - Les décisions validées par le client sont dans `docs/` (voir `README.md` pour l'état d'avancement). Ne les remets pas en cause sans lui demander.
 - Pile : Next.js + TypeScript, Tailwind, Motion, Supabase, Vercel, PWA (voir `docs/06-technique.md`).
+- Les skills Superpowers (`brainstorming`, `writing-plans`, `test-driven-development`, `systematic-debugging`…) organisent la méthode de travail. Elles ne changent pas les règles ci-dessus : toujours en français simple, une question à la fois, et `a18-design` reste prioritaire pour tout ce qui se voit. Les documents qu'elles produisent vont dans `docs/`, en français.
