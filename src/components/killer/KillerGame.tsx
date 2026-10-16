@@ -7,7 +7,8 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Celebration, type CeleSpec, Wink, celeDuration } from "@/components/Celebration";
-import { GameMenu, MenuButton } from "@/components/GameMenu";
+import { GameMenu } from "@/components/GameMenu";
+import { POP_PILL } from "@/components/x01/Volley";
 import type { Action, Dart } from "@/engine/types";
 import {
   type KillerEvent,
@@ -110,7 +111,7 @@ export function KillerGame() {
     });
   };
 
-  if (!state) return <div className="h-dvh bg-noir" />;
+  if (!state) return <div className="h-dvh bg-creme" />;
 
   const sides = state.setup.sides;
   const name = (i: number) => (sides[i].members.length > 1 ? sides[i].name : sides[i].members[0]);
@@ -182,7 +183,7 @@ export function KillerGame() {
   const nothingToUndo = state.numbers.every((n) => !n);
 
   return (
-    <main className="relative mx-auto h-dvh max-w-[460px] overflow-hidden bg-noir">
+    <main className="relative mx-auto h-dvh max-w-[460px] overflow-hidden bg-creme text-encre">
       {state.status === "numbers" ? (
         <Numbers state={state} onPick={(n) => void play({ n, m: 1 })} onUndo={undo} canUndo={!nothingToUndo} onMenu={() => setMenu(true)} />
       ) : (
@@ -201,6 +202,9 @@ export function KillerGame() {
 }
 
 /* ---------- Main faible : on attribue les numéros ---------- */
+
+const PAD_PAD =
+  "px-4 pb-[calc(12px+env(safe-area-inset-bottom))] pt-[calc(12px+env(safe-area-inset-top))] [@media(max-height:700px)]:pb-[calc(8px+env(safe-area-inset-bottom))] [@media(max-height:700px)]:pt-[calc(8px+env(safe-area-inset-top))]";
 
 function Numbers({
   state,
@@ -223,23 +227,23 @@ function Numbers({
   const owner = (n: number) => state.numbers.indexOf(n);
 
   return (
-    <div className="flex h-full flex-col px-3.5 pb-[calc(14px+env(safe-area-inset-bottom))] pt-[calc(18px+env(safe-area-inset-top))]">
-      <div className="flex min-h-6 items-center justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-gris">
-        <span>
-          <b className="text-blanc">Killer</b> · {t("Les numéros")}
-        </span>
-        <span className="flex items-center gap-2">
-          <span>
-            <b className="text-blanc">{done + 1}</b>/{total}
-          </span>
-          <MenuButton onClick={onMenu} />
-        </span>
+    <div className={`flex h-full flex-col ${PAD_PAD}`}>
+      <div className="flex shrink-0 items-center justify-between gap-2">
+        <div className="min-w-0 leading-tight">
+          <div className="truncate font-display text-[20px] font-black">Killer</div>
+          <div className="truncate text-[11px] font-bold uppercase tracking-[0.08em] text-attenue">
+            {t("Les numéros")} · {done + 1}/{total}
+          </div>
+        </div>
+        <button type="button" onClick={onMenu} className={POP_PILL}>
+          {t("MENU")}
+        </button>
       </div>
 
-      <h1 className="mt-4 text-[44px] font-black uppercase italic leading-[0.9] tracking-tight">
+      <h1 className="mt-3 font-display text-[44px] font-black uppercase leading-[0.92] tracking-tight [@media(max-height:700px)]:mt-2 [@media(max-height:700px)]:text-[38px]">
         {t("Main")}
         <br />
-        {t("faible !")}
+        <span className="mt-1 inline-block rounded-lg bg-ambre px-1.5">{t("faible !")}</span>
       </h1>
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.p
@@ -247,28 +251,31 @@ function Numbers({
           initial={{ x: 40, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: -40, opacity: 0 }}
-          transition={{ duration: 0.25, ease: [0.2, 0.8, 0.2, 1] }}
-          className="mt-2 text-[13px] leading-normal text-[#bdbdbd]"
+          transition={{ duration: 0.25, ease: [0.34, 1.56, 0.64, 1] }}
+          className="mt-3 text-[14px] font-medium leading-snug [@media(max-height:700px)]:mt-2 [@media(max-height:700px)]:text-[13px]"
         >
-          <b className="font-black uppercase italic text-cyan">{who}</b>, {t("lance une fléchette de ta main faible, puis touche le numéro obtenu.")}
+          <b className="font-display font-black uppercase text-violet">{who}</b>, {t("lance une fléchette de ta main faible, puis touche le numéro obtenu.")}
         </motion.p>
       </AnimatePresence>
 
-      <div className="mt-4 grid grid-cols-5 gap-1.5">
+      <div className="mt-3 grid grid-cols-5 gap-2 [@media(max-height:700px)]:mt-2 [@media(max-height:700px)]:gap-1.5">
         {Array.from({ length: 20 }, (_, k) => k + 1).map((n) => {
           const o = owner(n);
+          const taken = o >= 0;
           return (
             <button
               key={n}
               type="button"
-              disabled={o >= 0}
+              disabled={taken}
               onClick={() => onPick(n)}
-              aria-label={o >= 0 ? t("{n}, déjà pris par {name}", { n, name: state.setup.sides[o].name }) : t("Numéro {n}", { n })}
-              className="relative grid h-[52px] place-items-center bg-case active:bg-blanc active:text-noir disabled:bg-transparent disabled:outline disabled:outline-[1.5px] disabled:-outline-offset-[1.5px] disabled:outline-filet"
+              aria-label={taken ? t("{n}, déjà pris par {name}", { n, name: state.setup.sides[o].name }) : t("Numéro {n}", { n })}
+              className={`pad-key relative grid h-[54px] place-items-center rounded-2xl border-2 [@media(max-height:700px)]:h-[48px] ${
+                taken ? "border-bord bg-muted text-attenue" : "pop-press pop-shadow-sm border-encre bg-carte text-encre"
+              }`}
             >
-              <span className={`font-num text-[24px] leading-none ${o >= 0 ? "text-gris-2" : ""}`}>{n}</span>
-              {o >= 0 && (
-                <span className="absolute inset-x-1 bottom-1 truncate text-center text-[8px] font-black uppercase italic text-gris">
+              <span className={`font-num text-[24px] font-black leading-none ${taken ? "-translate-y-1" : ""}`}>{n}</span>
+              {taken && (
+                <span className="absolute inset-x-1 bottom-[3px] truncate text-center font-display text-[9px] font-extrabold uppercase text-attenue">
                   {state.setup.sides[o].name}
                 </span>
               )}
@@ -276,14 +283,14 @@ function Numbers({
           );
         })}
       </div>
-      <p className="mt-3 text-center text-[10px] font-bold uppercase tracking-[0.16em] text-gris">{t("Hors cible ou numéro déjà pris : on relance")}</p>
+      <p className="mt-3 text-center text-[11px] font-bold uppercase tracking-[0.1em] text-attenue [@media(max-height:700px)]:mt-2">{t("Hors cible ou numéro déjà pris : on relance")}</p>
 
       <div className="mt-auto pt-2.5">
         <button
           type="button"
           disabled={!canUndo}
           onClick={onUndo}
-          className="h-[46px] w-full border-[1.5px] border-[#3a3a3a] text-[12px] font-black tracking-wide text-[#cfcfcf] active:bg-case disabled:opacity-30"
+          className="pad-key pop-press h-[46px] w-full rounded-xl border-2 border-dashed border-encre bg-transparent font-display text-[13px] font-black tracking-wide text-encre disabled:opacity-40"
         >
           {t("ANNULER")}
         </button>
@@ -293,6 +300,15 @@ function Numbers({
 }
 
 /* ---------- La partie : les joueurs sont le pavé ---------- */
+
+/** Étoile ambre du badge TUEUR (dessin, pas un emoji). */
+function Star() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 shrink-0" aria-hidden="true">
+      <path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z" fill="var(--color-ambre)" stroke="var(--color-encre)" strokeWidth="2" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
 function Board({
   state,
@@ -319,54 +335,64 @@ function Board({
   const amKiller = state.killer[side];
   const team = state.setup.sides[side].members.length > 1;
   const canThrow = !busy && state.status === "open";
+  const many = state.setup.sides.length > 5;
 
   return (
-    <div className="flex h-full flex-col px-3.5 pb-[calc(14px+env(safe-area-inset-bottom))] pt-[calc(18px+env(safe-area-inset-top))]">
-      <div className="flex min-h-6 items-center justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-gris">
-        <span>
-          <b className="text-blanc">Killer</b> · {t(lives > 1 ? "{n} vies" : "{n} vie", { n: lives })}
-        </span>
-        <span className="flex items-center gap-2">
-          {t("Tour")} <b className="text-blanc">{state.turn}</b>
-          <MenuButton onClick={onMenu} />
-        </span>
+    <div className={`flex h-full flex-col ${PAD_PAD}`}>
+      <div className="flex shrink-0 items-center justify-between gap-2">
+        <div className="min-w-0 leading-tight">
+          <div className="flex min-w-0 items-baseline gap-2">
+            <span className="truncate font-display text-[20px] font-black">Killer</span>
+            {team && <span className="truncate text-[12px] font-extrabold uppercase tracking-[0.1em] text-violet">{state.setup.sides[side].name}</span>}
+          </div>
+          <div className="truncate text-[11px] font-bold uppercase tracking-[0.08em] text-attenue">
+            {t(lives > 1 ? "{n} vies" : "{n} vie", { n: lives })} · {t("Tour")} {state.turn}
+          </div>
+        </div>
+        <button type="button" onClick={onMenu} className={POP_PILL}>
+          {t("MENU")}
+        </button>
       </div>
 
-      {team && <div className="mt-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-cyan">{state.setup.sides[side].name}</div>}
-
-      <div className="mt-2 h-10 shrink-0">
+      {/* Qui joue et ce qu'il doit viser */}
+      <div className="mt-2 flex h-[42px] shrink-0 items-center gap-3 overflow-hidden [@media(max-height:700px)]:mt-1 [@media(max-height:700px)]:h-[36px]">
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.div
             key={`${side}-${who}`}
-            initial={{ x: 50, opacity: 0 }}
+            initial={{ x: 40, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            exit={{ x: -50, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.2, 0.8, 0.2, 1] }}
-            className="whitespace-nowrap font-black uppercase italic leading-[40px] tracking-tight"
-            style={{ fontSize: fitFont(who, 40, 30) }}
+            exit={{ x: -40, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.34, 1.56, 0.64, 1] }}
+            className="max-w-[55%] shrink-0 truncate whitespace-nowrap font-display font-black uppercase leading-none tracking-tight"
+            style={{ fontSize: fitFont(who, 30, 190) }}
           >
             {who}
           </motion.div>
         </AnimatePresence>
-      </div>
-      <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.16em] text-gris">
-        {amKiller ? (
-          <>
-            <b className="text-cyan">{t("Tueur")}</b> · {t("vise le double des autres")}
-          </>
-        ) : (
-          <>
-            {t("Vise ton")} <b className="text-cyan">{t("double {n}", { n: state.numbers[side] })}</b> {t("pour devenir tueur")}
-          </>
-        )}
+        <div className="min-w-0 flex-1 text-[12px] font-bold leading-tight text-attenue">
+          {amKiller ? (
+            <>
+              <b className="font-display font-black uppercase text-violet">{t("Tueur")}</b> · {t("vise le double des autres")}
+            </>
+          ) : (
+            <>
+              {t("Vise ton")} <b className="font-display font-black text-violet">{t("double {n}", { n: state.numbers[side] })}</b> {t("pour devenir tueur")}
+            </>
+          )}
+        </div>
       </div>
 
       {/* Les joueurs = le pavé */}
-      <div className="mt-2.5 flex min-h-0 flex-1 flex-col gap-1">
+      <div className="mt-2 flex min-h-0 flex-1 flex-col gap-1.5 pr-[3px] [@media(max-height:700px)]:gap-[5px]">
         {state.setup.sides.map((s, i) => {
           const dead = isOut(state, i);
           const active = i === side;
           const num = state.numbers[i];
+          const tone = dead
+            ? "border-bord bg-muted text-attenue"
+            : active
+              ? "pop-shadow-sm border-encre bg-violet text-white"
+              : "pop-shadow-sm border-encre bg-carte text-encre";
           return (
             <button
               key={i}
@@ -374,54 +400,74 @@ function Board({
               disabled={!canThrow || dead}
               onClick={() => onPlay({ n: num, m: 2 })}
               aria-label={t("Double {n} touché · {name}", { n: num, name: name(i) })}
-              className={`flex max-h-[56px] min-h-[40px] flex-1 items-stretch text-left outline-offset-[-1.5px] active:bg-[#303030] ${
-                active ? "bg-case outline outline-[1.5px] outline-cyan" : "bg-case"
-              } ${dead ? "opacity-35" : ""}`}
+              className={`pad-key ${dead ? "" : "pop-press"} flex max-h-[60px] min-h-[46px] flex-1 items-center gap-2.5 rounded-2xl border-2 px-2 text-left ${tone}`}
             >
-              <span className={`grid w-[52px] shrink-0 place-items-center font-num text-[26px] ${active ? "bg-cyan text-noir" : "bg-[#2c2c2c]"}`}>
+              <span
+                className={`grid h-[34px] w-[34px] shrink-0 place-items-center rounded-full border-2 font-num text-[18px] font-black leading-none ${
+                  dead ? "border-attenue bg-transparent text-attenue" : active ? "border-encre bg-white text-encre" : "border-encre bg-muted text-encre"
+                }`}
+              >
                 {num}
               </span>
-              <span className="flex min-w-0 flex-1 items-center gap-2 px-3">
-                <span className={`min-w-0 truncate text-[17px] font-black uppercase italic ${dead ? "line-through decoration-2" : ""}`}>{name(i)}</span>
+              <span className="flex min-w-0 flex-1 items-center gap-2">
+                <span className={`min-w-0 truncate font-display text-[17px] font-black uppercase ${dead ? "line-through decoration-2" : ""}`}>{name(i)}</span>
                 {state.killer[i] && !dead && (
-                  <span className="shrink-0 bg-blanc px-1.5 py-0.5 text-[9px] font-black uppercase tracking-[0.12em] text-noir">{t("Tueur")}</span>
+                  <span className="flex shrink-0 items-center gap-1 rounded-full border-2 border-encre bg-ambre py-px pl-1 pr-1.5 font-display text-[10px] font-black uppercase tracking-[0.06em] text-encre">
+                    <Star />
+                    {t("Tueur")}
+                  </span>
                 )}
               </span>
-              <span className="flex shrink-0 items-center gap-[3px] pr-3" aria-label={t(state.lives[i] > 1 ? "{n} vies" : "{n} vie", { n: state.lives[i] })}>
-                {Array.from({ length: lives }, (_, q) => (
-                  <i
-                    key={q}
-                    className={`skew-18 block h-[18px] w-[7px] transition-colors duration-300 ${q < state.lives[i] ? "bg-blanc" : "bg-[#3a3a3a]"}`}
-                  />
-                ))}
+              <span className={`flex shrink-0 items-center ${lives > 3 ? "gap-[3px]" : "gap-1"} pr-1`} aria-label={t(state.lives[i] > 1 ? "{n} vies" : "{n} vie", { n: state.lives[i] })}>
+                {Array.from({ length: lives }, (_, q) => {
+                  const full = !dead && q < state.lives[i];
+                  const dot = full
+                    ? active
+                      ? "border-encre bg-white"
+                      : "border-encre bg-rose"
+                    : dead
+                      ? "border-attenue bg-transparent"
+                      : active
+                        ? "border-white bg-transparent"
+                        : "border-attenue bg-transparent";
+                  return <i key={q} className={`block rounded-full border-2 transition-colors duration-300 ${many || lives > 3 ? "h-[14px] w-[14px]" : "h-[18px] w-[18px]"} ${dot}`} />;
+                })}
               </span>
             </button>
           );
         })}
       </div>
-      <p className="mt-2 text-[11px] leading-snug text-gris">{t("Seuls les doubles comptent. Touche le joueur dont tu as touché le double, toi compris.")}</p>
+      <p className="mt-2 text-[11px] font-medium leading-snug text-attenue [@media(max-height:700px)]:hidden">
+        {t("Seuls les doubles comptent. Touche le joueur dont tu as touché le double, toi compris.")}
+      </p>
 
-      {/* Les 3 fléchettes de la volée */}
-      <div className="mx-1 mt-2 grid h-[40px] shrink-0 grid-cols-3 gap-2">
-        {[0, 1, 2].map((k) => {
-          const dt = state.volley[k];
-          const tone = !dt ? "border-[#3a3a3a]" : dt.m === 2 && dt.n ? "border-cyan bg-cyan" : "border-blanc";
-          const txt = !dt ? "text-gris-2" : dt.m === 2 && dt.n ? "text-noir" : "text-blanc";
-          return (
-            <div key={k} className={`skew-18 grid place-items-center border-[1.5px] ${tone}`}>
-              <span className={`unskew-18 font-num text-[19px] ${txt}`}>{dt ? dartText(dt) : "—"}</span>
-            </div>
-          );
-        })}
-      </div>
+      <div className="mt-auto flex shrink-0 flex-col gap-[6px] pt-2 [@media(max-height:700px)]:gap-[5px] [@media(max-height:700px)]:pt-1.5">
+        {/* Les 3 fléchettes de la volée */}
+        <div className="grid h-11 grid-cols-3 gap-2 [@media(max-height:700px)]:h-10">
+          {[0, 1, 2].map((k) => {
+            const dt = state.volley[k];
+            if (!dt) {
+              return (
+                <div key={`${k}-x`} className="grid h-11 place-items-center rounded-[14px] border-2 border-dashed border-attenue/40 font-display text-[18px] font-extrabold text-attenue/60 [@media(max-height:700px)]:h-10">
+                  {k + 1}
+                </div>
+              );
+            }
+            const tone = dt.m === 2 && dt.n ? "bg-ambre" : "bg-carte";
+            return (
+              <div key={k} className={`grid h-11 place-items-center rounded-[14px] border-2 border-encre font-display text-[18px] font-extrabold shadow-[3px_3px_0_0_var(--color-encre)] [@media(max-height:700px)]:h-10 ${tone}`}>
+                {dartText(dt)}
+              </div>
+            );
+          })}
+        </div>
 
-      <div className="flex shrink-0 flex-col gap-[5px] pt-2.5">
-        <div className="grid grid-cols-[2fr_1fr] gap-[5px]">
+        <div className="grid grid-cols-[2fr_1fr] gap-[6px]">
           <button
             type="button"
             disabled={!canThrow}
             onClick={() => onPlay({ n: 0, m: 1 })}
-            className="h-[46px] bg-case text-[12px] font-black tracking-wide active:bg-blanc active:text-noir disabled:opacity-40"
+            className="pad-key pop-press pop-shadow-sm h-[46px] rounded-xl border-2 border-encre bg-muted font-display text-[12px] font-black tracking-wide text-encre disabled:opacity-40"
           >
             {t("RATÉ / AUTRE")}
           </button>
@@ -429,7 +475,7 @@ function Board({
             type="button"
             disabled={busy}
             onClick={onUndo}
-            className="h-[46px] border-[1.5px] border-[#3a3a3a] text-[12px] font-black tracking-wide text-[#cfcfcf] active:bg-case disabled:opacity-30"
+            className="pad-key pop-press h-[46px] rounded-xl border-2 border-dashed border-encre bg-transparent font-display text-[12px] font-black tracking-wide text-encre disabled:opacity-40"
           >
             {t("ANNULER")}
           </button>
@@ -438,8 +484,7 @@ function Board({
           type="button"
           disabled={(state.status !== "full" && state.status !== "match") || busy}
           onClick={onValidate}
-          style={{ "--h": "56px" } as React.CSSProperties}
-          className="btn-18 h-14 bg-blanc text-[17px] font-black uppercase italic text-noir active:bg-cyan disabled:bg-case disabled:text-gris-2"
+          className="pad-key pop-press pop-shadow h-14 rounded-2xl border-2 border-encre bg-violet font-display text-[17px] font-black uppercase text-white disabled:bg-muted disabled:text-attenue disabled:opacity-100 disabled:shadow-none"
         >
           {t("Valider la volée")}
         </button>
