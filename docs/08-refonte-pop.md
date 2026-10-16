@@ -80,6 +80,7 @@ Elles remplacent **partout** la mascotte smiley actuelle (`Mascot` dans `src/com
 
 - Police des titres et des chiffres : **Outfit** (800–900, chiffres tabulaires) ; texte courant : **Plus Jakarta Sans**. Via `next/font/google`.
 - Logo provisoire en haut d'accueil : petite cible dans un carré ambre + « A18 Darts », en attendant l'icône pop art finale.
+- Icône de l'app (écran d'accueil du téléphone, onglet du navigateur) : cible pop sur fond violet avec la fléchette au centre, fournie par le client (octobre 2026). Sources dans `docs/icone/` (`source-pop.webp`, `icone-pop-1024.png`).
 - La skill `a18-design` est **réécrite** avec ces règles (elle reste la skill prioritaire de l'app) ; l'ancienne direction « 18° » reste dans `docs/04-direction-18.md` comme archive.
 - Position exacte des fléchettes dans une zone : un peu au hasard dans la bonne case, pour faire vrai.
 - Ordre des travaux, découpage en étapes, composants à créer.

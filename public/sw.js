@@ -6,7 +6,7 @@
  * - Avec du réseau, il prend toujours la version en ligne d'abord et rafraîchit sa copie : pas de vieille version bloquée.
  * - Il ne touche jamais aux records (Supabase) : ils ont leur propre file d'attente sur le téléphone.
  */
-const CACHE = "a18-darts-v2";
+const CACHE = "a18-darts-v3";
 const PAGES = ["/", "/nouvelle", "/partie"];
 const FILES = ["/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png"];
 const MAX_ENTRIES = 400;
