@@ -20,7 +20,6 @@ Succès = en ouvrant l'app au bar, on a envie de sourire avant même de lancer u
 ## Non-objectifs
 
 - Changer les règles, le moteur, les options de partie, la sauvegarde, les records, la PWA, la langue.
-- Refaire les **scènes animées** des célébrations (fléchette qui déchire l'écran, cible qui se brise, ton-up, numéro fermé, trois ratés) : elles restent telles quelles. Le client y reviendra plus tard.
 - Adapter les têtes au visuel de Pierre : on le fera quand il l'enverra (voir « Plus tard »).
 
 ## Anti-objectifs (ce qui serait un échec même si ça marche)
@@ -32,7 +31,7 @@ Succès = en ouvrant l'app au bar, on a envie de sourire avant même de lancer u
 
 ## Décisions du client
 
-1. **Refonte complète**, écran de jeu compris. On ne garde de l'existant que **les animations** (scènes de célébration).
+1. **Refonte complète**, écran de jeu compris, **animations comprises**.
 2. **Abandonnés** : fond noir, cyan et chartreuse, angle unique de 18°, chiffres « A18 Élan Gras », logo A18 en haut d'écran.
 3. **Style Playful Geometric**, comme dans les maquettes : fond crème `#FFFDF5`, encre `#1E293B`, violet `#8B5CF6` (actions principales), rose `#F472B6`, ambre `#FBBF24`, menthe `#34D399` ; contours noirs épais ; ombres dures décalées sans flou ; formes qui flottent en fond ; boutons qui se soulèvent et s'enfoncent.
 4. **Têtes déjantées** (validées toutes les huit, « Mort de rire » corrigé : tête jaune, yeux plissés, larmes bleu clair qui giclent). Le bleu clair `#7DD3FC` est autorisé **uniquement** pour ces larmes.
@@ -41,7 +40,8 @@ Succès = en ouvrant l'app au bar, on a envie de sourire avant même de lancer u
    - si on peut finir **en une fléchette**, **toutes** les façons de le faire s'allument (ex. reste 2 en sortie simple : le 2 et le Double 1 ; en sortie double : le Double 1 seul) ;
    - sinon, seul le **chemin conseillé** s'allume (ex. reste 100 : Triple 20 puis Double 20), recalculé après chaque fléchette ;
    - la surbrillance est jaune ambre et pulse doucement, **sur la cible et sur le pavé** (pastille D / T sur la touche).
-7. Toujours valables : **rien ne se termine tout seul** (victoire et bust attendent « Valider la volée »), Annuler toujours visible, Double / Triple au-dessus du pavé sans cacher de touche, pas d'initiales remplacées par des têtes sur le podium (les initiales restent, les têtes décorent autour).
+7. **Scènes animées : mêmes histoires, redessinées dans le nouveau style.** La fléchette qui déchire l'écran et se plante dans le bull, la cible qui se brise sur un bust, la fléchette enflammée du ton-up, le cadenas du numéro fermé, les trois ratés dans le panneau en bois : même déroulé et même durée qu'aujourd'hui, mais dessinés en Playful Geometric (fond crème ou aplats de la palette, contours noirs épais, ombres dures, confettis géométriques) et avec la tête du moment à la place du smiley. Le bandeau de niveau moyen et la bulle de clin d'œil suivent le même style.
+8. Toujours valables : **rien ne se termine tout seul** (victoire et bust attendent « Valider la volée »), Annuler toujours visible, Double / Triple au-dessus du pavé sans cacher de touche, pas d'initiales remplacées par des têtes sur le podium (les initiales restent, les têtes décorent autour).
 
 ## Les têtes et leurs moments
 
@@ -84,7 +84,6 @@ Elles remplacent **partout** la mascotte smiley actuelle (`Mascot` dans `src/com
 - Position exacte des fléchettes dans une zone : un peu au hasard dans la bonne case, pour faire vrai.
 - Ordre des travaux, découpage en étapes, composants à créer.
 - **Les 4 autres jeux** (Cricket, Killer, Tour de l'horloge, Plus gros score) gardent exactement leur façon de saisir (`05-jeux.md`) et sont seulement **repeints** avec les mêmes briques que le 501 : carte joueur, touches à ombre dure, couleurs Playful. Ce qui était « incliné à 18° » devient arrondi ; ce qui était « cyan » (fermé, meneur, actif) devient violet ; les marques de Cricket deviennent des pastilles rondes. **Plus gros score** reçoit aussi la cible (même pavé que le 501), sans surbrillance pour finir. Cricket, Killer et Horloge n'ont pas de cible : chez eux, le tableau ou les joueurs sont déjà le pavé.
-- **Scènes animées** : leurs mouvements restent identiques, mais elles sont **recolorées** dans la nouvelle palette (plus de cyan ni de chartreuse) et le smiley y est remplacé par la tête du moment. C'est la lecture de « on garde les animations » : on garde ce qui bouge, pas l'ancienne couleur.
 - **Déclencheurs des têtes** : on branche les têtes sur les célébrations qui existent déjà (`CeleSpec` dans `Celebration.tsx`) sans en créer de nouvelles. « Grosses volées » = le 180 ; « passer devant » = le clin d'œil existant ; « dernier double » = l'écran de pression existant s'il y en a un, sinon seulement « Au bull ! ». Si deux moments tombent ensemble, la priorité actuelle des célébrations décide.
 - **La cible est un affichage**, on ne tape pas dessus : la saisie se fait uniquement au pavé, comme aujourd'hui.
 - **Pas de surbrillance** tant qu'un joueur en Double in n'est pas ouvert, ni quand la volée est en bust (en attente de « Valider »). Le moteur exposera une fonction « toutes les façons de finir en une fléchette » à côté de `suggestCheckout`, avec ses tests.
@@ -92,4 +91,3 @@ Elles remplacent **partout** la mascotte smiley actuelle (`Mascot` dans `src/com
 ## Plus tard
 
 - Adapter les têtes au visuel de Pierre quand il l'enverra (même liste de têtes et de moments, nouveau dessin).
-- Revoir les scènes animées dans ce nouveau style.
