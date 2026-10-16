@@ -1,16 +1,21 @@
 "use client";
 /**
- * Scènes courtes, en pop art, pour les moments plus fréquents :
- * - « misses »   : trois ratés, les fléchettes se plantent dans le panneau en OSB autour de la cible ;
- * - « ton »      : volée de 100 et plus, une fléchette enflammée traverse l'écran ;
+ * Scènes courtes, en style Pop, pour les moments plus fréquents :
+ * - « misses »   : trois ratés, les fléchettes se plantent dans le panneau en OSB autour de la cible (avec le Tournis) ;
+ * - « ton »      : volée de 100 et plus, une fléchette enflammée traverse l'écran (avec le Mort de rire) ;
  * - « closed »   : numéro fermé au Cricket, un cadenas claque dessus ;
+ * Fonds en aplat (crème ou violet) avec trame de points, contours encre épais, ombres dures sans flou.
  * Même principe que Scene.tsx : une horloge pilote tout, une tape passe la scène.
  */
-import { type MotionValue, motion, useTransform } from "motion/react";
+import { type MotionValue, motion, useReducedMotion, useTransform } from "motion/react";
 import type { ReactNode } from "react";
 import { Head } from "./Heads";
-import { POP, Shape, halftone } from "./Pop";
+import { POP, halftone } from "./Pop";
 import { Boom, C, Dart, FlyingDart, MG, WholeBoard, easeIn, easeOut, lerp, pop, seg, useTimeline } from "./Scene";
+
+/** Trames de points : encre légère sur crème, blanche sur violet. */
+const DOTS_CREAM = halftone("rgb(30 41 59 / 0.11)", 18);
+const DOTS_VIOLET = halftone("rgb(255 255 255 / 0.16)", 18);
 
 export type MiniKind = "misses" | "ton" | "closed";
 export const MINI_DURATION: Record<MiniKind, number> = { misses: 1.9, ton: 1.7, closed: 1.4 };
@@ -36,8 +41,8 @@ function Bubble({ time, t0, children, className = "" }: { time: MotionValue<numb
   const s = useIn(time, t0, 0.6);
   return (
     <motion.p
-      style={{ ...s, boxShadow: `5px 5px 0 ${POP.ink}` }}
-      className={`origin-bottom-left border-[3px] border-noir bg-blanc px-3.5 py-2.5 text-[15px] font-black italic leading-snug text-noir ${className}`}
+      style={{ ...s, boxShadow: `4px 4px 0 ${POP.ink}` }}
+      className={`relative mb-3 origin-bottom-left rounded-[18px] rounded-bl-[4px] border-[3px] border-encre bg-carte px-4 py-2.5 font-text text-[16px] font-bold leading-snug text-encre ${className}`}
     >
       {children}
     </motion.p>
@@ -73,6 +78,7 @@ const FLAKES = (() => {
   });
 })();
 
+/** Le panneau en OSB du bar, en carte : copeaux de bois, contour encre et ombre dure. */
 function Osb() {
   return (
     <svg viewBox="0 0 400 860" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 h-full w-full" aria-hidden>
@@ -86,15 +92,18 @@ function Osb() {
 
 const MISS_SPOTS: [number, number, number][] = [
   [62, 175, 24],
-  [346, 255, 40],
+  [300, 575, -24],
   [96, 515, 30],
 ];
 
 function Misses({ time, spec }: { time: MotionValue<number>; spec: MiniSpec }) {
   const panel = useTransform(time, (t) => seg(t, 0, 0.15));
   return (
-    <div className="absolute inset-0">
-      <motion.div className="absolute inset-0" style={{ opacity: panel }}>
+    <div className="absolute inset-0 bg-creme" style={DOTS_CREAM}>
+      <motion.div
+        className="absolute inset-x-3 bottom-[calc(132px+env(safe-area-inset-bottom))] top-[calc(12px+env(safe-area-inset-top))] overflow-hidden rounded-[28px] border-[3px] border-encre"
+        style={{ opacity: panel, boxShadow: `6px 6px 0 ${POP.ink}` }}
+      >
         <Osb />
       </motion.div>
       <svg viewBox="0 0 400 860" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 h-full w-full overflow-visible" aria-hidden>
@@ -106,11 +115,11 @@ function Misses({ time, spec }: { time: MotionValue<number>; spec: MiniSpec }) {
         ))}
       </svg>
       {["Ploc", "Ploc", "Ploc…"].map((w, k) => (
-        <Boom key={k} time={time} t0={0.38 + k * 0.28} className={["left-[4%] top-[12%]", "right-[4%] top-[24%]", "left-[8%] top-[52%]"][k]} rotate={[-10, 8, -6][k]}>
+        <Boom key={k} time={time} t0={0.38 + k * 0.28} className={["left-[4%] top-[12%]", "right-[5%] top-[57%]", "left-[6%] top-[51%]"][k]} rotate={[-10, 8, -6][k]}>
           {w}
         </Boom>
       ))}
-      <div className="absolute inset-x-4 bottom-[calc(60px+env(safe-area-inset-bottom))] flex items-end gap-2">
+      <div className="absolute inset-x-4 bottom-[calc(52px+env(safe-area-inset-bottom))] flex items-end gap-2">
         <motion.div style={useIn(time, 1.1)} className="shrink-0">
           <Head kind="tournis" size={92} />
         </motion.div>
@@ -128,10 +137,25 @@ function Flame({ time }: { time: MotionValue<number> }) {
   const flicker = useTransform(time, (t) => `translate(0 150) scale(${1 + 0.12 * Math.sin(t * 60)} ${1 + 0.25 * Math.sin(t * 47)}) translate(0 -150)`);
   return (
     <MG transform={flicker}>
-      <path d="M0 140 C -40 190 -26 250 0 330 C 26 250 40 190 0 140 Z" fill={POP.rose} stroke={POP.ink} strokeWidth={4} />
-      <path d="M0 150 C -26 190 -16 240 0 290 C 16 240 26 190 0 150 Z" fill={POP.ambre} />
-      <path d="M0 158 C -12 185 -8 220 0 250 C 8 220 12 185 0 158 Z" fill={POP.cream} />
+      <path d="M0 140 C -40 190 -26 250 0 330 C 26 250 40 190 0 140 Z" fill={POP.rose} stroke={POP.ink} strokeWidth={4} strokeLinejoin="round" />
+      <path d="M0 150 C -26 190 -16 240 0 290 C 16 240 26 190 0 150 Z" fill={POP.ambre} stroke={POP.ink} strokeWidth={2.5} />
+      <path d="M0 158 C -12 185 -8 220 0 250 C 8 220 12 185 0 158 Z" fill={POP.cream} stroke={POP.ink} strokeWidth={2.5} />
     </MG>
+  );
+}
+
+/** Explosion ambre à contour encre, assez large pour que le chiffre tienne dedans ; `shadow` : sa silhouette encre (ombre dure). */
+function Burst({ shadow = false }: { shadow?: boolean }) {
+  const n = 16;
+  const pts = Array.from({ length: n * 2 }, (_, i) => {
+    const r = i % 2 ? 140 : 186;
+    const a = ((i * 180) / n - 90) * (Math.PI / 180);
+    return `${(190 + r * Math.cos(a)).toFixed(1)},${(190 + r * Math.sin(a)).toFixed(1)}`;
+  }).join(" ");
+  return (
+    <svg viewBox="-4 -4 396 396" width={380} height={380} aria-hidden>
+      <polygon points={pts} fill={shadow ? POP.ink : POP.ambre} stroke={POP.ink} strokeWidth={5} strokeLinejoin="round" />
+    </svg>
   );
 }
 
@@ -143,12 +167,22 @@ function Ton({ time, spec }: { time: MotionValue<number>; spec: MiniSpec }) {
   const burst = useIn(time, 0.5, 0.2);
   const word = useIn(time, 0.55);
   const num = useIn(time, 0.62);
+  const head = useIn(time, 0.72);
+  const reduce = useReducedMotion();
   return (
-    <div className="absolute inset-0" style={{ background: POP.rose, ...halftone("rgb(0 0 0 / 0.14)") }}>
-      <motion.div style={burst} className="pointer-events-none absolute left-1/2 top-[38%] -ml-[170px] -mt-[170px]">
-        <motion.div animate={{ rotate: 360 }} transition={{ duration: 14, repeat: Infinity, ease: "linear" }}>
-          <Shape name="burst" fill={POP.ambre} size={340} flat />
-        </motion.div>
+    <div className="absolute inset-0 bg-violet" style={DOTS_VIOLET}>
+      <motion.div style={burst} className="pointer-events-none absolute left-1/2 top-[38%] -ml-[190px] -mt-[190px]">
+        {/* L'ombre tourne avec l'explosion mais reste décalée en bas à droite. */}
+        {[true, false].map((shadow) => (
+          <motion.div
+            key={String(shadow)}
+            className={shadow ? "absolute left-2 top-2" : "relative"}
+            animate={reduce ? undefined : { rotate: 360 }}
+            transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
+          >
+            <Burst shadow={shadow} />
+          </motion.div>
+        ))}
       </motion.div>
       <svg viewBox="0 0 400 860" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 h-full w-full overflow-visible" aria-hidden>
         <MG transform={dart}>
@@ -159,14 +193,20 @@ function Ton({ time, spec }: { time: MotionValue<number>; spec: MiniSpec }) {
       <Boom time={time} t0={0.5} className="left-[6%] top-[14%]" rotate={-10}>
         Boom !
       </Boom>
-      <div className="absolute inset-x-0 top-[38%] -translate-y-1/2 text-center text-noir">
-        <motion.b style={word} className="block text-[40px] font-black uppercase italic leading-none tracking-tight">
+      <div className="absolute inset-x-0 top-[38%] -translate-y-1/2 text-center text-encre">
+        <motion.b
+          style={{ ...word, boxShadow: `3px 3px 0 ${POP.ink}` }}
+          className="relative inline-block rounded-full border-[3px] border-encre bg-carte px-4 py-0.5 font-display text-[30px] font-black uppercase leading-tight tracking-tight"
+        >
           {spec.kicker}
         </motion.b>
-        <motion.span style={num} className="block font-num text-[130px] leading-[0.9]">
+        <motion.span style={num} className="mt-1 block font-num text-[112px] font-black leading-[0.9]">
           {spec.num}
         </motion.span>
       </div>
+      <motion.div style={head} className="pointer-events-none absolute bottom-[calc(56px+env(safe-area-inset-bottom))] right-3 origin-bottom-right">
+        <Head kind="mdr" size={112} />
+      </motion.div>
     </div>
   );
 }
@@ -182,7 +222,7 @@ function Padlock({ time }: { time: MotionValue<number> }) {
       </g>
       <MG transform={shackle}>
         <path d="M50 78 V30 A50 50 0 0 1 150 30 V78" fill="none" stroke={POP.ink} strokeWidth={30} strokeLinecap="round" />
-        <path d="M50 78 V30 A50 50 0 0 1 150 30 V78" fill="none" stroke="#D9D9D9" strokeWidth={16} strokeLinecap="round" />
+        <path d="M50 78 V30 A50 50 0 0 1 150 30 V78" fill="none" stroke={POP.cream} strokeWidth={16} strokeLinecap="round" />
       </MG>
       <rect x={10} y={70} width={180} height={130} rx={18} fill={POP.ambre} stroke={POP.ink} strokeWidth={7} />
       <circle cx={100} cy={122} r={15} fill={POP.ink} />
@@ -200,12 +240,15 @@ function Closed({ time, spec }: { time: MotionValue<number>; spec: MiniSpec }) {
   const num = useIn(time, 0.02, 0.6);
   const label = useIn(time, 0.62);
   return (
-    <div className="absolute inset-0 bg-cyan" style={halftone("rgb(0 0 0 / 0.12)")}>
+    <div className="absolute inset-0 bg-violet" style={DOTS_VIOLET}>
       <div className="absolute inset-x-0 top-[34%] -translate-y-1/2">
         <motion.div style={num} className="relative mx-auto w-fit">
-          <div className="skew-18 absolute inset-x-[-28px] inset-y-[18px] border-[5px] border-noir bg-blanc" style={{ boxShadow: `7px 7px 0 ${POP.ink}` }} />
+          <div
+            className="absolute inset-x-[-22px] inset-y-[16px] -rotate-3 rounded-[28px] border-[4px] border-encre bg-carte"
+            style={{ boxShadow: `6px 6px 0 ${POP.ink}` }}
+          />
           <span
-            className={`relative block whitespace-nowrap px-6 font-num leading-[1] text-noir ${
+            className={`relative block whitespace-nowrap px-6 font-num font-black leading-[1] text-encre ${
               (spec.num ?? "").length <= 2 ? "text-[170px]" : (spec.num ?? "").length <= 4 ? "py-6 text-[96px]" : (spec.num ?? "").length <= 7 ? "py-8 text-[64px]" : "py-9 text-[44px]"
             }`}
           >
@@ -219,7 +262,10 @@ function Closed({ time, spec }: { time: MotionValue<number>; spec: MiniSpec }) {
       <Boom time={time} t0={0.44} className="right-[6%] top-[14%]" rotate={10}>
         Clac !
       </Boom>
-      <motion.p style={label} className="absolute inset-x-0 top-[58%] text-center text-[34px] font-black uppercase italic text-noir">
+      <motion.p
+        style={{ ...label, textShadow: `0.06em 0.06em 0 ${POP.ink}` }}
+        className="absolute inset-x-0 top-[58%] text-center font-display text-[36px] font-black uppercase tracking-tight text-white"
+      >
         {spec.text}
       </motion.p>
     </div>
