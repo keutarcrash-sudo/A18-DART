@@ -330,7 +330,7 @@ export function X01Game() {
         {view === "tableau" && (
           <motion.div
             key="tab"
-            className="absolute inset-0 z-20 bg-noir"
+            className="absolute inset-0 z-20 bg-creme"
             initial={{ clipPath: "inset(100% 0 0 0)" }}
             animate={{ clipPath: "inset(0% 0 0 0)" }}
             exit={{ clipPath: "inset(100% 0 0 0)" }}
@@ -339,7 +339,7 @@ export function X01Game() {
             <Tableau
               title={
                 <>
-                  <b className="text-blanc">{start}</b> · {t("Course vers zéro")}
+                  <b className="text-encre">{start}</b> · {t("Course vers zéro")}
                 </>
               }
               who={who}

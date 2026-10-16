@@ -15,33 +15,51 @@ import { type PodiumData, PodiumScene, todayLabel } from "./PodiumScene";
 const STORY_W = 360;
 const STORY_H = 640;
 
+const BTN = "pop-shadow pop-press h-14 rounded-full border-2 border-encre font-display text-lg font-extrabold";
+const LINK = "flex min-h-[46px] items-center px-1 text-sm font-bold underline decoration-ambre decoration-4 underline-offset-[6px]";
+
+/** Décor du fond : quelques formes en bordure, derrière le contenu. */
+function Confettis({ story = false }: { story?: boolean }) {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      <svg className={story ? "absolute -right-3 top-[300px]" : "confetti-bob absolute -right-3 top-[210px]"} width="46" height="46" viewBox="0 0 46 46">
+        <circle cx="23" cy="23" r="19" fill="#34D399" stroke="#1E293B" strokeWidth="3" />
+      </svg>
+      <svg className={story ? "absolute -left-3 top-[360px]" : "confetti-spin absolute -left-3 top-[300px]"} width="40" height="40" viewBox="0 0 44 44">
+        <path d="M16 3 H28 V16 H41 V28 H28 V41 H16 V28 H3 V16 H16 Z" fill="#F472B6" stroke="#1E293B" strokeWidth="3" strokeLinejoin="round" />
+      </svg>
+    </div>
+  );
+}
+
 export function FinDePartie({ data, onRevanche }: { data: PodiumData; onRevanche: () => void }) {
   const t = useT();
   const [sharing, setSharing] = useState(false);
   const [date] = useState(todayLabel);
 
   return (
-    <div className="absolute inset-0 z-50 flex flex-col bg-noir px-[18px] pb-[calc(12px+env(safe-area-inset-bottom))] pt-[calc(22px+env(safe-area-inset-top))]">
-      <div className="min-h-0 flex-1">
-        <PodiumScene data={data} width={320} date={date} />
+    <div className="absolute inset-0 z-50 flex flex-col overflow-hidden bg-creme px-4 pb-[calc(10px+env(safe-area-inset-bottom))] pt-[calc(16px+env(safe-area-inset-top))] text-encre">
+      <Confettis />
+      <div className="relative min-h-0 flex-1">
+        <PodiumScene data={data} width={340} date={date} />
       </div>
-      <div className="mt-4 grid shrink-0 grid-cols-2 gap-1.5" style={{ "--h": "56px" } as React.CSSProperties}>
-        <button type="button" onClick={onRevanche} className="btn-18 h-14 bg-cyan text-base font-black uppercase italic text-noir active:bg-blanc">
+      <div className="relative mt-3 grid shrink-0 grid-cols-2 gap-2.5">
+        <button type="button" onClick={onRevanche} className={`${BTN} bg-violet text-white`}>
           {t("Revanche")}
         </button>
         <button
           type="button"
           onClick={() => setSharing(true)}
-          className="btn-18 h-14 bg-blanc text-base font-black uppercase italic text-noir active:bg-cyan"
+          className={`${BTN} bg-carte text-encre`}
         >
           {t("Partager")}
         </button>
       </div>
-      <div className="mt-1 flex shrink-0 justify-between">
-        <Link href="/nouvelle" onClick={() => clearPartie()} className="py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[#a8a8a8] active:text-cyan">
+      <div className="relative mt-1 flex shrink-0 justify-between px-1.5">
+        <Link href="/nouvelle" onClick={() => clearPartie()} className={LINK}>
           {t("Autre jeu")}
         </Link>
-        <Link href="/" className="py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[#a8a8a8] active:text-cyan">
+        <Link href="/" className={LINK}>
           {t("Accueil")}
         </Link>
       </div>
@@ -81,7 +99,7 @@ function Partage({ data, date, onClose }: { data: PodiumData; date: string; onCl
       if (!node) return;
       try {
         await document.fonts.ready;
-        const opts = { width: STORY_W, height: STORY_H, pixelRatio: 3, backgroundColor: "#171717" };
+        const opts = { width: STORY_W, height: STORY_H, pixelRatio: 3, backgroundColor: "#FFFDF5" };
         // Safari dessine parfois mal le premier essai (polices, logo) : on en fait un pour rien.
         await toPng(node, opts).catch(() => null);
         const url = await toPng(node, opts);
@@ -117,14 +135,18 @@ function Partage({ data, date, onClose }: { data: PodiumData; date: string; onCl
 
   return (
     <motion.div
-      className="absolute inset-0 z-10 flex flex-col bg-noir px-[18px] pb-[calc(12px+env(safe-area-inset-bottom))] pt-[calc(16px+env(safe-area-inset-top))]"
+      className="absolute inset-0 z-10 flex flex-col bg-creme px-4 pb-[calc(12px+env(safe-area-inset-bottom))] pt-[calc(12px+env(safe-area-inset-top))] text-encre"
       initial={{ clipPath: "inset(100% 0 0 0)" }}
       animate={{ clipPath: "inset(0% 0 0 0)" }}
       exit={{ clipPath: "inset(100% 0 0 0)" }}
       transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
     >
-      <div className="flex min-h-8 items-center justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-gris">
-        <button type="button" onClick={onClose} className="-ml-1 flex items-center gap-2 px-1 py-2 text-blanc">
+      <div className="flex min-h-11 items-center justify-between text-[11px] font-bold uppercase tracking-[0.08em] text-attenue">
+        <button
+          type="button"
+          onClick={onClose}
+          className="pop-shadow-sm pop-press flex h-11 items-center gap-2 rounded-full border-2 border-encre bg-carte px-4 font-display text-[14px] font-extrabold normal-case tracking-normal text-encre"
+        >
           <span aria-hidden className="text-base leading-none">
             ←
           </span>
@@ -136,24 +158,27 @@ function Partage({ data, date, onClose }: { data: PodiumData; date: string; onCl
       {/* Aperçu : l'image est dessinée en vrai à 360 × 640, puis réduite pour tenir à l'écran. */}
       <div ref={box} className="relative mt-2 min-h-0 flex-1">
         <div
-          className="absolute left-1/2 top-0 border border-filet"
-          style={{ width: STORY_W * scale + 2, height: STORY_H * scale + 2, marginLeft: -(STORY_W * scale + 2) / 2 }}
+          className="absolute left-1/2 top-0 border-2 border-encre shadow-[4px_4px_0_0_var(--color-encre)]"
+          style={{ width: STORY_W * scale + 4, height: STORY_H * scale + 4, marginLeft: -(STORY_W * scale + 4) / 2 }}
         >
           <div style={{ transform: `scale(${scale})`, transformOrigin: "0 0", width: STORY_W, height: STORY_H }}>
-            <div ref={story} className="bg-noir px-6 pb-6 pt-7 text-blanc" style={{ width: STORY_W, height: STORY_H }}>
-              <PodiumScene data={data} story width={300} date={date} />
+            <div ref={story} className="relative overflow-hidden bg-creme px-6 pb-6 pt-7 text-encre" style={{ width: STORY_W, height: STORY_H }}>
+              <Confettis story />
+              <div className="relative h-full">
+                <PodiumScene data={data} story width={300} date={date} />
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <div className="mt-3 shrink-0">
-        <p className="mb-2 h-4 text-center text-[11px] font-bold uppercase tracking-[0.14em] text-gris">
+        <p className="mb-2 h-4 text-center text-[12px] font-bold text-attenue">
           {error ? t("L'image n'a pas pu être préparée.") : !file ? t("Préparation de l'image…") : saved ? t("Image enregistrée.") : ""}
         </p>
-        <div className={`grid gap-1.5 ${canShare ? "grid-cols-[1.4fr_1fr]" : "grid-cols-1"}`} style={{ "--h": "56px" } as React.CSSProperties}>
+        <div className={`grid gap-2.5 ${canShare ? "grid-cols-[1.4fr_1fr]" : "grid-cols-1"}`}>
           {canShare && (
-            <button type="button" onClick={share} className="btn-18 h-14 bg-cyan text-base font-black uppercase italic text-noir active:bg-blanc">
+            <button type="button" onClick={share} className={`${BTN} bg-violet text-white`}>
               {t("Partager")}
             </button>
           )}
@@ -161,7 +186,7 @@ function Partage({ data, date, onClose }: { data: PodiumData; date: string; onCl
             type="button"
             disabled={!file}
             onClick={save}
-            className="btn-18 h-14 bg-blanc text-base font-black uppercase italic text-noir active:bg-cyan disabled:bg-case disabled:text-gris-2"
+            className={`${BTN} bg-carte text-encre disabled:border-bord disabled:bg-muted disabled:text-attenue disabled:shadow-none`}
           >
             {t("Enregistrer")}
           </button>
