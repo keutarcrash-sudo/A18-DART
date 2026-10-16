@@ -1,0 +1,559 @@
+<title>A18 Darts Pop</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Mise en page : 4 téléphones côte à côte (puis empilés), style Playful Geometric variante Standard. */
+:root {
+  --bg: #FFFDF5; --fg: #1E293B; --muted: #F1F5F9; --muted-fg: #64748B;
+  --violet: #8B5CF6; --pink: #F472B6; --amber: #FBBF24; --mint: #34D399;
+  --border: #E2E8F0; --card: #FFFFFF;
+  --display: "Outfit", system-ui, sans-serif;
+  --body: "Plus Jakarta Sans", system-ui, sans-serif;
+  --bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); margin: 0;
+  background-image: radial-gradient(#1E293B22 1.4px, transparent 1.5px); background-size: 22px 22px; }
+.page { max-width: 1640px; margin: 0 auto; padding-block: 40px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header.intro { max-width: 760px; margin: 0 auto 40px; text-align: center; }
+header.intro h1 { font-family: var(--display); font-weight: 800; font-size: clamp(34px, 5vw, 52px); line-height: 1.02; letter-spacing: -0.02em; margin: 14px 0 12px; text-wrap: balance; }
+header.intro p { color: var(--muted-fg); font-size: 17px; line-height: 1.6; margin: 0; }
+.tag { display: inline-flex; align-items: center; gap: 8px; padding: 5px 14px; border-radius: 999px; background: var(--violet); color: #fff; border: 2px solid var(--fg); font-weight: 700; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+.tag i { width: 9px; height: 9px; border-radius: 50%; background: var(--amber); border: 2px solid var(--fg); }
+
+.phones { display: flex; flex-wrap: wrap; justify-content: center; gap: 40px 36px; }
+figure { margin: 0; display: grid; gap: 14px; justify-items: center; }
+figcaption { font-family: var(--display); font-weight: 700; font-size: 18px; }
+figcaption span { display: block; font-family: var(--body); font-weight: 400; font-size: 14px; color: var(--muted-fg); text-align: center; max-width: 340px; margin-top: 4px; }
+
+.phone { width: 360px; max-width: 100%; height: 760px; border: 3px solid var(--fg); border-radius: 44px; background: var(--fg); padding: 10px; box-shadow: 8px 8px 0 var(--fg); }
+.screen { position: relative; height: 100%; border-radius: 34px; overflow: hidden; background: var(--bg); display: flex; flex-direction: column; padding: 22px 18px 18px; gap: 14px; }
+
+/* Confettis */
+.cf { position: absolute; pointer-events: none; z-index: 0; }
+.screen > *:not(.cf) { position: relative; z-index: 1; }
+@keyframes bob { 0%,100% { translate: 0 0; } 50% { translate: 0 -8px; } }
+@keyframes spin { to { rotate: 360deg; } }
+@keyframes popin { 0% { transform: scale(0); } 70% { transform: scale(1.06); } 100% { transform: scale(1); } }
+@keyframes wiggle { 0%,100% { rotate: 0deg; } 33% { rotate: 4deg; } 66% { rotate: -4deg; } }
+.bob { animation: bob var(--t, 5s) ease-in-out infinite; animation-delay: var(--d, 0s); }
+.spin { animation: spin var(--t, 16s) linear infinite; }
+
+/* Commun */
+.top { display: flex; align-items: center; justify-content: space-between; }
+.brand { display: flex; align-items: center; gap: 8px; font-family: var(--display); font-weight: 800; font-size: 20px; }
+.brand b { width: 34px; height: 34px; border-radius: 10px; background: var(--amber); border: 2px solid var(--fg); display: grid; place-items: center; box-shadow: 2px 2px 0 var(--fg); }
+.lang { display: flex; border: 2px solid var(--fg); border-radius: 999px; overflow: hidden; font-weight: 700; font-size: 12px; }
+.lang span { padding: 5px 10px; }
+.lang .on { background: var(--fg); color: var(--bg); }
+.pill { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; border-radius: 999px; border: 2px solid var(--fg); font-weight: 700; font-size: 16px; padding: 0 20px; background: var(--card); color: var(--fg); transition: transform 300ms var(--bounce), box-shadow 300ms var(--bounce); cursor: pointer; font-family: var(--body); }
+.pill.pop { box-shadow: 4px 4px 0 var(--fg); }
+.pill.pop:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--fg); }
+.pill.pop:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--fg); }
+.pill.violet { background: var(--violet); color: #fff; }
+.pill .ar { width: 32px; height: 32px; border-radius: 50%; background: #fff; color: var(--fg); display: grid; place-items: center; margin-right: -12px; }
+.small { min-height: 36px; font-size: 13px; padding: 0 14px; }
+.lbl { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted-fg); }
+.num { font-family: var(--display); font-weight: 800; font-variant-numeric: tabular-nums; }
+
+/* Accueil */
+.hero-card { background: var(--violet); color: #fff; border: 2px solid var(--fg); border-radius: 28px 28px 28px 6px; padding: 22px 20px 20px; box-shadow: 6px 6px 0 var(--fg); overflow: hidden; }
+.hero-card h2 { font-family: var(--display); font-weight: 900; font-size: 46px; line-height: .95; margin: 8px 0 18px; letter-spacing: -0.02em; }
+.hero-card .lbl { color: #fff; opacity: .9; }
+.hero-card .row { display: flex; align-items: center; justify-content: space-between; }
+.hero-card .go { width: 54px; height: 54px; border-radius: 50%; background: var(--amber); border: 2px solid var(--fg); display: grid; place-items: center; box-shadow: 3px 3px 0 var(--fg); }
+.punch { font-family: var(--display); font-weight: 700; font-size: 20px; line-height: 1.25; margin: 2px 0; }
+.punch u { text-decoration: none; background: linear-gradient(transparent 58%, var(--amber) 58% 92%, transparent 92%); }
+.rec { background: var(--card); border: 2px solid var(--fg); border-radius: 20px; padding: 14px 14px 10px; box-shadow: 6px 6px 0 var(--border); }
+.rec-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.rec-head h3 { font-family: var(--display); font-weight: 800; font-size: 22px; margin: 0; }
+.tabs { display: flex; gap: 4px; }
+.tabs span { font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 999px; border: 2px solid var(--fg); }
+.tabs .on { background: var(--mint); }
+.rec-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-top: 2px dashed var(--border); font-size: 14px; }
+.rec-row:first-of-type { border-top: 0; }
+.ic { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--fg); display: grid; place-items: center; flex: none; }
+.rec-row .who { flex: 1; min-width: 0; }
+.rec-row .who b { display: block; font-size: 14px; }
+.rec-row .who span { color: var(--muted-fg); font-size: 12px; }
+.rec-row .num { font-size: 24px; }
+.install { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 14px; margin-top: auto; }
+
+/* Choix du jeu */
+.h { font-family: var(--display); font-weight: 800; font-size: 32px; line-height: 1; margin: 4px 0 0; letter-spacing: -0.02em; }
+.games { display: grid; gap: 12px; }
+.game { display: flex; align-items: center; gap: 14px; background: var(--card); border: 2px solid var(--fg); border-radius: 18px; padding: 12px 14px; box-shadow: 4px 4px 0 var(--fg); transition: transform 300ms var(--bounce); }
+.game:hover { transform: rotate(-1deg) scale(1.02); }
+.game .shape { width: 50px; height: 50px; border: 2px solid var(--fg); display: grid; place-items: center; flex: none; font-family: var(--display); font-weight: 900; font-size: 16px; }
+.game h4 { margin: 0; font-family: var(--display); font-weight: 800; font-size: 19px; }
+.game p { margin: 2px 0 0; font-size: 12.5px; color: var(--muted-fg); line-height: 1.35; }
+.game .t { margin-left: auto; font-size: 12px; font-weight: 700; padding: 3px 9px; border: 2px solid var(--fg); border-radius: 999px; white-space: nowrap; align-self: flex-start; }
+
+/* Écran de jeu */
+.gbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.gbar .lbl { color: var(--fg); }
+.gbar .lbl small { display: block; color: var(--muted-fg); font-weight: 500; letter-spacing: .04em; }
+.gbar .btns { display: flex; gap: 6px; }
+.player { position: relative; background: var(--card); border: 2px solid var(--fg); border-radius: 24px; padding: 14px 16px 12px; box-shadow: 6px 6px 0 var(--pink); }
+.player .name { display: flex; align-items: center; gap: 8px; font-family: var(--display); font-weight: 900; font-size: 26px; letter-spacing: -0.01em; }
+.player .name i { width: 14px; height: 14px; border-radius: 50%; background: var(--pink); border: 2px solid var(--fg); }
+.player .score { font-size: 104px; line-height: .9; margin: 4px 0 6px; letter-spacing: -0.04em; }
+.player .score small { font-size: 30px; color: var(--violet); letter-spacing: 0; vertical-align: top; margin-left: 6px; display: inline-block; animation: popin 600ms var(--bounce) both; }
+.hint { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; background: var(--mint); border: 2px solid var(--fg); border-radius: 999px; padding: 4px 11px; }
+.others { position: absolute; right: 14px; bottom: 12px; display: grid; gap: 4px; text-align: right; font-size: 12px; color: var(--muted-fg); }
+.others b { color: var(--fg); font-family: var(--display); font-size: 16px; }
+.slots { display: flex; gap: 8px; align-items: center; }
+.slot { flex: 1; height: 46px; border: 2px dashed #CBD5E1; border-radius: 14px; display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 18px; color: #94A3B8; }
+.slot.f { border: 2px solid var(--fg); color: var(--fg); background: var(--amber); box-shadow: 3px 3px 0 var(--fg); }
+.slot.f.t { background: var(--pink); }
+.slots .tot { width: 54px; text-align: right; font-size: 26px; }
+.pad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; }
+.k { height: 46px; border: 2px solid var(--fg); border-radius: 12px; background: var(--card); display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 19px; box-shadow: 2px 2px 0 var(--fg); }
+.k.sel { background: var(--violet); color: #fff; }
+.pad2 { display: grid; grid-template-columns: 1fr 1.2fr 1.2fr 1.3fr; gap: 7px; }
+.pad2 .k { font-size: 14px; }
+.k.bull { background: var(--mint); }
+.k.miss { background: var(--muted); }
+.k.undo { background: transparent; box-shadow: none; border-style: dashed; color: var(--muted-fg); }
+.dt { display: flex; gap: 8px; }
+.dt .pill { flex: 1; min-height: 46px; }
+.dt .d { background: var(--amber); }
+.dt .tr { background: var(--pink); }
+.valider { width: 100%; min-height: 56px; font-size: 18px; }
+
+/* Podium */
+.win { text-align: center; }
+.win h2 { font-family: var(--display); font-weight: 900; font-size: 44px; line-height: .95; margin: 6px 0 0; letter-spacing: -0.02em; }
+.win h2 u { text-decoration: none; background: linear-gradient(transparent 55%, var(--amber) 55% 92%, transparent 92%); }
+.podium { display: grid; grid-template-columns: 1fr 1.1fr 1fr; align-items: end; gap: 8px; margin-top: 8px; }
+.step { display: grid; justify-items: center; gap: 8px; }
+.av { width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(--fg); display: grid; place-items: center; font-family: var(--display); font-weight: 900; font-size: 24px; background: var(--card); box-shadow: 3px 3px 0 var(--fg); }
+.step.first .av { width: 72px; height: 72px; font-size: 32px; background: var(--amber); }
+.step .nm { font-weight: 700; font-size: 13px; text-align: center; line-height: 1.2; }
+.step .nm span { display: block; color: var(--muted-fg); font-weight: 500; font-size: 12px; }
+.block { width: 100%; border: 2px solid var(--fg); display: grid; place-items: start center; padding-top: 10px; font-family: var(--display); font-weight: 900; font-size: 34px; }
+.first .block { height: 150px; background: var(--violet); color: #fff; border-radius: 22px 22px 0 0; }
+.second .block { height: 104px; background: var(--pink); border-radius: 999px 999px 0 0; }
+.third .block { height: 76px; background: var(--mint); border-radius: 12px 12px 0 0; }
+.best { display: flex; align-items: center; justify-content: space-between; background: var(--card); border: 2px solid var(--fg); border-radius: 18px; padding: 10px 14px; box-shadow: 4px 4px 0 var(--border); }
+.best .num { font-size: 40px; color: var(--violet); }
+.duo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.links2 { display: flex; justify-content: space-between; font-weight: 700; font-size: 14px; padding: 0 6px; }
+
+
+
+/* Cible sur l'écran de jeu */
+.pl2 { display: grid; grid-template-columns: minmax(0,1fr) 128px; column-gap: 6px; align-items: center; padding-bottom: 10px; }
+.pl2 .score { font-size: 60px; margin: 4px 0 8px; display: flex; align-items: flex-start; gap: 4px; }
+.pl2 .score small { font-size: 22px; margin: 4px 0 0; }
+.board { width: 128px; height: 128px; display: block; overflow: visible; }
+.pl2 .name { grid-column: 1 / -1; }
+.pl2 .hint { font-size: 12px; white-space: nowrap; padding: 4px 9px; }
+.pl2 .hint > svg { display: none; }
+.others2 { grid-column: 1 / -1; display: flex; gap: 14px; margin-top: 8px; padding-top: 8px; border-top: 2px dashed var(--border); font-size: 12px; color: var(--muted-fg); }
+.others2 b { color: var(--fg); font-family: var(--display); font-size: 15px; margin-left: 4px; }
+@keyframes stick { 0% { transform: translate(26px,-34px) scale(1.6); opacity: 0; } 60% { transform: translate(0,0) scale(.92); opacity: 1; } 100% { transform: translate(0,0) scale(1); } }
+.dart.new { animation: stick 420ms var(--bounce) both; }
+.k { cursor: pointer; user-select: none; transition: transform 160ms var(--bounce); }
+.k:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 var(--fg); }
+.dtrow { display: flex; gap: 8px; height: 46px; }
+.dtrow[hidden] { display: none !important; }
+.dtrow button { flex: 1; min-height: 46px; }
+.demo { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; max-width: 340px; }
+.demo button { min-height: 34px; font-size: 12px; padding: 0 12px; }
+.demo button.on { background: var(--fg); color: var(--bg); }
+@keyframes glowk { 0%,100% { box-shadow: 0 0 0 0 #FBBF24, 2px 2px 0 var(--fg); } 50% { box-shadow: 0 0 0 5px #FBBF24, 2px 2px 0 var(--fg); } }
+.k.glow { background: #FEF3C7; animation: glowk 1.1s ease-in-out infinite; position: relative; }
+.k.glow::after { content: attr(data-m); position: absolute; top: -9px; right: -7px; min-width: 20px; height: 20px; padding: 0 4px; border-radius: 999px; background: var(--fg); color: #fff; font-size: 11px; display: grid; place-items: center; }
+@keyframes glowz { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+.zone { animation: glowz 1.1s ease-in-out infinite; }
+.try { position: absolute; left: 50%; bottom: 8px; translate: -50% 0; font-size: 11px; font-weight: 700; color: var(--muted-fg); white-space: nowrap; }
+
+/* Têtes déjantées */
+.head { display: block; overflow: visible; }
+.head .face { transition: transform 300ms var(--bounce); }
+@keyframes eyespin { to { rotate: 360deg; } }
+@keyframes pulse { 0%,100% { scale: 1; } 50% { scale: 1.18; } }
+@keyframes melt { 0%,100% { scale: 1 1; } 50% { scale: 1 1.06; } }
+@keyframes laugh { 0%,100% { translate: 0 0; } 25% { translate: 0 -3px; } 75% { translate: 0 2px; } }
+@keyframes shake { 0%,100% { rotate: 0deg; } 25% { rotate: -6deg; } 75% { rotate: 6deg; } }
+@keyframes tongue { 0%,100% { scale: 1 1; } 50% { scale: 1 1.15; } }
+@keyframes sweat { 0% { translate: 0 0; opacity: 1; } 80% { translate: 0 10px; opacity: 1; } 100% { translate: 0 12px; opacity: 0; } }
+.eyespin { transform-box: fill-box; transform-origin: center; animation: eyespin 1.6s linear infinite; }
+.pulse { transform-box: fill-box; transform-origin: center; animation: pulse .9s ease-in-out infinite; }
+.melt { transform-origin: 60px 20px; animation: melt 2.4s ease-in-out infinite; }
+.laugh { animation: laugh .35s ease-in-out infinite; }
+.shake { transform-origin: 60px 70px; animation: shake .5s ease-in-out infinite; }
+.tongue { transform-box: fill-box; transform-origin: top center; animation: tongue 1s ease-in-out infinite; }
+.sweat { animation: sweat 1.4s ease-in infinite; }
+.burstspin { transform-origin: 60px 60px; animation: spin 10s linear infinite; }
+.wig { animation: wiggle 2.6s ease-in-out infinite; transform-origin: 50% 80%; }
+.heads { margin: 72px auto 0; max-width: 1180px; }
+.heads h2 { font-family: var(--display); font-weight: 800; font-size: clamp(28px, 4vw, 40px); text-align: center; margin: 12px 0 8px; letter-spacing: -0.02em; }
+.heads > p { text-align: center; color: var(--muted-fg); max-width: 620px; margin: 0 auto 32px; line-height: 1.6; }
+.heads-top { text-align: center; }
+.hgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 22px; }
+.hcard { background: var(--card); border: 2px solid var(--fg); border-radius: 22px; padding: 18px 18px 16px; box-shadow: 6px 6px 0 var(--fg); display: grid; justify-items: center; gap: 6px; text-align: center; transition: transform 300ms var(--bounce); }
+.hcard:hover { transform: rotate(-1.5deg) scale(1.03); }
+.hcard h3 { font-family: var(--display); font-weight: 800; font-size: 22px; margin: 6px 0 0; }
+.hcard p { margin: 0; color: var(--muted-fg); font-size: 14px; line-height: 1.45; }
+.hcard .when { font-size: 12px; font-weight: 700; padding: 3px 10px; border: 2px solid var(--fg); border-radius: 999px; background: var(--muted); margin-top: 4px; }
+.peek { position: absolute; z-index: 3 !important; }
+.bubble { position: relative; background: var(--card); border: 2px solid var(--fg); border-radius: 18px 18px 18px 4px; padding: 10px 14px; font-family: var(--display); font-weight: 800; font-size: 19px; line-height: 1.15; box-shadow: 4px 4px 0 var(--fg); animation: popin 600ms var(--bounce) both; }
+.wink { position: absolute; left: 14px; right: 14px; bottom: 96px; z-index: 4 !important; display: flex; align-items: flex-end; gap: 6px; }
+.dim { opacity: .35; }
+@media (prefers-reduced-motion: reduce) { .head * { animation: none !important; } }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+@media (max-width: 420px) { .phone { height: 720px; } .player .score { font-size: 92px; } }
+</style>
+
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="h-tournis" viewBox="0 0 120 120"><g class="shake"><circle cx="65" cy="65" r="46" fill="#1E293B"/><circle cx="60" cy="60" r="46" fill="#34D399" stroke="#1E293B" stroke-width="5"/>
+  <path class="eyespin" d="M43 54 m-1 0 a1 1 0 0 1 2 0 a3 3 0 0 1 -6 0 a5 5 0 0 1 10 0 a7 7 0 0 1 -14 0 a9 9 0 0 1 18 0" fill="none" stroke="#1E293B" stroke-width="3.5" stroke-linecap="round"/>
+  <path class="eyespin" d="M77 54 m-1 0 a1 1 0 0 1 2 0 a3 3 0 0 1 -6 0 a5 5 0 0 1 10 0 a7 7 0 0 1 -14 0 a9 9 0 0 1 18 0" fill="none" stroke="#1E293B" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M40 82 q6 -7 12 0 t12 0 t12 0 t6 -2" fill="none" stroke="#1E293B" stroke-width="5" stroke-linecap="round"/></g></symbol>
+
+<symbol id="h-langue" viewBox="0 0 120 120"><g class="wig"><circle cx="65" cy="65" r="46" fill="#1E293B"/><circle cx="60" cy="60" r="46" fill="#FBBF24" stroke="#1E293B" stroke-width="5"/>
+  <path d="M33 54 q9 -9 18 0" fill="none" stroke="#1E293B" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="79" cy="50" r="12" fill="#fff" stroke="#1E293B" stroke-width="4"/><circle cx="82" cy="52" r="5" fill="#1E293B"/>
+  <path d="M36 72 q24 26 48 0 z" fill="#1E293B" stroke="#1E293B" stroke-width="4" stroke-linejoin="round"/>
+  <g class="tongue"><path d="M52 80 v12 q0 12 11 12 q11 0 11 -12 v-12 z" fill="#F472B6" stroke="#1E293B" stroke-width="4" stroke-linejoin="round"/><path d="M63 84 v10" stroke="#1E293B" stroke-width="3" stroke-linecap="round"/></g></g></symbol>
+
+<symbol id="h-fondue" viewBox="0 0 120 120"><g class="melt">
+  <path transform="translate(5 5)" d="M14 62 a46 46 0 0 1 92 0 v14 q0 8 -7 8 q-6 0 -6 10 q0 12 -8 12 q-8 0 -8 -16 q0 -6 -7 -6 q-8 0 -8 18 q0 10 -9 10 q-9 0 -9 -14 q0 -10 -8 -10 q-6 0 -6 -8 q0 -6 -8 -6 q-8 0 -8 -10 z" fill="#1E293B"/>
+  <path d="M14 62 a46 46 0 0 1 92 0 v14 q0 8 -7 8 q-6 0 -6 10 q0 12 -8 12 q-8 0 -8 -16 q0 -6 -7 -6 q-8 0 -8 18 q0 10 -9 10 q-9 0 -9 -14 q0 -10 -8 -10 q-6 0 -6 -8 q0 -6 -8 -6 q-8 0 -8 -10 z" fill="#F472B6" stroke="#1E293B" stroke-width="5" stroke-linejoin="round"/>
+  <ellipse cx="42" cy="52" rx="10" ry="12" fill="#fff" stroke="#1E293B" stroke-width="4"/><circle cx="42" cy="58" r="4.5" fill="#1E293B"/><path d="M32 50 h20" stroke="#1E293B" stroke-width="5" stroke-linecap="round"/>
+  <ellipse cx="78" cy="54" rx="10" ry="12" fill="#fff" stroke="#1E293B" stroke-width="4"/><circle cx="78" cy="60" r="4.5" fill="#1E293B"/><path d="M68 52 h20" stroke="#1E293B" stroke-width="5" stroke-linecap="round"/>
+  <path d="M46 78 q7 -5 14 0 q7 5 14 0" fill="none" stroke="#1E293B" stroke-width="5" stroke-linecap="round"/></g></symbol>
+
+<symbol id="h-explosee" viewBox="0 0 120 120">
+  <polygon class="burstspin" points="60,0 69,22 90,8 86,32 112,30 96,50 120,62 96,72 110,94 86,90 88,116 68,100 58,120 50,98 28,112 32,88 6,92 22,72 0,60 22,48 8,28 32,32 30,8 52,22" fill="#FBBF24" stroke="#1E293B" stroke-width="4" stroke-linejoin="round"/>
+  <g class="laugh"><circle cx="63" cy="63" r="36" fill="#1E293B"/><circle cx="60" cy="60" r="36" fill="#8B5CF6" stroke="#1E293B" stroke-width="5"/>
+  <circle cx="46" cy="52" r="13" fill="#fff" stroke="#1E293B" stroke-width="4"/><circle class="pulse" cx="46" cy="52" r="4" fill="#1E293B"/>
+  <circle cx="75" cy="52" r="13" fill="#fff" stroke="#1E293B" stroke-width="4"/><circle class="pulse" cx="75" cy="52" r="4" fill="#1E293B"/>
+  <ellipse cx="60" cy="80" rx="11" ry="9" fill="#1E293B"/><ellipse cx="60" cy="84" rx="6" ry="3.5" fill="#F472B6"/></g></symbol>
+
+<symbol id="h-frimeur" viewBox="0 0 120 120"><g class="wig"><circle cx="65" cy="65" r="46" fill="#1E293B"/><circle cx="60" cy="60" r="46" fill="#FBBF24" stroke="#1E293B" stroke-width="5"/>
+  <path d="M26 48 h30 v8 q0 14 -15 14 q-15 0 -15 -14 z" fill="#1E293B"/><path d="M64 48 h30 v8 q0 14 -15 14 q-15 0 -15 -14 z" fill="#1E293B"/>
+  <path d="M54 52 h12 M20 50 h8 M92 50 h8" stroke="#1E293B" stroke-width="5" stroke-linecap="round"/>
+  <path d="M33 54 l7 -4 M71 54 l7 -4" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  <path d="M44 84 q16 10 32 -8" fill="none" stroke="#1E293B" stroke-width="5" stroke-linecap="round"/><path d="M74 72 l4 6" stroke="#1E293B" stroke-width="4" stroke-linecap="round"/></g></symbol>
+
+<symbol id="h-coeurs" viewBox="0 0 120 120"><g class="wig"><circle cx="65" cy="65" r="46" fill="#1E293B"/><circle cx="60" cy="60" r="46" fill="#FBBF24" stroke="#1E293B" stroke-width="5"/>
+  <path class="pulse" d="M42 55 l-11 -11 a6.5 6.5 0 0 1 11 -9 a6.5 6.5 0 0 1 11 9 z" fill="#F472B6" stroke="#1E293B" stroke-width="4" stroke-linejoin="round"/>
+  <path class="pulse" d="M78 55 l-11 -11 a6.5 6.5 0 0 1 11 -9 a6.5 6.5 0 0 1 11 9 z" fill="#F472B6" stroke="#1E293B" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M36 72 q24 28 48 0 z" fill="#1E293B" stroke="#1E293B" stroke-width="4" stroke-linejoin="round"/>
+  <circle cx="28" cy="72" r="6" fill="#F472B6" opacity=".7"/><circle cx="92" cy="72" r="6" fill="#F472B6" opacity=".7"/></g></symbol>
+
+<symbol id="h-mdr" viewBox="0 0 120 120"><g class="laugh"><g transform="rotate(-14 60 60)">
+  <circle cx="65" cy="65" r="46" fill="#1E293B"/><circle cx="60" cy="60" r="46" fill="#FBBF24" stroke="#1E293B" stroke-width="5"/>
+  <path d="M30 40 l14 8 l-14 8 M90 40 l-14 8 l14 8" fill="none" stroke="#1E293B" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M28 64 h64 q0 34 -32 34 q-32 0 -32 -34 z" fill="#1E293B" stroke="#1E293B" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M38 66 h44 v6 h-44 z" fill="#fff"/>
+  <path d="M44 90 q16 -12 32 0 q-6 7 -16 7 q-10 0 -16 -7 z" fill="#F472B6"/>
+  <g class="pulse"><path d="M30 54 q-14 -2 -22 14 q-4 10 4 12 q8 0 10 -10 q2 -10 8 -16 z" fill="#7DD3FC" stroke="#1E293B" stroke-width="4" stroke-linejoin="round"/></g>
+  <g class="pulse" style="animation-delay:-.45s"><path d="M90 54 q14 -2 22 14 q4 10 -4 12 q-8 0 -10 -10 q-2 -10 -8 -16 z" fill="#7DD3FC" stroke="#1E293B" stroke-width="4" stroke-linejoin="round"/></g>
+</g></g></symbol>
+
+<symbol id="h-crispe" viewBox="0 0 120 120"><g class="shake" style="animation-duration:.25s"><circle cx="65" cy="65" r="46" fill="#1E293B"/><circle cx="60" cy="60" r="46" fill="#8B5CF6" stroke="#1E293B" stroke-width="5"/>
+  <circle cx="42" cy="50" r="13" fill="#fff" stroke="#1E293B" stroke-width="4"/><circle cx="44" cy="52" r="4" fill="#1E293B"/>
+  <circle cx="79" cy="52" r="7" fill="#fff" stroke="#1E293B" stroke-width="4"/><circle cx="80" cy="53" r="2.5" fill="#1E293B"/>
+  <path d="M28 34 l16 6 M92 38 l-14 5" stroke="#1E293B" stroke-width="5" stroke-linecap="round"/>
+  <rect x="34" y="70" width="52" height="20" rx="5" fill="#fff" stroke="#1E293B" stroke-width="4"/>
+  <path d="M34 80 h52 M47 70 v20 M60 70 v20 M73 70 v20" stroke="#1E293B" stroke-width="3"/>
+  <path class="sweat" d="M96 30 q-7 11 0 16 q7 -5 0 -16 z" fill="#fff" stroke="#1E293B" stroke-width="3.5" stroke-linejoin="round"/></g></symbol>
+</defs></svg>
+
+<div class="page">
+  <header class="intro">
+    <span class="tag"><i></i>Maquettes · nouvelle direction</span>
+    <h1>A18 Darts, version crème et colorée</h1>
+    <p>Cinq écrans de l'app redessinés dans le style Playful Geometric. Les scènes animées des célébrations restent comme aujourd'hui. Nouveau : des têtes déjantées, présentées plus bas. Les boutons réagissent quand tu passes ou appuies dessus.</p>
+  </header>
+
+  <div class="phones">
+
+    <!-- 1. Accueil -->
+    <figure>
+      <div class="phone"><div class="screen">
+        <svg class="cf bob" style="right:-14px;top:150px;--t:6s" width="60" height="60" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="26" fill="#F472B6" stroke="#1E293B" stroke-width="3"/></svg>
+        <svg class="cf spin" style="left:-10px;top:440px" width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><path d="M16 3 H28 V16 H41 V28 H28 V41 H16 V28 H3 V16 H16 Z" fill="#34D399" stroke="#1E293B" stroke-width="3" stroke-linejoin="round"/></svg>
+        <div class="top">
+          <div class="brand"><b><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="#1E293B" stroke-width="2.5"/><circle cx="10" cy="10" r="3" fill="#1E293B"/></svg></b>A18 Darts</div>
+          <div class="lang"><span class="on">FR</span><span>EN</span></div>
+        </div>
+        <div style="position:relative"><svg class="head" width="74" height="74" viewBox="0 0 120 120" style="position:absolute;right:-8px;top:-30px;z-index:3;rotate:12deg" aria-hidden="true"><use href="#h-langue"/></svg><div class="hero-card">
+          <span class="lbl">Partie en cours · Killer</span>
+          <h2>Reprendre</h2>
+          <div class="row"><span style="font-weight:500;font-size:14px">Thomas, Léa, Sam et Guillaume</span><span class="go"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1E293B" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+        </div>
+        </div>
+        <button class="pill pop" style="width:100%">Nouvelle partie</button>
+        <p class="punch">À l'Arena18, le <u>180</u> joue à domicile.</p>
+        <div class="rec">
+          <div class="rec-head"><h3>Records</h3><div class="tabs"><span class="on">Aujourd'hui</span><span>Semaine</span></div></div>
+          <div class="rec-row"><span class="ic" style="background:#FBBF24"><svg width="14" height="14" viewBox="0 0 24 24" fill="#1E293B" aria-hidden="true"><path d="M12 2l3 6.5 7 1-5 5 1.2 7L12 18l-6.2 3.5L7 14.5l-5-5 7-1z"/></svg></span><div class="who"><b>Thomas</b><span>Meilleure volée</span></div><span class="num">140</span></div>
+          <div class="rec-row"><span class="ic" style="background:#F472B6"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1E293B" stroke-width="3" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2" fill="#1E293B"/></svg></span><div class="who"><b>Léa</b><span>Plus gros checkout</span></div><span class="num">96</span></div>
+        </div>
+        <div class="install"><span class="ic" style="background:#34D399;width:26px;height:26px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1E293B" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 4v12M6 11l6 6 6-6M5 20h14"/></svg></span>Installer l'app sur ton téléphone</div>
+      </div></div>
+      <figcaption>Accueil<span>Fond crème, la partie en cours en grosse carte violette, records sur une carte « sticker ».</span></figcaption>
+    </figure>
+
+    <!-- 2. Choix du jeu -->
+    <figure>
+      <div class="phone"><div class="screen">
+        <svg class="cf bob" style="right:14px;top:22px;--t:5s;--d:-1s" width="50" height="44" viewBox="0 0 50 44" aria-hidden="true"><polygon points="25,3 47,41 3,41" fill="#FBBF24" stroke="#1E293B" stroke-width="3" stroke-linejoin="round"/></svg>
+        <div><span class="lbl">4 joueurs</span><h2 class="h">On joue à quoi ?</h2></div>
+        <div class="games">
+          <div class="game"><span class="shape" style="background:#8B5CF6;color:#fff;border-radius:50%">501</span><div><h4>501 / 301</h4><p>Le classique : descends à zéro pile.</p></div><span class="t" style="background:#34D399">25 min</span></div>
+          <div class="game"><span class="shape" style="background:#F472B6;border-radius:6px">20</span><div><h4>Cricket</h4><p>Ferme 20 à 15 et le bull avant les autres.</p></div><span class="t" style="background:#34D399">20 min</span></div>
+          <div class="game"><span class="shape" style="background:#FBBF24;border-radius:24px 24px 24px 4px">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E293B" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4"/></svg></span><div><h4>Killer</h4><p>Chacun son numéro. Deviens tueur.</p></div><span class="t">15 min</span></div>
+          <div class="game"><span class="shape" style="background:#34D399;border-radius:999px 999px 6px 6px">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E293B" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div><h4>Tour de l'horloge</h4><p>De 1 à 20, dans l'ordre.</p></div><span class="t" style="background:#34D399">10 min</span></div>
+          <div class="game"><span class="shape" style="background:#8B5CF6;color:#fff;border-radius:6px 24px 6px 24px">180</span><div><h4>Plus gros score</h4><p>Le plus de points en quelques volées.</p></div><span class="t" style="background:#34D399">10 min</span></div>
+        </div>
+      </div></div>
+      <figcaption>Choix du jeu<span>Chaque jeu a sa forme et sa couleur. La pastille verte = durée idéale pour un verre.</span></figcaption>
+    </figure>
+
+    <!-- 3. Écran de jeu -->
+    <figure>
+      <div class="phone"><div class="screen" id="g-screen" style="gap:12px">
+        <div class="gbar">
+          <span class="lbl">501<small>Volée 4 · 2ᵉ fléchette</small></span>
+          <div class="btns"><button class="pill small">Tableau</button><button class="pill small">Menu</button></div>
+        </div>
+        <div class="player pl2">
+          <div class="name"><i></i>GUILLAUME</div>
+          <div style="min-width:0">
+            <div class="score num"><span id="g-score">160</span><small id="g-delta"></small></div>
+            <span class="hint" id="g-hint"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1E293B" stroke-width="3" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg><span>T20 · T20 · D20</span></span>
+          </div>
+          <svg class="board" id="g-board" viewBox="-112 -112 224 224" role="img" aria-label="Cible avec les fléchettes de la volée"></svg>
+          <div class="others2"><span>Léa<b class="num">212</b></span><span>Sam<b class="num">340</b></span></div>
+          <svg class="head" id="g-head" width="54" height="54" viewBox="0 0 120 120" style="position:absolute;right:-14px;top:-30px;opacity:0" aria-hidden="true"><use href="#h-explosee"/></svg>
+        </div>
+        <div class="slots" id="g-slots"></div>
+        <div class="dtrow" id="g-dt" hidden><button class="pill pop" id="g-d" style="background:#FBBF24">Double</button><button class="pill pop" id="g-t" style="background:#F472B6">Triple</button></div>
+        <div class="pad">
+          <span class="k" role="button" tabindex="0">1</span><span class="k" role="button" tabindex="0">2</span><span class="k" role="button" tabindex="0">3</span><span class="k" role="button" tabindex="0">4</span><span class="k" role="button" tabindex="0">5</span>
+          <span class="k" role="button" tabindex="0">6</span><span class="k" role="button" tabindex="0">7</span><span class="k" role="button" tabindex="0">8</span><span class="k" role="button" tabindex="0">9</span><span class="k" role="button" tabindex="0">10</span>
+          <span class="k" role="button" tabindex="0">11</span><span class="k" role="button" tabindex="0">12</span><span class="k" role="button" tabindex="0">13</span><span class="k" role="button" tabindex="0">14</span><span class="k" role="button" tabindex="0">15</span>
+          <span class="k" role="button" tabindex="0">16</span><span class="k" role="button" tabindex="0">17</span><span class="k" role="button" tabindex="0">18</span><span class="k" role="button" tabindex="0">19</span><span class="k" role="button" tabindex="0">20</span>
+        </div>
+        <div class="pad2"><span class="k" role="button" tabindex="0">25</span><span class="k bull">BULL</span><span class="k miss">RATÉ</span><span class="k undo">Annuler</span></div>
+        <button class="pill pop violet valider" id="g-valider">Valider la volée</button>
+      </div></div>
+      <div class="demo" id="g-demo">Essaie avec : <button class="pill on" data-start="160">Reste 160</button><button class="pill" data-start="100">Reste 100</button><button class="pill" data-start="2">Reste 2</button></div>
+      <figcaption>Écran de jeu<span>Tape un chiffre : la fléchette se plante sur la cible. Les cases pour finir s'illuminent en jaune, sur la cible et sur le pavé.</span></figcaption>
+    </figure>
+
+    <!-- 5. Chambrage -->
+    <figure>
+      <div class="phone"><div class="screen" style="gap:12px">
+        <div class="dim" style="display:flex;flex-direction:column;gap:12px"><div class="gbar">
+          <span class="lbl">501<small>Volée 4 · 2ᵉ fléchette</small></span>
+          <div class="btns"><button class="pill small">Tableau</button><button class="pill small">Menu</button></div>
+        </div>
+        <div class="player pl2">
+          <div class="name"><i></i>GUILLAUME</div><div style="min-width:0"><div class="score num">275</div><span class="hint"><span>Volée de 26</span></span></div>
+          <svg class="board" data-darts='[[20,1,0.4,75],[5,1,-0.3,80],[1,1,0.2,34]]' viewBox="-112 -112 224 224" aria-hidden="true"></svg>
+          <div class="others2"><span>Léa<b class="num">212</b></span><span>Sam<b class="num">340</b></span></div>
+        </div>
+        <div class="slots"><span class="slot f">20</span><span class="slot f">5</span><span class="slot f">1</span><span class="tot num">26</span></div>
+        <div class="pad">
+          <span class="k">1</span><span class="k">2</span><span class="k">3</span><span class="k">4</span><span class="k">5</span>
+          <span class="k">6</span><span class="k">7</span><span class="k">8</span><span class="k">9</span><span class="k">10</span>
+          <span class="k">11</span><span class="k">12</span><span class="k">13</span><span class="k">14</span><span class="k">15</span>
+          <span class="k">16</span><span class="k">17</span><span class="k">18</span><span class="k">19</span><span class="k sel">20</span>
+        </div>
+        <div class="pad2"><span class="k">25</span><span class="k bull">BULL</span><span class="k miss">RATÉ</span><span class="k undo">Annuler</span></div>
+        <button class="pill pop violet valider">Valider la volée</button>
+      </div>
+        <div class="wink"><svg class="head" width="92" height="92" viewBox="0 0 120 120" style="" aria-hidden="true"><use href="#h-langue"/></svg><div class="bubble">26… le classique.</div></div>
+      </div></div>
+      <figcaption>Chambrage<span>Pendant la partie, une tête surgit avec une bulle, sans bloquer la saisie. Une tape et elle disparaît.</span></figcaption>
+    </figure>
+
+    <!-- 4. Podium -->
+    <figure>
+      <div class="phone"><div class="screen">
+                <svg class="cf bob" style="right:14px;top:96px;--t:4.5s" width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="13" fill="#34D399" stroke="#1E293B" stroke-width="3"/></svg>
+        <svg class="cf bob" style="right:40px;top:230px;--t:6s;--d:-2s" width="70" height="24" viewBox="0 0 70 24" aria-hidden="true"><path d="M4 16 Q 13 2 22 12 T 40 12 T 58 12 T 66 8" fill="none" stroke="#8B5CF6" stroke-width="4" stroke-linecap="round"/></svg>
+        <svg class="head" width="70" height="70" viewBox="0 0 120 120" style="position:absolute;right:4px;top:96px;z-index:3;rotate:10deg" aria-hidden="true"><use href="#h-frimeur"/></svg><svg class="head" width="52" height="52" viewBox="0 0 120 120" style="position:absolute;left:14px;top:80px;z-index:3;rotate:-12deg" aria-hidden="true"><use href="#h-coeurs"/></svg><div class="win"><span class="lbl">501 · 08.10.2026</span><h2>Guillaume<br><u>gagne !</u></h2></div>
+        <div class="podium">
+          <div class="step second"><span class="av">T</span><span class="nm">Thomas<span>Reste 32</span></span><div class="block">2</div></div>
+          <div class="step first"><span class="av">G</span><span class="nm">Guillaume<span>Fini en D20</span></span><div class="block">1</div></div>
+          <div class="step third"><span class="av">S</span><span class="nm">Sam<span>Reste 104</span></span><div class="block">3</div></div>
+        </div>
+        <div class="best"><div><span class="lbl">Volée de la partie</span><div style="font-weight:700;font-size:14px;margin-top:2px">Guillaume · volée 3</div></div><span class="num">180</span></div>
+        <div class="duo"><button class="pill pop violet">Revanche</button><button class="pill pop">Partager</button></div>
+        <div class="links2"><span>Autre jeu</span><span>Accueil</span></div>
+      </div></div>
+      <figcaption>Podium<span>Marches de formes différentes, initiales dans des pastilles, Revanche et Partager côte à côte.</span></figcaption>
+    </figure>
+
+  </div>
+
+  <section class="heads">
+    <div class="heads-top"><span class="tag"><i></i>Proposition en attendant Pierre</span></div>
+    <h2>Les têtes déjantées</h2>
+    <p>Huit têtes, chacune liée à un moment de la partie. Elles bougent en boucle : yeux qui tournent, tête qui fond, langue qui gigote. Passe la souris dessus pour les faire danser.</p>
+    <div class="hgrid">
+      <div class="hcard"><svg class="head" width="120" height="120" viewBox="0 0 120 120" style="" aria-hidden="true"><use href="#h-explosee"/></svg><h3>L'Explosée</h3><p>Yeux exorbités, crâne qui part en étoile.</p><span class="when">180 et grosses volées</span></div>
+      <div class="hcard"><svg class="head" width="120" height="120" viewBox="0 0 120 120" style="" aria-hidden="true"><use href="#h-frimeur"/></svg><h3>Le Frimeur</h3><p>Lunettes noires, sourire en coin.</p><span class="when">Victoire, passer devant</span></div>
+      <div class="hcard"><svg class="head" width="120" height="120" viewBox="0 0 120 120" style="" aria-hidden="true"><use href="#h-coeurs"/></svg><h3>Le Coup de cœur</h3><p>Des cœurs qui battent à la place des yeux.</p><span class="when">Record du jour</span></div>
+      <div class="hcard"><svg class="head" width="120" height="120" viewBox="0 0 120 120" style="" aria-hidden="true"><use href="#h-mdr"/></svg><h3>Le Mort de rire</h3><p>Plié de rire, les larmes qui giclent.</p><span class="when">Ton-up (100 et plus)</span></div>
+      <div class="hcard"><svg class="head" width="120" height="120" viewBox="0 0 120 120" style="" aria-hidden="true"><use href="#h-langue"/></svg><h3>Le Tire-langue</h3><p>Clin d'œil et langue tirée.</p><span class="when">Chambrage, le 26</span></div>
+      <div class="hcard"><svg class="head" width="120" height="120" viewBox="0 0 120 120" style="" aria-hidden="true"><use href="#h-tournis"/></svg><h3>Le Tournis</h3><p>Yeux en spirale, bouche en zigzag.</p><span class="when">Trois ratés</span></div>
+      <div class="hcard"><svg class="head" width="120" height="120" viewBox="0 0 120 120" style="" aria-hidden="true"><use href="#h-fondue"/></svg><h3>La Fondue</h3><p>Elle coule de partout, le moral aussi.</p><span class="when">Bust, éliminé</span></div>
+      <div class="hcard"><svg class="head" width="120" height="120" viewBox="0 0 120 120" style="" aria-hidden="true"><use href="#h-crispe"/></svg><h3>Le Crispé</h3><p>Dents serrées, goutte de sueur.</p><span class="when">« Au bull ! », dernier double</span></div>
+    </div>
+  </section>
+</div>
+
+<script>
+(() => {
+  const ORDER = [20,1,18,4,13,6,10,15,2,17,3,19,7,16,8,11,14,9,12,5];
+  const INK = '#1E293B', CREAM = '#FFFDF5', PINK = '#F472B6', MINT = '#34D399', VIOLET = '#8B5CF6', AMBER = '#FBBF24';
+  const R = { bull: 7, outer: 15, tIn: 54, tOut: 64, dIn: 90, dOut: 100 };
+  const pt = (a, r) => [r * Math.cos(a), r * Math.sin(a)];
+  const segAngle = (n) => (ORDER.indexOf(n) * 18 - 90) * Math.PI / 180;
+  function wedge(a0, a1, r0, r1, fill) {
+    const [x0,y0] = pt(a0,r1), [x1,y1] = pt(a1,r1), [x2,y2] = pt(a1,r0), [x3,y3] = pt(a0,r0);
+    return `<path d="M${x0} ${y0} A${r1} ${r1} 0 0 1 ${x1} ${y1} L${x2} ${y2} A${r0} ${r0} 0 0 0 ${x3} ${y3}Z" fill="${fill}"/>`;
+  }
+  function boardBase() {
+    let g = `<circle cx="5" cy="5" r="106" fill="${INK}"/><circle r="106" fill="${INK}"/>`;
+    ORDER.forEach((n, i) => {
+      const c = (i * 18 - 90) * Math.PI / 180, a0 = c - Math.PI / 20, a1 = c + Math.PI / 20;
+      const even = i % 2 === 0;
+      g += wedge(a0, a1, R.outer, R.dOut, even ? INK : CREAM);
+      g += wedge(a0, a1, R.dIn, R.dOut, even ? PINK : MINT);
+      g += wedge(a0, a1, R.tIn, R.tOut, even ? PINK : MINT);
+    });
+    g += `<circle r="${R.outer}" fill="${MINT}" stroke="${INK}" stroke-width="2"/><circle r="${R.bull}" fill="${PINK}" stroke="${INK}" stroke-width="2"/>`;
+    g += `<circle r="${R.dOut}" fill="none" stroke="${INK}" stroke-width="3"/>`;
+    return g;
+  }
+  // Position d'une fléchette : n (0 = raté), m (1/2/3), décalage d'angle, rayon
+  function place(n, m) {
+    if (n === 0) return null;
+    const jit = (Math.random() - 0.5) * 0.18;
+    if (n === 25) return m === 2 ? [n, m, Math.random() * 6.28, Math.random() * 4] : [n, m, Math.random() * 6.28, 10 + Math.random() * 3];
+    const r = m === 3 ? 59 : m === 2 ? 95 : (Math.random() < 0.6 ? 70 + Math.random() * 16 : 22 + Math.random() * 26);
+    return [n, m, jit, r];
+  }
+  function dartSVG(d, cls) {
+    const [n, m, off, r] = d;
+    const a = n === 25 ? off : segAngle(n) + off;
+    const [x, y] = pt(a, r);
+    return `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(1.35)"><g class="dart ${cls}">
+      <line x1="0" y1="0" x2="20" y2="-26" stroke="${INK}" stroke-width="5" stroke-linecap="round"/>
+      <path d="M17 -22 l14 -6 l-4 -4 l-6 -14 z" fill="${VIOLET}" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
+      <circle r="4.5" fill="${AMBER}" stroke="${INK}" stroke-width="2.5"/></g></g>`;
+  }
+  const BASE = boardBase();
+  function zone(z) {
+    if (z.n === 25) return `<circle class="zone" r="${z.m === 2 ? R.bull : R.outer}" fill="${AMBER}" stroke="${INK}" stroke-width="3"/>`;
+    const c = segAngle(z.n), a0 = c - Math.PI / 20, a1 = c + Math.PI / 20;
+    const [r0, r1] = z.m === 3 ? [R.tIn - 4, R.tOut + 4] : z.m === 2 ? [R.dIn - 5, R.dOut + 5] : [R.tOut, R.dIn];
+    return wedge(a0 - 0.03, a1 + 0.03, r0, r1, AMBER).replace('<path', '<path class="zone" stroke="' + INK + '" stroke-width="3"');
+  }
+  function draw(svg, darts, animLast, zones = []) {
+    svg.innerHTML = BASE + (zones.length ? `<circle r="106" fill="${CREAM}" opacity=".55"/>` : '') + zones.map(zone).join('') + darts.filter(Boolean).map((d, i, arr) => dartSVG(d, animLast && i === arr.length - 1 ? 'new' : '')).join('');
+  }
+  document.querySelectorAll('svg.board[data-darts]').forEach(svg => {
+    const darts = JSON.parse(svg.dataset.darts).map(([n, m, off, r]) => [n, m, off, r]);
+    draw(svg, darts, false);
+  });
+
+  // Écran de jeu cliquable
+  const screen = document.getElementById('g-screen');
+  if (!screen) return;
+  const board = document.getElementById('g-board'), slots = document.getElementById('g-slots');
+  const scoreEl = document.getElementById('g-score'), deltaEl = document.getElementById('g-delta');
+  const hint = document.getElementById('g-hint'), dt = document.getElementById('g-dt'), head = document.getElementById('g-head');
+  const HINTS = { 170: 'T20 · T20 · BULL', 160: 'T20 · T20 · D20', 140: 'T20 · T20 · D10', 120: 'T20 · 20 · D20', 110: 'T20 · BULL', 100: 'T20 · D20', 90: 'T20 · D15', 80: 'T20 · D10', 70: 'T10 · D20', 60: '20 · D20', 50: 'BULL', 40: 'D20', 36: 'D18', 32: 'D16', 24: 'D12', 20: 'D10', 18: 'D9', 16: 'D8', 12: 'D6', 10: 'D5', 8: 'D4', 6: 'D3', 5: '1 · D2', 4: 'D2', 3: '1 · D1', 2: 'D1' };
+  let start = 160, volley = []; // {n, m, pos}
+  const val = (v) => v.n === 0 ? 0 : v.n * v.m;
+  const label = (v) => v.n === 0 ? 'Raté' : v.n === 25 ? (v.m === 2 ? 'BULL' : '25') : (v.m === 3 ? 'T' : v.m === 2 ? 'D' : '') + v.n;
+  function render(anim) {
+    const sum = volley.reduce((t, v) => t + val(v), 0);
+    const left = start - sum;
+    scoreEl.textContent = left < 0 ? start : left;
+    deltaEl.textContent = sum ? '−' + sum : '';
+    deltaEl.style.animation = 'none'; void deltaEl.offsetWidth; deltaEl.style.animation = '';
+    const h = HINTS[left];
+    hint.style.visibility = h && volley.length < 3 && h.split(' · ').length <= 3 - volley.length ? 'visible' : 'hidden';
+    if (h) hint.lastElementChild.textContent = 'Pour finir : ' + h;
+    slots.innerHTML = [0,1,2].map(i => {
+      const v = volley[i];
+      if (!v) return `<span class="slot">${i + 1}</span>`;
+      return `<span class="slot f${v.m === 3 ? ' t' : ''}"${v.m === 2 ? ' style="background:#FBBF24"' : v.m === 1 ? ' style="background:#fff"' : ''}>${label(v)}</span>`;
+    }).join('') + `<span class="tot num">${sum}</span>`;
+    const left2 = start - sum, h2 = HINTS[left2];
+    const path = h2 && volley.length < 3 ? h2.split(' · ').map(t => t === 'BULL' ? { n: 25, m: 2 } : { n: Number(t.replace(/^[TD]/, '')), m: t[0] === 'T' ? 3 : t[0] === 'D' ? 2 : 1 }) : [];
+    const ok = path.length && path.length <= 3 - volley.length;
+    draw(board, volley.map(v => v.pos), anim, ok ? path : []);
+    screen.querySelectorAll('.k').forEach(k => { k.classList.remove('glow'); k.removeAttribute('data-m'); });
+    if (ok) path.forEach(z => {
+      const t = z.n === 25 ? 'BULL' : String(z.n);
+      const k = [...screen.querySelectorAll('.k')].find(x => x.textContent.trim() === t);
+      if (!k) return;
+      k.classList.add('glow');
+      const tag = z.n === 25 ? '' : z.m === 3 ? 'T' : z.m === 2 ? 'D' : '1';
+      if (tag) k.setAttribute('data-m', k.getAttribute('data-m') ? k.getAttribute('data-m') + '·' + tag : tag);
+    });
+    const last = volley[volley.length - 1];
+    dt.hidden = !(last && last.n !== 0 && (last.n !== 25 ? last.m === 1 : last.m === 1));
+    document.getElementById('g-t').hidden = !!(last && last.n === 25);
+    slots.hidden = !dt.hidden;
+    const big = last && last.m === 3 && last.n >= 17;
+    head.style.transition = 'opacity 200ms'; head.style.opacity = big ? 1 : 0;
+  }
+  function add(n, m) {
+    if (volley.length >= 3) return;
+    volley.push({ n, m, pos: place(n, m) });
+    render(true);
+  }
+  function upgrade(m) {
+    const v = volley[volley.length - 1];
+    if (!v) return;
+    v.m = m; v.pos = place(v.n, m); render(true);
+  }
+  screen.querySelectorAll('.k').forEach(k => {
+    const go = () => {
+      const t = k.textContent.trim();
+      if (t === 'Annuler') { volley.pop(); render(false); return; }
+      if (t === 'RATÉ') return add(0, 1);
+      if (t === 'BULL') return add(25, 2);
+      add(Number(t), 1);
+    };
+    k.addEventListener('click', go);
+    k.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+  });
+  document.getElementById('g-d').addEventListener('click', () => upgrade(2));
+  document.getElementById('g-t').addEventListener('click', () => upgrade(3));
+  document.getElementById('g-valider').addEventListener('click', () => {
+    const sum = volley.reduce((t, v) => t + val(v), 0);
+    if (start - sum >= 2 || start - sum === 0) start = start - sum === 0 ? 160 : start - sum;
+    volley = []; render(false);
+  });
+  document.querySelectorAll('#g-demo button').forEach(bt => bt.addEventListener('click', () => {
+    document.querySelectorAll('#g-demo button').forEach(x => x.classList.toggle('on', x === bt));
+    start = Number(bt.dataset.start); volley = []; render(false);
+  }));
+  // État de départ : un Triple 20 déjà planté
+  volley = [{ n: 20, m: 3, pos: [20, 3, 0.05, 59] }];
+  render(false);
+})();
+</script>
