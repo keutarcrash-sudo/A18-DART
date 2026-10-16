@@ -25,12 +25,24 @@ export function todayLabel(): string {
   return `${p(d.getDate())}.${p(d.getMonth() + 1)}.${d.getFullYear()}`;
 }
 
-/** Marches : 1 violet (coins vifs en haut), 2 rose (arche), 3 menthe. */
+/**
+ * Marches : 1 violet (coins vifs en haut), 2 rose (arche), 3 menthe.
+ * `h` : à l'écran, selon la hauteur du téléphone (plus hautes sur les grands écrans pour ne pas laisser de vide) ;
+ * `hs` : dans l'image story, toujours la même taille (l'image fait 360 × 640 quel que soit le téléphone).
+ */
 const STEP = [
-  { h: "h-[128px] [@media(min-height:800px)]:h-[150px] [@media(max-height:700px)]:h-[96px]", cls: "rounded-t-[22px] bg-violet text-white", pad: "pt-2.5" },
-  { h: "h-[92px] [@media(min-height:800px)]:h-[104px] [@media(max-height:700px)]:h-[68px]", cls: "rounded-t-[999px] bg-rose text-encre", pad: "pt-3" },
-  { h: "h-[68px] [@media(min-height:800px)]:h-[76px] [@media(max-height:700px)]:h-[50px]", cls: "rounded-t-xl bg-menthe text-encre", pad: "pt-1.5" },
+  { h: "h-[128px] [@media(min-height:800px)]:h-[232px] [@media(max-height:700px)]:h-[96px]", hs: "h-[150px]", cls: "rounded-t-[22px] bg-violet text-white", pad: "pt-2.5" },
+  { h: "h-[92px] [@media(min-height:800px)]:h-[168px] [@media(max-height:700px)]:h-[68px]", hs: "h-[104px]", cls: "rounded-t-[999px] bg-rose text-encre", pad: "pt-3" },
+  { h: "h-[68px] [@media(min-height:800px)]:h-[122px] [@media(max-height:700px)]:h-[50px]", hs: "h-[76px]", cls: "rounded-t-xl bg-menthe text-encre", pad: "pt-1.5" },
 ] as const;
+
+/** Pastilles des initiales : plus grandes sur les grands écrans ; taille fixe dans l'image story. */
+const BADGE = {
+  first: "h-[72px] w-[72px] text-[32px] [@media(max-height:700px)]:h-[60px] [@media(max-height:700px)]:w-[60px] [@media(max-height:700px)]:text-[27px] [@media(min-height:800px)]:h-[92px] [@media(min-height:800px)]:w-[92px] [@media(min-height:800px)]:text-[42px]",
+  other: "h-[56px] w-[56px] text-[24px] [@media(max-height:700px)]:h-[48px] [@media(max-height:700px)]:w-[48px] [@media(max-height:700px)]:text-[21px] [@media(min-height:800px)]:h-[70px] [@media(min-height:800px)]:w-[70px] [@media(min-height:800px)]:text-[30px]",
+  firstStory: "h-[72px] w-[72px] text-[32px]",
+  otherStory: "h-[56px] w-[56px] text-[24px]",
+};
 
 /**
  * @param story  version image : les initiales restent dans leurs pastilles, avec la signature Arena18 en bas.
@@ -61,8 +73,8 @@ export function PodiumScene({ data, story = false, width, date }: { data: Podium
       </div>
 
       {/* Le titre, avec le Frimeur et le Coup de cœur autour */}
-      <div className="mt-3 text-center font-display font-black leading-[0.98] tracking-tight [@media(max-height:700px)]:mt-1.5">
-        <span className="block whitespace-nowrap" style={{ fontSize: fitPx(l1, 46, width) }}>
+      <div className={`mt-3 text-center font-display font-black leading-[0.98] tracking-tight [@media(max-height:700px)]:mt-1.5 ${story ? "" : "[@media(min-height:800px)]:mt-6"}`}>
+        <span className="-my-[0.07em] block truncate px-1 leading-[1.12]" style={{ fontSize: fitPx(l1, 46, width) }}>
           {l1}
         </span>
         <div className="mt-0.5 flex h-[42px] items-center justify-center gap-1">
@@ -75,7 +87,7 @@ export function PodiumScene({ data, story = false, width, date }: { data: Podium
           </span>
           <Head kind="frimeur" size={58} className="-mr-2 shrink-0 rotate-[10deg]" />
         </div>
-        <span className="mt-0.5 block whitespace-nowrap font-extrabold text-attenue" style={{ fontSize: fitPx(l3, 22, width, 14) }}>
+        <span className="-mb-[0.07em] mt-[calc(2px-0.07em)] block truncate px-1 font-extrabold leading-[1.12] text-attenue" style={{ fontSize: fitPx(l3, 22, width, 14) }}>
           {l3}
         </span>
       </div>
@@ -91,14 +103,14 @@ export function PodiumScene({ data, story = false, width, date }: { data: Podium
             <div key={r} className={`flex min-w-0 flex-col items-center ${first ? "flex-[1.1]" : "flex-1"}`}>
               <span
                 className={`grid shrink-0 place-items-center rounded-full border-2 border-encre font-display font-black shadow-[3px_3px_0_0_var(--color-encre)] ${
-                  first ? "h-[72px] w-[72px] bg-ambre text-[32px] [@media(max-height:700px)]:h-[60px] [@media(max-height:700px)]:w-[60px] [@media(max-height:700px)]:text-[27px]" : "h-[56px] w-[56px] bg-carte text-[24px] [@media(max-height:700px)]:h-[48px] [@media(max-height:700px)]:w-[48px] [@media(max-height:700px)]:text-[21px]"
+                  first ? `bg-ambre ${story ? BADGE.firstStory : BADGE.first}` : `bg-carte ${story ? BADGE.otherStory : BADGE.other}`
                 }`}
               >
                 {p.name.charAt(0).toUpperCase()}
               </span>
-              <span className="mt-1.5 w-full truncate px-0.5 text-center text-[13px] font-bold leading-tight">{p.name}</span>
+              <span className={`mt-1.5 w-full truncate px-0.5 text-center text-[13px] font-bold leading-tight ${story ? "" : "[@media(min-height:800px)]:text-[15px]"}`}>{p.name}</span>
               <span className="mb-1.5 h-4 w-full truncate text-center text-[12px] font-medium leading-4 text-attenue">{p.value ?? ""}</span>
-              <div className={`grid w-full place-items-start justify-items-center border-2 border-encre font-display text-[34px] font-black leading-none ${STEP[r].h} ${STEP[r].cls} ${STEP[r].pad}`}>
+              <div className={`grid w-full place-items-start justify-items-center border-2 border-encre font-display text-[34px] font-black leading-none ${story ? STEP[r].hs : STEP[r].h} ${STEP[r].cls} ${STEP[r].pad}`}>
                 {r + 1}
               </div>
             </div>

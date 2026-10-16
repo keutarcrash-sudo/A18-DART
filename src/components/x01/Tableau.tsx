@@ -33,12 +33,12 @@ export function Tableau({ title, who, current, rows, onClose }: Props) {
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-creme px-4 pb-4 pt-[calc(14px+env(safe-area-inset-top))] text-encre">
-      <div className="flex min-h-11 items-center justify-between gap-2">
+      <div className="flex min-h-12 items-center justify-between gap-2">
         <span className="min-w-0 truncate text-[11px] font-bold uppercase tracking-[0.08em] text-attenue">{title}</span>
         <button
           type="button"
           onClick={onClose}
-          className="pop-shadow-sm pop-press relative h-11 shrink-0 rounded-full border-2 border-encre bg-carte px-4 font-display text-[13px] font-extrabold tracking-wide text-encre"
+          className="pop-shadow-sm pop-press relative h-12 shrink-0 rounded-full border-2 border-encre bg-carte px-4 font-display text-[13px] font-extrabold tracking-wide text-encre"
         >
           {t("SAISIR")}
         </button>

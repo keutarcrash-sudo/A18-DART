@@ -14,14 +14,14 @@ export function Screen({ children }: { children: ReactNode }) {
 export function TopBar({ onBack, left, right }: { onBack?: () => void; left: ReactNode; right?: ReactNode }) {
   const t = useT();
   return (
-    <div className="flex min-h-11 items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-[0.08em] text-attenue">
+    <div className="flex min-h-12 items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-[0.08em] text-attenue">
       <span className="flex items-center">
         {onBack && (
           <button
             type="button"
             onClick={onBack}
             aria-label={t("Retour")}
-            className="pop-shadow-sm pop-press mr-2 grid h-11 w-11 place-items-center rounded-full border-2 border-encre bg-carte text-xl font-black leading-none text-encre"
+            className="pop-shadow-sm pop-press mr-2 grid h-12 w-12 place-items-center rounded-full border-2 border-encre bg-carte text-xl font-black leading-none text-encre"
           >
             ←
           </button>
@@ -82,10 +82,9 @@ export function Cta({
   children: ReactNode;
   onClick: () => void;
   disabled?: boolean;
-  /** « cyan » : ancien nom du violet, gardé jusqu'à la tâche 15. */
-  tone?: "blanc" | "violet" | "cyan";
+  tone?: "blanc" | "violet";
 }) {
-  const violet = tone !== "blanc";
+  const violet = tone === "violet";
   return (
     <button
       type="button"

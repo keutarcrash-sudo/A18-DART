@@ -83,7 +83,8 @@ export function Board({
 }: {
   darts: { dart: Dart; seed: number }[];
   zones: Dart[];
-  size: number;
+  /** Taille en px, ou "100%" pour suivre la boîte qui la contient (taille qui change selon l'écran). */
+  size: number | string;
 }) {
   const t = useT();
   const label = darts.length

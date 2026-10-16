@@ -13,7 +13,7 @@ import { GameMenu } from "@/components/GameMenu";
 import { Board } from "@/components/x01/Board";
 import { Pad } from "@/components/x01/Pad";
 import { Tableau } from "@/components/x01/Tableau";
-import { DartRow, OthersGrid, POP_PILL, boardDartsOf } from "@/components/x01/Volley";
+import { BOARD_BOX, DartRow, GAIN_SIZE, OthersGrid, PLAYER_CARD, POP_PILL, boardDartsOf } from "@/components/x01/Volley";
 import type { Dart, Mult } from "@/engine/types";
 import { type HighEvent, type HighState, bestHighVolley, currentMemberHigh, highRounds, rankingHigh } from "@/engine/high";
 import { useFlatPhone, useWakeLock } from "@/lib/device";
@@ -213,8 +213,8 @@ export function HighGame() {
   const others = Array.from({ length: nSides - 1 }, (_, k) => (side + 1 + k) % nSides);
   const scoreSize =
     String(shownScore).length >= 3
-      ? "text-[70px] [@media(min-height:740px)]:text-[82px] [@media(max-width:379px)]:text-[62px] [@media(max-height:700px)]:text-[58px]"
-      : "text-[92px] [@media(min-height:740px)]:text-[104px] [@media(max-height:700px)]:text-[68px]";
+      ? "text-[70px] [@media(min-height:740px)_and_(max-height:819px)_and_(min-width:380px)]:text-[82px] [@media(min-height:820px)_and_(min-width:380px)]:text-[80px] [@media(max-width:379px)]:text-[62px] [@media(max-height:700px)]:text-[58px]"
+      : "text-[92px] [@media(min-height:740px)_and_(max-height:819px)_and_(min-width:380px)]:text-[104px] [@media(min-height:820px)_and_(min-width:380px)]:text-[112px] [@media(min-height:820px)_and_(max-width:379px)]:text-[104px] [@media(max-height:700px)]:text-[68px]";
   const team = sides[side].members.length > 1 ? sides[side].name : null;
 
   return (
@@ -269,7 +269,7 @@ export function HighGame() {
         </div>
 
         {/* Carte du joueur actif : nom, score géant, point de la volée ; cible à droite ; les autres en bas */}
-        <div className="mt-3 grid shrink-0 grid-cols-[minmax(0,1fr)_128px] items-center gap-x-2 rounded-3xl border-2 border-encre bg-carte px-3.5 pb-2.5 pt-3 shadow-[6px_6px_0_0_var(--color-rose)] [@media(max-height:700px)]:mt-1 [@media(max-height:700px)]:pb-1.5 [@media(max-height:700px)]:pt-2">
+        <div className={PLAYER_CARD}>
           <div className="min-w-0">
             <motion.div
               key={`${side}-${who}`}
@@ -286,13 +286,13 @@ export function HighGame() {
                 {who}
               </span>
             </motion.div>
-            <div className="mt-1 flex items-start gap-1">
+            <div className="mt-1 flex items-start gap-1 [@media(min-height:820px)]:mt-2">
               <span className={`font-num font-black leading-[0.9] tracking-[-0.04em] ${scoreSize}`}>{shownScore}</span>
               <AnimatePresence>
                 {plus && (
                   <motion.span
                     key={plus.id}
-                    className="mt-1 shrink-0 font-num text-[22px] font-black text-violet"
+                    className={`mt-1 shrink-0 font-num font-black text-violet ${GAIN_SIZE}`}
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     exit={{ opacity: 0 }}
@@ -303,13 +303,13 @@ export function HighGame() {
                 )}
               </AnimatePresence>
             </div>
-            <div className="mt-1.5 inline-block max-w-full rounded-2xl border-2 border-encre bg-menthe px-2.5 py-[3px] text-[12px] font-bold leading-snug">
+            <div className="mt-1.5 inline-block max-w-full rounded-2xl border-2 border-encre bg-menthe px-2.5 py-[3px] text-[12px] font-bold leading-snug [@media(min-height:820px)]:mt-2.5 [@media(min-height:820px)]:py-1 [@media(min-height:820px)]:text-[13px]">
               {hint}
             </div>
           </div>
           {/* La cible est un affichage : la fléchette qui dépasse ne doit jamais capter une tape (Menu juste au-dessus). */}
-          <div className="pointer-events-none">
-            <Board darts={boardDarts} zones={[]} size={128} />
+          <div className={BOARD_BOX}>
+            <Board darts={boardDarts} zones={[]} size="100%" />
           </div>
           <OthersGrid items={others.map((i) => ({ key: i, name: sides[i].name, score: state.scores[i], lead: i === order[0] && top > 0 }))} />
         </div>

@@ -2,13 +2,13 @@
  * Mode hors ligne d'A18 Darts (« service worker » : un petit programme qui tourne en arrière-plan sur le téléphone).
  *
  * - Il garde une copie des 3 écrans (accueil, création de partie, partie) et de tout ce qu'il leur faut
- *   (code, polices, chiffres A18, logo) : sans réseau, l'app s'ouvre quand même.
+ *   (code, polices, icônes) : sans réseau, l'app s'ouvre quand même. Changer CACHE quand le style change.
  * - Avec du réseau, il prend toujours la version en ligne d'abord et rafraîchit sa copie : pas de vieille version bloquée.
  * - Il ne touche jamais aux records (Supabase) : ils ont leur propre file d'attente sur le téléphone.
  */
-const CACHE = "a18-darts-v1";
+const CACHE = "a18-darts-v2";
 const PAGES = ["/", "/nouvelle", "/partie"];
-const FILES = ["/logo-a18.png", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png"];
+const FILES = ["/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png"];
 const MAX_ENTRIES = 400;
 const WARM_EVERY = 60 * 60 * 1000;
 

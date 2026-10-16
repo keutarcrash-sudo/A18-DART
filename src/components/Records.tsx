@@ -26,7 +26,7 @@ export function Records() {
               type="button"
               aria-pressed={p === period}
               onClick={() => setPeriod(p)}
-              className={`min-h-9 rounded-full border-2 border-encre px-3 text-[11px] font-bold ${p === period ? "bg-menthe" : "bg-carte"}`}
+              className={`relative min-h-9 rounded-full border-2 border-encre px-3 text-[11px] font-bold after:absolute after:inset-x-0 after:-inset-y-[7px] after:content-[''] ${p === period ? "bg-menthe" : "bg-carte"}`}
             >
               {p === "day" ? t("Aujourd'hui") : t("Semaine")}
             </button>

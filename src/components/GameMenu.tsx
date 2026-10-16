@@ -44,7 +44,7 @@ export function GameMenu({ open, onClose, onRestart, label }: { open: boolean; o
           exit={{ clipPath: "inset(0 0 100% 0)" }}
           transition={{ duration: 0.3, ease: [0.2, 0.8, 0.2, 1] }}
         >
-          <div className="flex min-h-11 items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-[0.08em] text-attenue">
+          <div className="flex min-h-12 items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-[0.08em] text-attenue">
             <span>
               <b className="text-encre">{t(label)}</b> · {t("Partie en pause")}
             </span>
@@ -52,7 +52,7 @@ export function GameMenu({ open, onClose, onRestart, label }: { open: boolean; o
               type="button"
               onClick={onClose}
               aria-label={t("Fermer le menu")}
-              className="pop-shadow-sm pop-press grid h-11 w-11 place-items-center rounded-full border-2 border-encre bg-carte text-xl font-black leading-none text-encre"
+              className="pop-shadow-sm pop-press grid h-12 w-12 place-items-center rounded-full border-2 border-encre bg-carte text-xl font-black leading-none text-encre"
             >
               ×
             </button>

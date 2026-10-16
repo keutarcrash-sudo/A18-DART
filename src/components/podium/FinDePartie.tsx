@@ -141,11 +141,11 @@ function Partage({ data, date, onClose }: { data: PodiumData; date: string; onCl
       exit={{ clipPath: "inset(100% 0 0 0)" }}
       transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
     >
-      <div className="flex min-h-11 items-center justify-between text-[11px] font-bold uppercase tracking-[0.08em] text-attenue">
+      <div className="flex min-h-12 items-center justify-between text-[11px] font-bold uppercase tracking-[0.08em] text-attenue">
         <button
           type="button"
           onClick={onClose}
-          className="pop-shadow-sm pop-press flex h-11 items-center gap-2 rounded-full border-2 border-encre bg-carte px-4 font-display text-[14px] font-extrabold normal-case tracking-normal text-encre"
+          className="pop-shadow-sm pop-press flex h-12 items-center gap-2 rounded-full border-2 border-encre bg-carte px-4 font-display text-[14px] font-extrabold normal-case tracking-normal text-encre"
         >
           <span aria-hidden className="text-base leading-none">
             ←

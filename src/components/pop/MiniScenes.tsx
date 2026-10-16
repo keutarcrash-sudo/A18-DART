@@ -144,7 +144,7 @@ function Flame({ time }: { time: MotionValue<number> }) {
   );
 }
 
-/** Explosion ambre à contour encre, assez large pour que le chiffre tienne dedans ; `shadow` : sa silhouette encre (ombre dure). */
+/** Explosion ambre à contour encre (340 px : avec son ombre, elle tient sur un écran de 360 px), assez large pour que le chiffre tienne dedans ; `shadow` : sa silhouette encre (ombre dure). */
 function Burst({ shadow = false }: { shadow?: boolean }) {
   const n = 16;
   const pts = Array.from({ length: n * 2 }, (_, i) => {
@@ -153,7 +153,7 @@ function Burst({ shadow = false }: { shadow?: boolean }) {
     return `${(190 + r * Math.cos(a)).toFixed(1)},${(190 + r * Math.sin(a)).toFixed(1)}`;
   }).join(" ");
   return (
-    <svg viewBox="-4 -4 396 396" width={380} height={380} aria-hidden>
+    <svg viewBox="-4 -4 396 396" width={340} height={340} aria-hidden>
       <polygon points={pts} fill={shadow ? POP.ink : POP.ambre} stroke={POP.ink} strokeWidth={5} strokeLinejoin="round" />
     </svg>
   );
@@ -171,7 +171,7 @@ function Ton({ time, spec }: { time: MotionValue<number>; spec: MiniSpec }) {
   const reduce = useReducedMotion();
   return (
     <div className="absolute inset-0 bg-violet" style={DOTS_VIOLET}>
-      <motion.div style={burst} className="pointer-events-none absolute left-1/2 top-[38%] -ml-[190px] -mt-[190px]">
+      <motion.div style={burst} className="pointer-events-none absolute left-1/2 top-[38%] -ml-[170px] -mt-[170px]">
         {/* L'ombre tourne avec l'explosion mais reste décalée en bas à droite. */}
         {[true, false].map((shadow) => (
           <motion.div
@@ -216,7 +216,7 @@ function Ton({ time, spec }: { time: MotionValue<number>; spec: MiniSpec }) {
 function Padlock({ time }: { time: MotionValue<number> }) {
   const shackle = useTransform(time, (t) => `translate(0 ${lerp(-34, 0, easeOut(seg(t, 0.5, 0.62)))})`);
   return (
-    <svg viewBox="-10 -70 220 270" width={130} height={160} aria-hidden>
+    <svg viewBox="-10 -70 220 282" width={130} height={167} aria-hidden>
       <g transform="translate(7 7)">
         <rect x={10} y={70} width={180} height={130} rx={18} fill={POP.ink} />
       </g>

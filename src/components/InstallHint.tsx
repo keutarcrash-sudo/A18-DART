@@ -21,7 +21,7 @@ export function InstallHint() {
         type="button"
         onClick={() => (mode === "android" ? install() : setHelp(!help))}
         aria-expanded={mode === "ios" ? help : undefined}
-        className="flex min-h-11 items-center gap-2.5 text-sm font-bold text-encre"
+        className="flex min-h-12 items-center gap-2.5 text-sm font-bold text-encre"
       >
         <span className="grid h-[26px] w-[26px] place-items-center rounded-full border-2 border-encre bg-menthe">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1E293B" strokeWidth="3" strokeLinecap="round" aria-hidden="true">

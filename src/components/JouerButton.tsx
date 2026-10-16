@@ -21,7 +21,7 @@ export function JouerButton() {
     <>
       <div className="relative mt-9">
         {/* Le Tire-langue dépasse de la carte (décoratif) */}
-        <Head kind="langue" size={74} className="absolute -top-[30px] right-[-8px] z-10 rotate-12" />
+        <Head kind="langue" size={74} className="pointer-events-none absolute -top-[30px] right-[-8px] z-10 rotate-12" />
         <Link
           href={resume ? "/partie" : "/nouvelle"}
           onClick={resume ? enterFullscreen : undefined}

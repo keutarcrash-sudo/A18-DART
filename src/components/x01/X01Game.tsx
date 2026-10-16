@@ -30,7 +30,7 @@ import { GameMenu } from "@/components/GameMenu";
 import { Board } from "./Board";
 import { Pad } from "./Pad";
 import { Tableau } from "./Tableau";
-import { DartRow, OthersGrid, POP_PILL, boardDartsOf } from "./Volley";
+import { BOARD_BOX, DartRow, GAIN_SIZE, OthersGrid, PLAYER_CARD, POP_PILL, boardDartsOf } from "./Volley";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -213,8 +213,9 @@ export function X01Game() {
       return `${t("Reste après la volée :")} ${rest}`;
     }
     if (!state.opened[side]) return t("Double in : cherche un double pour démarrer");
+    // Même règle que la cible (finishZones) : dès qu'un chemin existe, la pastille le donne.
     const route = state.volleyStart <= 170 ? suggestCheckout(state.volleyStart, opts.finish) : null;
-    if (route && (doubleOut || route.length < 3)) return `${t("Pour finir :")} ${route.map(dartLabel).join(" · ")}`;
+    if (route) return `${t("Pour finir :")} ${route.map(dartLabel).join(" · ")}`;
     return t("Volée en cours");
   })();
 
@@ -229,8 +230,8 @@ export function X01Game() {
   // Score géant, un peu plus petit à 3 chiffres pour ne jamais toucher la cible ; plus grand sur les écrans hauts.
   const scoreSize =
     String(shownScore).length >= 3
-      ? "text-[70px] [@media(min-height:740px)]:text-[82px] [@media(max-width:379px)]:text-[62px]"
-      : "text-[92px] [@media(min-height:740px)]:text-[104px]";
+      ? "text-[70px] [@media(min-height:740px)_and_(max-height:819px)_and_(min-width:380px)]:text-[82px] [@media(min-height:820px)_and_(min-width:380px)]:text-[80px] [@media(max-width:379px)]:text-[62px]"
+      : "text-[92px] [@media(min-height:740px)_and_(max-height:819px)_and_(min-width:380px)]:text-[104px] [@media(min-height:820px)_and_(min-width:380px)]:text-[112px] [@media(min-height:820px)_and_(max-width:379px)]:text-[104px]";
   const team = state.setup.sides[side].members.length > 1 ? state.setup.sides[side].name : null;
   return (
     <main className="relative mx-auto h-dvh max-w-[460px] overflow-hidden bg-creme text-encre">
@@ -258,7 +259,7 @@ export function X01Game() {
         </div>
 
         {/* Carte du joueur actif : nom, score géant, pour finir ; cible à droite ; les autres en bas */}
-        <div className="mt-3 grid shrink-0 grid-cols-[minmax(0,1fr)_128px] items-center gap-x-2 rounded-3xl border-2 border-encre bg-carte px-3.5 pb-2.5 pt-3 shadow-[6px_6px_0_0_var(--color-rose)] [@media(max-height:700px)]:mt-1 [@media(max-height:700px)]:pb-1.5 [@media(max-height:700px)]:pt-2">
+        <div className={PLAYER_CARD}>
           <div className="min-w-0">
             <motion.div
               key={`${side}-${who}`}
@@ -275,7 +276,7 @@ export function X01Game() {
                 {who}
               </span>
             </motion.div>
-            <div className="mt-1 flex items-start gap-1">
+            <div className="mt-1 flex items-start gap-1 [@media(min-height:820px)]:mt-2">
               <span
                 className={`font-num font-black leading-[0.9] tracking-[-0.04em] ${scoreSize} ${bust ? "line-through decoration-[6px]" : ""}`}
               >
@@ -285,7 +286,7 @@ export function X01Game() {
                 {points > 0 && !bust && (
                   <motion.span
                     key={points}
-                    className="mt-1 shrink-0 font-num text-[22px] font-black text-violet"
+                    className={`mt-1 shrink-0 font-num font-black text-violet ${GAIN_SIZE}`}
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     exit={{ opacity: 0 }}
@@ -296,13 +297,13 @@ export function X01Game() {
                 )}
               </AnimatePresence>
             </div>
-            <div className="mt-1.5 inline-block max-w-full rounded-2xl border-2 border-encre bg-menthe px-2.5 py-[3px] text-[12px] font-bold leading-snug">
+            <div className="mt-1.5 inline-block max-w-full rounded-2xl border-2 border-encre bg-menthe px-2.5 py-[3px] text-[12px] font-bold leading-snug [@media(min-height:820px)]:mt-2.5 [@media(min-height:820px)]:py-1 [@media(min-height:820px)]:text-[13px]">
               {hint}
             </div>
           </div>
           {/* La cible est un affichage : la fléchette qui dépasse ne doit jamais capter une tape (Menu juste au-dessus). */}
-          <div className="pointer-events-none">
-            <Board darts={boardDarts} zones={zones} size={128} />
+          <div className={BOARD_BOX}>
+            <Board darts={boardDarts} zones={zones} size="100%" />
           </div>
           <OthersGrid items={others.map((i) => ({ key: i, name: state.setup.sides[i].name, score: state.scores[i], lead: i === leader }))} />
         </div>
