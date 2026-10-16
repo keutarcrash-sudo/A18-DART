@@ -300,3 +300,31 @@ export function suggestCheckout(rest: number, finish: "simple" | "double", darts
   }
   return null;
 }
+
+/* ---------- Zones pour finir (surbrillance sur la cible) ---------- */
+
+/**
+ * Toutes les fléchettes uniques qui font exactement `rest` en respectant la sortie.
+ * Triées par n décroissant ; à n égal : triple, puis double, puis simple (tri stable).
+ */
+export function oneDartFinishes(rest: number, finish: "simple" | "double"): Dart[] {
+  const candidates = finish === "double" ? DOUBLES : [...TRIPLES, ...DOUBLES, ...SINGLES];
+  return candidates.filter((d) => dartPoints(d) === rest).sort((a, b) => b.n - a.n);
+}
+
+/**
+ * Cases à allumer sur la cible : rien en cas de bust, de Double in pas ouvert ou sans fléchette ;
+ * sinon les fins en une fléchette, à défaut la suggestion de fin.
+ */
+export function finishZones(
+  rest: number,
+  finish: "simple" | "double",
+  dartsLeft: number,
+  opened: boolean,
+  bust: boolean,
+): Dart[] {
+  if (bust || !opened || dartsLeft === 0) return [];
+  const one = oneDartFinishes(rest, finish);
+  if (one.length > 0) return one;
+  return suggestCheckout(rest, finish, dartsLeft) ?? [];
+}

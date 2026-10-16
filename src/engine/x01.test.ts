@@ -5,6 +5,8 @@ import {
   type X01Options,
   type X01Setup,
   bestVolley,
+  finishZones,
+  oneDartFinishes,
   currentMember,
   rankingX01,
   replayX01,
@@ -225,5 +227,50 @@ describe("Suggestion de fin en cours de volée", () => {
   it("95 en double out : T19 puis D19 ; après T19, il reste 38 → D19 en 2 fléchettes", () => {
     expect(suggestCheckout(95, "double")?.map((d) => d.n * d.m)).toEqual([57, 38]);
     expect(suggestCheckout(38, "double", 2)?.map((d) => `${d.m}x${d.n}`)).toEqual(["2x19"]);
+  });
+});
+
+describe("oneDartFinishes", () => {
+  it("2 en Double out : seulement le double 1", () => {
+    expect(oneDartFinishes(2, "double")).toEqual([{ n: 1, m: 2 }]);
+  });
+  it("2 en fin simple : le simple 2 et le double 1", () => {
+    const r = oneDartFinishes(2, "simple");
+    expect(r).toHaveLength(2);
+    expect(r).toContainEqual({ n: 2, m: 1 });
+    expect(r).toContainEqual({ n: 1, m: 2 });
+  });
+  it("50 en Double out : le bull", () => {
+    expect(oneDartFinishes(50, "double")).toEqual([{ n: 25, m: 2 }]);
+  });
+  it("60 en fin simple : le triple 20, sans doublon de case", () => {
+    const r = oneDartFinishes(60, "simple");
+    expect(r).toContainEqual({ n: 20, m: 3 });
+    const keys = r.map((x) => `${x.n}x${x.m}`);
+    expect(new Set(keys).size).toBe(keys.length);
+  });
+  it("3 en Double out : aucune", () => {
+    expect(oneDartFinishes(3, "double")).toEqual([]);
+  });
+});
+
+describe("finishZones", () => {
+  it("100 en Double out : suggestion T20 puis D20", () => {
+    expect(finishZones(100, "double", 3, true, false)).toEqual([
+      { n: 20, m: 3 },
+      { n: 20, m: 2 },
+    ]);
+  });
+  it("rien sur un bust", () => {
+    expect(finishZones(2, "double", 1, true, true)).toEqual([]);
+  });
+  it("rien en Double in pas encore ouvert", () => {
+    expect(finishZones(40, "double", 3, false, false)).toEqual([]);
+  });
+  it("rien quand il n'y a plus de fléchette", () => {
+    expect(finishZones(40, "double", 0, true, false)).toEqual([]);
+  });
+  it("171 : impossible à finir", () => {
+    expect(finishZones(171, "double", 3, true, false)).toEqual([]);
   });
 });
