@@ -232,8 +232,6 @@ export function X01Game() {
       ? "text-[70px] [@media(min-height:740px)]:text-[82px] [@media(max-width:379px)]:text-[62px]"
       : "text-[92px] [@media(min-height:740px)]:text-[104px]";
   const team = state.setup.sides[side].members.length > 1 ? state.setup.sides[side].name : null;
-  const pill = POP_PILL;
-
   return (
     <main className="relative mx-auto h-dvh max-w-[460px] overflow-hidden bg-creme text-encre">
       <div className="flex h-full flex-col px-4 pb-[calc(12px+env(safe-area-inset-bottom))] pt-[calc(12px+env(safe-area-inset-top))] [@media(max-height:660px)]:pt-[calc(8px+env(safe-area-inset-top))]">
@@ -250,10 +248,10 @@ export function X01Game() {
             </div>
           </div>
           <div className="flex shrink-0 gap-2">
-            <button type="button" onClick={() => setView("tableau")} className={pill}>
+            <button type="button" onClick={() => setView("tableau")} className={POP_PILL}>
               {t("TABLEAU")}
             </button>
-            <button type="button" onClick={() => setMenu(true)} className={pill}>
+            <button type="button" onClick={() => setMenu(true)} className={POP_PILL}>
               {t("MENU")}
             </button>
           </div>
@@ -307,9 +305,9 @@ export function X01Game() {
             <Board darts={boardDarts} zones={zones} size={128} />
           </div>
           {others.length > 0 && (
-            <div className="col-span-2 mt-2.5 [@media(max-height:660px)]:mt-1.5 flex h-[26px] flex-wrap items-end gap-x-3.5 overflow-hidden border-t-2 border-dashed border-bord pt-1.5 text-[12px] text-attenue">
+            <div className="col-span-2 mt-2.5 [@media(max-height:660px)]:mt-1.5 flex h-[34px] flex-nowrap items-end gap-x-3.5 overflow-x-auto overflow-y-hidden border-t-2 border-dashed border-bord pt-1.5 text-[12px] text-attenue">
               {others.map((i) => (
-                <span key={i} className="whitespace-nowrap">
+                <span key={i} className="shrink-0 whitespace-nowrap">
                   {state.setup.sides[i].name}
                   <b className={`ml-1 font-num text-[15px] font-extrabold ${i === leader ? "text-violet" : "text-encre"}`}>{state.scores[i]}</b>
                 </span>
