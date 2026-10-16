@@ -256,7 +256,7 @@ export function CricketGame() {
                         const tone = dead
                           ? on
                             ? "border-attenue bg-attenue"
-                            : "border-slate-400 bg-transparent"
+                            : "border-attenue bg-transparent"
                           : on
                           ? mineShut
                             ? "border-encre bg-white"
@@ -265,7 +265,7 @@ export function CricketGame() {
                               : "border-encre bg-encre"
                           : mineShut
                             ? "border-white/60 bg-transparent"
-                            : "border-slate-400 bg-transparent";
+                            : "border-attenue bg-transparent";
                         return <i key={q} className={`block shrink-0 rounded-full transition-[background-color] duration-200 ${dot} ${tone}`} />;
                       })}
                     </span>
