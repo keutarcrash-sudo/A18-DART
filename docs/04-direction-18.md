@@ -1,3 +1,5 @@
+> **Archive : remplacée par `08-refonte-pop.md`.** Cette direction « 18° » ne s'applique plus ; elle est gardée pour mémoire.
+
 # 04 — Direction créative « 18° »
 
 Remplace les 4 pistes de `03-directions-creatives.md`, qui sont conservées comme archive. Cette direction intègre toutes les réponses du cadrage (`00-cadrage.md`).

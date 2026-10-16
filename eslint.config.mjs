@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Outils hors de l'app : scripts des skills et scénarios Playwright (copiés tels quels).
+    ".claude/**",
+    "e2e/**",
   ]),
 ]);
 

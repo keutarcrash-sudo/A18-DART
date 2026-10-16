@@ -1,10 +1,36 @@
 @import "tailwindcss";
 
 /*
- * Direction « 18° » (voir .claude/skills/a18-design/SKILL.md).
- * Couleur = sens, jamais décor. Un seul angle : 18°. Aucun arrondi, aucune ombre.
+ * Refonte « Pop » (Playful Geometric, variante Standard) — voir .claude/skills/a18-design/SKILL.md
+ * et docs/08-refonte-pop.md. Fond crème, encre, contours 2 px, ombres dures sans flou, rebonds.
+ *
+ * Les anciens jetons « 18° » (noir, cyan, chartreuse, case, gris, filet…) et utilitaires (btn-18,
+ * skew-18…) restent ci-dessous tant que les écrans ne sont pas tous convertis (supprimés à la tâche 15).
  */
 @theme {
+  /* --- Pop : palette --- */
+  --color-creme: #fffdf5; /* fond papier */
+  --color-encre: #1e293b; /* texte, contours, ombres dures */
+  --color-carte: #ffffff; /* cartes, touches */
+  --color-violet: #8b5cf6; /* actions principales (texte blanc autorisé) */
+  --color-rose: #f472b6;
+  --color-ambre: #fbbf24; /* surbrillance « pour finir », Double */
+  --color-menthe: #34d399;
+  --color-bord: #e2e8f0; /* contours discrets, séparateurs */
+  --color-muted: #f1f5f9; /* fonds atténués */
+  --color-attenue: #64748b; /* texte secondaire */
+  --color-larme: #7dd3fc; /* UNIQUEMENT les larmes du « Mort de rire » */
+
+  /* --- Pop : polices (variables posées par next/font dans layout.tsx) --- */
+  --font-display: var(--font-outfit), system-ui, sans-serif;
+  --font-text: var(--font-jakarta), system-ui, sans-serif;
+  --font-num: var(--font-outfit), system-ui, sans-serif;
+  --font-num--font-feature-settings: "tnum"; /* chiffres de même largeur */
+
+  /* --- Pop : rebond (léger dépassement puis retour) --- */
+  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* --- Anciens jetons « 18° » : à retirer à la tâche 15 --- */
   --color-noir: #171717;
   --color-noir-deep: #0d0d0d;
   --color-blanc: #ffffff;
@@ -14,12 +40,6 @@
   --color-case: #232323;
   --color-cyan: #0cc0df; /* joueur actif, meneur, action principale, Double */
   --color-chartreuse: #c7d530; /* Triple et records uniquement */
-
-  --font-text: var(--font-montserrat), system-ui, sans-serif;
-  --font-num: var(--font-a18), var(--font-montserrat), system-ui, sans-serif;
-
-  --radius-*: initial;
-  --shadow-*: initial;
 }
 
 @layer base {
@@ -28,8 +48,8 @@
     height: 100%;
   }
   body {
-    background: var(--color-noir);
-    color: var(--color-blanc);
+    background: var(--color-creme);
+    color: var(--color-encre);
     font-family: var(--font-text);
     -webkit-font-smoothing: antialiased;
     -webkit-tap-highlight-color: transparent;
@@ -40,10 +60,54 @@
     touch-action: manipulation;
   }
   :focus-visible {
-    outline: 2px solid var(--color-cyan);
+    outline: 3px solid var(--color-violet);
     outline-offset: 2px;
   }
 }
+
+/*
+ * Ombre dure « sticker » : décalée, sans flou, couleur encre. pop-shadow = 4 px, pop-shadow-sm = 2 px
+ * (petites touches). La variable --pop sert aussi à pop-press.
+ */
+@utility pop-shadow {
+  --pop: 4px;
+  box-shadow: var(--pop) var(--pop) 0 0 var(--color-encre);
+}
+@utility pop-shadow-sm {
+  --pop: 2px;
+  box-shadow: var(--pop) var(--pop) 0 0 var(--color-encre);
+}
+
+/*
+ * Bouton qui se soulève au survol (−2 px, ombre +2 px) et s'enfonce à l'appui (+2 px, ombre réduite),
+ * avec rebond. À combiner avec pop-shadow ou pop-shadow-sm. Utilise la propriété `translate` (et non
+ * `transform`) pour ne pas écraser les transformations de Motion. Mouvement réduit : la règle globale
+ * plus bas coupe la transition (donc le rebond), le retour visuel de l'appui reste.
+ */
+@utility pop-press {
+  transition:
+    translate 300ms var(--ease-pop),
+    box-shadow 300ms var(--ease-pop),
+    background-color 200ms;
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      translate: -2px -2px;
+      box-shadow: calc(var(--pop, 4px) + 2px) calc(var(--pop, 4px) + 2px) 0 0 var(--color-encre);
+    }
+  }
+  &:active:not(:disabled) {
+    translate: 2px 2px;
+    box-shadow: calc(var(--pop, 4px) / 2) calc(var(--pop, 4px) / 2) 0 0 var(--color-encre);
+  }
+}
+
+/* Trame de points (fond décoratif, derrière le contenu). */
+@utility dots {
+  background-image: radial-gradient(var(--color-encre) 1.5px, transparent 1.6px);
+  background-size: 22px 22px;
+}
+
+/* --- Anciens utilitaires « 18° » : à retirer à la tâche 15 --- */
 
 /* Parallélogramme incliné à 18° des deux côtés : décalage = hauteur × tan 18° (0,325). */
 @utility btn-18 {
