@@ -1,0 +1,167 @@
+/*
+ * Playful Geometric — jetons prêts à copier.
+ * Variante Standard sur :root, variante Loud (Memphis) avec .pg-loud sur un conteneur.
+ * Polices : Outfit 700/800, Plus Jakarta Sans 400/500, Bricolage Grotesque 800 (Loud) via Google Fonts
+ * ou next/font/google.
+ */
+
+:root {
+  --pg-bg: #fffdf5;
+  --pg-fg: #1e293b;
+  --pg-muted: #f1f5f9;
+  --pg-muted-fg: #64748b;
+  --pg-accent: #8b5cf6;
+  --pg-accent-fg: #ffffff;
+  --pg-secondary: #f472b6;
+  --pg-tertiary: #fbbf24;
+  --pg-quaternary: #34d399;
+  --pg-border: #e2e8f0;
+  --pg-input-border: #cbd5e1;
+  --pg-input: #ffffff;
+  --pg-card: #ffffff;
+  --pg-ring: #8b5cf6;
+
+  --pg-ink: var(--pg-fg);
+  --pg-line: 2px;
+  --pg-pop: 4px;
+
+  --pg-radius-sm: 8px;
+  --pg-radius-md: 16px;
+  --pg-radius-lg: 24px;
+  --pg-radius-full: 9999px;
+
+  --pg-font-display: "Outfit", system-ui, sans-serif;
+  --pg-font-body: "Plus Jakarta Sans", system-ui, sans-serif;
+
+  /* Rebond : léger dépassement puis retour. */
+  --pg-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Variante Loud / Memphis : à poser sur <body> ou sur une section. */
+.pg-loud {
+  --pg-bg: #f5efe2;
+  --pg-fg: #17140d;
+  --pg-muted-fg: #4a4436;
+  --pg-accent: #ff5b57; /* corail : action principale */
+  --pg-accent-fg: #17140d;
+  --pg-teal: #12b3a4;
+  --pg-mustard: #ffc531;
+  --pg-violet: #6b5be6;
+  --pg-sky: #3aa0ff;
+  --pg-secondary: var(--pg-teal);
+  --pg-tertiary: var(--pg-mustard);
+  --pg-quaternary: var(--pg-violet);
+  --pg-ring: var(--pg-violet);
+  --pg-line: 3px;
+  --pg-pop: 8px;
+  --pg-font-display: "Bricolage Grotesque", "Outfit", system-ui, sans-serif;
+}
+
+@media (max-width: 640px) {
+  :root { --pg-pop: 2px; }
+  .pg-loud { --pg-pop: 4px; }
+}
+
+/* ---------- Ombres dures ---------- */
+
+.pg-pop {
+  border: var(--pg-line) solid var(--pg-ink);
+  box-shadow: var(--pg-pop) var(--pg-pop) 0 0 var(--pg-ink);
+  transition: transform 300ms var(--pg-bounce), box-shadow 300ms var(--pg-bounce), background-color 200ms;
+}
+.pg-pop:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: calc(var(--pg-pop) + 2px) calc(var(--pg-pop) + 2px) 0 0 var(--pg-ink);
+}
+.pg-pop:active {
+  transform: translate(2px, 2px);
+  box-shadow: calc(var(--pg-pop) / 2) calc(var(--pg-pop) / 2) 0 0 var(--pg-ink);
+}
+
+/* ---------- Motifs ---------- */
+
+.pg-dots {
+  background-image: radial-gradient(var(--pg-ink) 1.5px, transparent 1.6px);
+  background-size: 22px 22px;
+}
+.pg-grid {
+  background-image:
+    linear-gradient(var(--pg-border) 2px, transparent 2px),
+    linear-gradient(90deg, var(--pg-border) 2px, transparent 2px);
+  background-size: 32px 32px;
+}
+.pg-stripes {
+  background-image: repeating-linear-gradient(-45deg, var(--pg-ink) 0 3px, transparent 3px 12px);
+}
+
+/* Surligneur sous un mot du titre (Loud). */
+.pg-mark {
+  background: linear-gradient(transparent 62%, var(--pg-mark, var(--pg-tertiary)) 62% 92%, transparent 92%);
+  padding: 0 0.06em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* ---------- Animations ---------- */
+
+@keyframes pg-pop-in {
+  0% { transform: scale(0); opacity: 0; }
+  70% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@keyframes pg-wiggle {
+  0%, 100% { rotate: 0deg; }
+  33% { rotate: 3deg; }
+  66% { rotate: -3deg; }
+}
+@keyframes pg-drift {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 14px -18px; }
+}
+@keyframes pg-bob {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -12px; }
+}
+@keyframes pg-spin {
+  to { rotate: 360deg; }
+}
+@keyframes pg-marquee {
+  to { transform: translateX(-50%); }
+}
+
+.pg-in { animation: pg-pop-in 600ms var(--pg-bounce) both; animation-delay: var(--d, 0ms); }
+.pg-wiggle:hover { animation: pg-wiggle 400ms ease-in-out; }
+.pg-drift { animation: pg-drift var(--t, 9s) ease-in-out infinite; animation-delay: var(--d, 0s); }
+.pg-bob { animation: pg-bob var(--t, 5s) ease-in-out infinite; animation-delay: var(--d, 0s); }
+.pg-spin { animation: pg-spin var(--t, 14s) linear infinite; }
+.pg-marquee { display: flex; width: max-content; animation: pg-marquee 24s linear infinite; }
+
+:focus-visible {
+  outline: 3px solid var(--pg-ring);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pg-in, .pg-wiggle:hover, .pg-drift, .pg-bob, .pg-spin, .pg-marquee { animation: none !important; }
+  .pg-pop, .pg-pop:hover, .pg-pop:active { transition: none; transform: none; }
+}
+
+/*
+ * Tailwind 4 : exposer les jetons comme utilitaires (bg-pg-accent, font-pg-display, shadow-pg…).
+ *
+ * @theme inline {
+ *   --color-pg-bg: var(--pg-bg);
+ *   --color-pg-fg: var(--pg-fg);
+ *   --color-pg-muted: var(--pg-muted);
+ *   --color-pg-muted-fg: var(--pg-muted-fg);
+ *   --color-pg-accent: var(--pg-accent);
+ *   --color-pg-secondary: var(--pg-secondary);
+ *   --color-pg-tertiary: var(--pg-tertiary);
+ *   --color-pg-quaternary: var(--pg-quaternary);
+ *   --color-pg-border: var(--pg-border);
+ *   --font-pg-display: var(--pg-font-display);
+ *   --font-pg-body: var(--pg-font-body);
+ *   --shadow-pg: var(--pg-pop) var(--pg-pop) 0 0 var(--pg-ink);
+ *   --ease-pg-bounce: var(--pg-bounce);
+ * }
+ */
