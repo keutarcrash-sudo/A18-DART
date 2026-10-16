@@ -5,10 +5,10 @@
  */
 import { useRouter } from "next/navigation";
 import { useT } from "@/lib/i18n";
-import { Mascot } from "@/components/pop/Pop";
+import { Head } from "@/components/pop/Heads";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { Cta, Screen, Seg, Title, TopBar } from "@/components/ui";
+import { Cta, Pill, Screen, Seg, Title, TopBar } from "@/components/ui";
 import { DEFAULT_X01_OPTIONS, type X01Options } from "@/engine/x01";
 import { type CricketMode, DEFAULT_CRICKET_OPTIONS } from "@/engine/cricket";
 import { DEFAULT_KILLER_OPTIONS } from "@/engine/killer";
@@ -182,7 +182,7 @@ function Players({
         onBack={onBack}
         left={
           <>
-            {t("Étape")} <b className="mx-1 text-blanc">1</b>/3
+            {t("Étape")} <b className="mx-1 text-encre">1</b>/3
           </>
         }
         right={players.length > 1 ? t("{n} joueurs", { n: players.length }) : t("{n} joueur", { n: players.length })}
@@ -208,22 +208,25 @@ function Players({
           autoComplete="off"
           aria-label={t("Prénom du joueur")}
           disabled={players.length >= MAX_PLAYERS}
-          className="h-[54px] min-w-0 flex-1 border-b-2 border-cyan bg-case px-3.5 text-xl font-black uppercase italic text-blanc outline-none placeholder:normal-case placeholder:text-gris-2"
+          className="h-14 min-w-0 flex-1 rounded-lg border-2 border-[#CBD5E1] bg-carte px-4 font-display text-xl font-extrabold text-encre outline-none transition-[border-color,box-shadow] duration-200 ease-pop placeholder:font-text placeholder:text-base placeholder:font-medium placeholder:text-attenue focus:border-violet focus:shadow-[4px_4px_0_0_var(--color-violet)] disabled:bg-muted"
         />
-        <button type="submit" className="w-[62px] bg-cyan text-[15px] font-black italic text-noir active:bg-blanc">
+        <button
+          type="submit"
+          className="pop-shadow-sm pop-press h-14 w-[66px] rounded-full border-2 border-encre bg-violet font-display text-base font-extrabold text-white"
+        >
           OK
         </button>
       </form>
 
       {free.length > 0 && (
-        <div className="mt-3 flex flex-wrap items-center gap-1.5">
-          <small className="mr-1 text-[9px] font-bold uppercase tracking-[0.16em] text-gris">{t("Récents sur ce téléphone")}</small>
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <small className="mr-1 text-[11px] font-bold uppercase tracking-[0.08em] text-attenue">{t("Récents sur ce téléphone")}</small>
           {free.map((r) => (
             <button
               key={r}
               type="button"
               onClick={() => add(r)}
-              className="border-[1.5px] border-[#3a3a3a] px-2.5 py-1.5 text-xs font-bold text-[#d0d0d0] active:bg-case"
+              className="pop-shadow-sm pop-press min-h-[46px] rounded-full border-2 border-encre bg-carte px-4 text-sm font-bold text-encre"
             >
               {r}
             </button>
@@ -231,9 +234,9 @@ function Players({
         </div>
       )}
 
-      <div className="mt-4 flex flex-col">
+      <div className="mt-5 flex flex-col gap-2.5">
         {players.length === 0 && (
-          <p className="border-b border-filet py-5 text-[13px] leading-relaxed text-gris">
+          <p className="rounded-2xl border-2 border-dashed border-[#CBD5E1] px-4 py-5 text-[13px] leading-relaxed text-attenue">
             {t("Tape un prénom puis OK. Seul, ça marche aussi : idéal pour s'entraîner.")}
           </p>
         )}
@@ -242,19 +245,24 @@ function Players({
             key={p.name}
             initial={{ x: 30, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            className="flex h-[52px] items-center gap-3 border-b border-filet"
+            className="pop-shadow-sm flex min-h-[54px] items-center gap-3 rounded-2xl border-2 border-encre bg-carte py-1 pl-2.5 pr-1.5"
           >
-            <span className="skew-18 grid h-[26px] w-[30px] shrink-0 place-items-center bg-case">
-              <span className="unskew-18 font-num text-sm text-gris">{i + 1}</span>
+            <span
+              className={`grid h-8 w-8 shrink-0 place-items-center rounded-full border-2 border-encre font-num text-sm font-black text-encre ${
+                ["bg-ambre", "bg-rose", "bg-menthe"][i % 3]
+              }`}
+            >
+              {i + 1}
             </span>
-            <span className="min-w-0 flex-1 truncate text-2xl font-black uppercase italic">{p.name}</span>
+            <span className="min-w-0 flex-1 truncate font-display text-2xl font-extrabold">{p.name}</span>
             {teams && (
               <button
                 type="button"
                 aria-label={t("Changer {name} d'équipe", { name: p.name })}
                 onClick={() => setPlayers(players.map((q, j) => (j === i ? { ...q, team: q.team === "A" ? "B" : "A" } : q)))}
-                style={{ "--h": "26px" } as React.CSSProperties}
-                className={`btn-18 h-[26px] w-[38px] text-[13px] font-black italic text-noir ${p.team === "A" ? "bg-cyan" : "bg-blanc"}`}
+                className={`pop-shadow-sm pop-press h-[46px] w-[46px] rounded-full border-2 border-encre font-display text-sm font-extrabold ${
+                  p.team === "A" ? "bg-violet text-white" : "bg-ambre text-encre"
+                }`}
               >
                 {p.team}
               </button>
@@ -263,7 +271,7 @@ function Players({
               type="button"
               aria-label={t("Retirer {name}", { name: p.name })}
               onClick={() => setPlayers(players.filter((_, j) => j !== i))}
-              className="h-10 w-8 text-xl text-gris"
+              className="grid h-[46px] w-[46px] place-items-center text-2xl font-bold text-attenue"
             >
               ×
             </button>
@@ -275,10 +283,12 @@ function Players({
         type="button"
         aria-pressed={teams}
         onClick={() => setTeams(!teams)}
-        className="mt-3.5 flex items-center gap-2.5 self-start border-[1.5px] border-filet px-3 py-2.5 text-xs font-bold"
+        className="pop-shadow-sm pop-press mt-4 flex min-h-[46px] items-center gap-3 self-start rounded-full border-2 border-encre bg-carte py-1.5 pl-3 pr-4 text-sm font-bold"
       >
-        <i className={`skew-18 relative h-4 w-[30px] ${teams ? "bg-cyan" : "bg-[#333]"}`}>
-          <i className={`absolute top-0.5 h-3 w-3 transition-all ${teams ? "left-4 bg-noir" : "left-0.5 bg-gris"}`} />
+        <i className={`relative h-6 w-[42px] rounded-full border-2 border-encre transition-colors ${teams ? "bg-violet" : "bg-muted"}`}>
+          <i
+            className={`absolute top-0.5 h-4 w-4 rounded-full border-2 border-encre bg-carte transition-all duration-300 ease-pop ${teams ? "left-[20px]" : "left-0.5"}`}
+          />
         </i>
         {t("Jouer en équipes")}
       </button>
@@ -301,13 +311,13 @@ function Games({ count, label, onBack, onPick }: { count: number; label: string;
         onBack={onBack}
         left={
           <>
-            {t("Étape")} <b className="mx-1 text-blanc">2</b>/3
+            {t("Étape")} <b className="mx-1 text-encre">2</b>/3
           </>
         }
         right={label}
       />
       <Title>{t("À quoi on joue ?")}</Title>
-      <div className="mt-3.5 flex flex-col">
+      <div className="mt-5 flex flex-col gap-3">
         {GAMES.map((g) => {
           const min = estimateMinutes(g, count);
           const tooFew = g.minPlayers && count < g.minPlayers;
@@ -318,35 +328,66 @@ function Games({ count, label, onBack, onPick }: { count: number; label: string;
               type="button"
               disabled={disabled}
               onClick={() => onPick(g)}
-              className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2.5 gap-y-1 border-b border-filet py-3.5 text-left active:bg-case disabled:opacity-35"
+              className="pop-shadow pop-press flex min-h-[74px] items-center gap-3.5 rounded-[18px] border-2 border-encre bg-carte px-3.5 py-3 text-left disabled:border-bord disabled:bg-muted disabled:shadow-none"
             >
-              <span className={g.numeric ? "font-num text-[32px] leading-none" : "text-[26px] font-black uppercase italic leading-none"}>
-                {t(g.name)}
+              <GameShape id={g.id} ready={g.ready} />
+              <span className="min-w-0 flex-1">
+                <span className="block font-display text-[19px] font-extrabold leading-tight">{t(g.name)}</span>
+                <span className="mt-0.5 block text-[12.5px] leading-snug text-attenue">{t(g.desc)}</span>
               </span>
-              <span className="row-span-2 text-right text-[10px] font-bold uppercase leading-normal tracking-widest text-gris">
+              <span className="self-start">
                 {!g.ready ? (
-                  t("Bientôt")
+                  <Pill small>{t("Bientôt")}</Pill>
                 ) : tooFew ? (
-                  <>
-                    {t("{n} joueurs", { n: g.minPlayers ?? 0 })}
-                    <br />
-                    {t("minimum")}
-                  </>
+                  <Pill small>
+                    {t("{n} joueurs", { n: g.minPlayers ?? 0 })} {t("minimum")}
+                  </Pill>
                 ) : (
-                  <>
-                    <b className={`block font-num text-xl font-normal tracking-normal ${min >= 10 && min <= 30 ? "text-cyan" : "text-blanc"}`}>
-                      ~{min}
-                    </b>
-                    min
-                  </>
+                  <Pill small tone={min >= 10 && min <= 30 ? "menthe" : "blanc"}>
+                    ~{min} min
+                  </Pill>
                 )}
               </span>
-              <span className="text-xs leading-snug text-[#a8a8a8]">{t(g.desc)}</span>
             </button>
           );
         })}
       </div>
     </Screen>
+  );
+}
+
+const SHAPE_ICON = {
+  killer: <path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4" />,
+  clock: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </>
+  ),
+};
+
+/** Forme et couleur propres à chaque jeu (maquette « Choix du jeu »). */
+function GameShape({ id, ready }: { id: GameInfo["id"]; ready: boolean }) {
+  const base = "grid h-[50px] w-[50px] shrink-0 place-items-center border-2 border-encre font-display text-base font-black";
+  const label = id === "501" || id === "301" ? id : id === "cricket" ? "20" : id === "high" ? "180" : null;
+  const style: Record<GameInfo["id"], { cls: string; radius: string }> = {
+    "501": { cls: "bg-violet text-white", radius: "50%" },
+    "301": { cls: "bg-violet text-white", radius: "50%" },
+    cricket: { cls: "bg-rose text-encre", radius: "6px" },
+    killer: { cls: "bg-ambre text-encre", radius: "24px 24px 24px 4px" },
+    clock: { cls: "bg-menthe text-encre", radius: "999px 999px 6px 6px" },
+    high: { cls: "bg-violet text-white", radius: "6px 24px 6px 24px" },
+    originals: { cls: "bg-carte text-attenue", radius: "12px" },
+  };
+  const st = style[id];
+  return (
+    <span aria-hidden="true" className={`${base} ${ready ? st.cls : "border-dashed bg-carte text-attenue"}`} style={{ borderRadius: st.radius }}>
+      {label ?? (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E293B" strokeWidth="2.6" strokeLinecap="round">
+          {id === "killer" || id === "clock" ? SHAPE_ICON[id] : <path d="M12 6v12M6 12h12" />}
+        </svg>
+      )}
+    </span>
   );
 }
 
@@ -395,7 +436,7 @@ function Options({
         onBack={onBack}
         left={
           <>
-            {t("Étape")} <b className="mx-1 text-blanc">3</b>/3
+            {t("Étape")} <b className="mx-1 text-encre">3</b>/3
           </>
         }
         right={t("Réglages")}
@@ -464,7 +505,7 @@ function Options({
         <X01Settings opts={opts} setOpts={setOpts} />
       )}
       <div className="min-h-4 flex-1" />
-      <Cta tone="cyan" onClick={onNext}>
+      <Cta tone="violet" onClick={onNext}>
         {t("Au bull →")}
       </Cta>
     </Screen>
@@ -534,33 +575,32 @@ function Bull({
     <Screen>
       <TopBar onBack={onBack} left={t("Qui commence ?")} />
       <div className="relative mt-4">
-        <h1 className="text-[70px] font-black uppercase italic leading-[0.85] tracking-tighter">
+        <h1 className="font-display text-[70px] font-black leading-[0.85] tracking-tighter">
           {t("Au")}
           <br />
-          <span className="text-cyan">{t("bull !")}</span>
+          <span className="text-violet">{t("bull !")}</span>
         </h1>
         <div className="absolute -top-1 right-0">
-          <Mascot mood="wow" size={96} />
+          <Head kind="crispe" size={104} />
         </div>
       </div>
-      <p className="mt-2 text-[13px] leading-normal text-[#bdbdbd]">
+      <p className="mt-3 text-[13px] leading-normal text-attenue">
         {t("Chacun lance une fléchette vers le centre. Touche le prénom du plus proche :")}{" "}
         {sides.length < players.length ? t("son équipe commence, avec lui.") : t("il commence.")}
       </p>
-      <div className="mt-5 grid grid-cols-2 gap-2">
+      <div className="mt-5 grid grid-cols-2 gap-3">
         {players.map((p) => (
           <button
             key={p.name}
             type="button"
             onClick={() => onPick(p.name)}
-            style={{ "--h": "58px" } as React.CSSProperties}
-            className="btn-18 h-[58px] truncate bg-blanc px-3.5 text-base font-black uppercase italic text-noir active:bg-cyan"
+            className="pop-shadow pop-press h-14 truncate rounded-full border-2 border-encre bg-carte px-3.5 font-display text-base font-extrabold text-encre active:bg-ambre"
           >
             {p.name}
           </button>
         ))}
       </div>
-      <button type="button" onClick={onSkip} className="mt-4 self-start py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-gris">
+      <button type="button" onClick={onSkip} className="mt-5 min-h-[46px] self-start px-1 text-[11px] font-bold uppercase tracking-[0.08em] text-attenue underline decoration-2 underline-offset-4">
         {t("Passer · ordre de saisie")}
       </button>
     </Screen>
