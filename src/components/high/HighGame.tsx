@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Celebration, type CeleSpec, Wink, celeDuration } from "@/components/Celebration";
 import type { HeadKind } from "@/components/pop/Heads";
+import { TAKES_LEAD_HEAD } from "@/components/celebration-heads";
 import { GameMenu } from "@/components/GameMenu";
 import { Board } from "@/components/x01/Board";
 import { Pad } from "@/components/x01/Pad";
@@ -112,7 +113,7 @@ export function HighGame() {
       else if (find("threeMisses")) {
         await celebrate({ level: "scene", kind: "misses", text: t("Trois à côté. Ça arrive aux meilleurs.") });
       }
-      else if (find("takesLead") && st.status !== "match") showWink(t("{name} passe devant.", { name: st.setup.sides[side].name }), "frimeur");
+      else if (find("takesLead") && st.status !== "match") showWink(t("{name} passe devant.", { name: st.setup.sides[side].name }), TAKES_LEAD_HEAD);
 
       const won = find("matchWon");
       if (won) {

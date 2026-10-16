@@ -11,6 +11,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useT } from "@/lib/i18n";
 import { fitFont } from "@/lib/fit";
 import { Head, type HeadKind } from "@/components/pop/Heads";
+import { MAX_HEADS, MID_HEAD, WINK_HEAD } from "@/components/celebration-heads";
 import { POP, PopIn, Shape, type ShapeName, halftone } from "@/components/pop/Pop";
 import { SCENE_DURATION, type SceneKind, SceneBoard, Tear, useAppear, useSceneTime } from "@/components/pop/Scene";
 import { MINI_DURATION, MiniScene, type MiniSpec } from "@/components/pop/MiniScenes";
@@ -35,14 +36,14 @@ const TONES: Record<CeleTone, { bg: string; dots: string; text: string; big: Rea
     bg: "bg-violet",
     dots: "rgb(255 255 255 / 0.16)",
     text: "text-white",
-    big: { textShadow: `5px 5px 0 ${POP.ink}` },
+    big: { textShadow: `0.05em 0.05em 0 ${POP.ink}` },
     sub: "text-white",
   },
   ambre: {
     bg: "bg-ambre",
     dots: "rgb(30 41 59 / 0.13)",
     text: "text-encre",
-    big: { textShadow: `5px 5px 0 ${POP.white}` },
+    big: { textShadow: `0.05em 0.05em 0 ${POP.white}` },
     sub: "text-encre",
   },
   bust: {
@@ -74,7 +75,7 @@ interface Deco {
 const SETS: Record<string, { head: HeadKind; scene: SceneKind; boom?: string; deco: Deco[] }> = {
   "180": {
     scene: "triple",
-    head: "explosee",
+    head: MAX_HEADS["180"],
     deco: [
       { shape: "star", fill: POP.ambre, size: 58, rotate: -14, pos: { left: "-10px", top: "16%" } },
       { shape: "dot", fill: POP.menthe, size: 34, rotate: 0, pos: { right: "4%", top: "11%" } },
@@ -84,7 +85,7 @@ const SETS: Record<string, { head: HeadKind; scene: SceneKind; boom?: string; de
   },
   exploit: {
     scene: "triple",
-    head: "explosee",
+    head: MAX_HEADS.exploit,
     deco: [
       { shape: "plus", fill: POP.ambre, size: 44, rotate: -10, pos: { left: "-8px", top: "18%" } },
       { shape: "star", fill: POP.rose, size: 50, rotate: 16, pos: { right: "2%", top: "10%" } },
@@ -93,7 +94,7 @@ const SETS: Record<string, { head: HeadKind; scene: SceneKind; boom?: string; de
   },
   victoire: {
     scene: "bull",
-    head: "frimeur",
+    head: MAX_HEADS.victoire,
     deco: [
       { shape: "star", fill: POP.ambre, size: 60, rotate: -12, pos: { left: "-10px", top: "18%" } },
       { shape: "dot", fill: POP.rose, size: 32, rotate: 0, pos: { right: "6%", top: "9%" } },
@@ -105,7 +106,7 @@ const SETS: Record<string, { head: HeadKind; scene: SceneKind; boom?: string; de
   record: {
     scene: "bull",
     boom: "Record !",
-    head: "coeurs",
+    head: MAX_HEADS.record,
     deco: [
       { shape: "heart", fill: POP.rose, size: 54, rotate: -12, pos: { left: "-8px", top: "18%" } },
       { shape: "star", fill: POP.white, size: 48, rotate: 14, pos: { right: "3%", top: "9%" } },
@@ -116,7 +117,7 @@ const SETS: Record<string, { head: HeadKind; scene: SceneKind; boom?: string; de
   bust: {
     scene: "shatter",
     boom: "Bust !",
-    head: "fondue",
+    head: MAX_HEADS.bust,
     deco: [
       { shape: "triangle", fill: POP.ambre, size: 40, rotate: -18, pos: { left: "-6px", top: "20%" } },
       { shape: "square", fill: POP.violet, size: 30, rotate: 14, pos: { right: "4%", top: "10%" } },
@@ -126,7 +127,7 @@ const SETS: Record<string, { head: HeadKind; scene: SceneKind; boom?: string; de
   chambrage: {
     scene: "shatter",
     boom: "Out !",
-    head: "fondue",
+    head: MAX_HEADS.chambrage,
     deco: [
       { shape: "plus", fill: POP.rose, size: 40, rotate: -16, pos: { left: "-8px", top: "20%" } },
       { shape: "dot", fill: POP.ambre, size: 30, rotate: 0, pos: { right: "4%", top: "10%" } },
@@ -169,6 +170,17 @@ function ContinueHint({ label }: { label: string }) {
   );
 }
 
+/**
+ * Taille du mot du bandeau moyen : il passe à la ligne entre les mots, et le mot le plus long tient
+ * toujours en entier à côté de la pastille du chiffre (jamais coupé).
+ * Place prise : marges de l'écran 32 + tête 92 + droite 24 + écart 12 = 160 px, plus la pastille.
+ */
+function midWordSize(word: string, num: string): string {
+  const longest = Math.max(1, ...word.split(/\s+/).map((w) => w.length));
+  const pill = Math.round(num.length * 0.62 * 52 + 30);
+  return `min(30px, calc((min(100vw, 460px) - ${160 + pill}px) / ${(longest * 0.72).toFixed(2)}))`;
+}
+
 /** Niveau moyen : une carte-bandeau qui rebondit au milieu de l'écran, avec le Mort de rire. */
 function MidCele({ spec, onDone }: { spec: Extract<CeleSpec, { level: "mid" }>; onDone: () => void }) {
   const reduce = useReducedMotion();
@@ -191,13 +203,15 @@ function MidCele({ spec, onDone }: { spec: Extract<CeleSpec, { level: "mid" }>; 
           className="relative flex h-[118px] items-center justify-between gap-3 rounded-[24px] border-[3px] border-encre bg-carte pl-[92px] pr-6 text-encre"
           style={{ boxShadow: `6px 6px 0 ${POP.ink}`, ...halftone("rgb(30 41 59 / 0.07)", 12) }}
         >
-          <b className="min-w-0 truncate font-display text-[30px] font-black uppercase leading-none tracking-tight">{spec.word}</b>
-          <span className="shrink-0 rounded-[16px] border-[3px] border-encre bg-violet px-3 pb-1 pt-0.5 font-num text-[58px] font-black leading-none text-white">
+          <b className="min-w-0 font-display font-black uppercase leading-none tracking-tight" style={{ fontSize: midWordSize(spec.word, spec.num) }}>
+            {spec.word}
+          </b>
+          <span className="shrink-0 rounded-[16px] border-[3px] border-encre bg-violet px-3 pb-1 pt-0.5 font-num text-[52px] font-black leading-none text-white">
             {spec.num}
           </span>
         </div>
         <PopIn delay={0.16} rotate={-10} className="pointer-events-none absolute -left-1 top-1/2 -mt-[52px]">
-          <Head kind="mdr" size={96} />
+          <Head kind={MID_HEAD} size={96} />
         </PopIn>
       </motion.div>
       <PopIn delay={0.22} rotate={-14} className="pointer-events-none absolute left-[10%] top-[calc(50%-122px)]">
@@ -214,7 +228,7 @@ function MidCele({ spec, onDone }: { spec: Extract<CeleSpec, { level: "mid" }>; 
 }
 
 /** La bulle de la tête : elle chambre sans bloquer la saisie (une tape ailleurs continue la partie). */
-export function Wink({ text, head = "langue" }: { text: string | null; head?: HeadKind }) {
+export function Wink({ text, head = WINK_HEAD }: { text: string | null; head?: HeadKind }) {
   const reduce = useReducedMotion();
   return (
     <AnimatePresence>
@@ -241,6 +255,9 @@ export function Wink({ text, head = "langue" }: { text: string | null; head?: He
     </AnimatePresence>
   );
 }
+
+/** Place gardée à droite du texte pour la tête (px). */
+const HEAD_ROOM = 84;
 
 /** Grande célébration : la scène (déchirure, fléchette, cible), puis le texte qui claque au moment de l'impact. */
 function MaxCele({
@@ -292,7 +309,7 @@ function MaxCele({
       <div className="relative flex h-full flex-col px-5 pb-[calc(66px+env(safe-area-inset-bottom))] pt-[calc(48px+env(safe-area-inset-top))]">
         <SceneBoard kind={set.scene} time={time} boom={set.boom} />
 
-        <div className="mt-auto pr-[84px]">
+        <div className="mt-auto" style={{ paddingRight: HEAD_ROOM }}>
           <motion.span
             style={kick}
             className="relative z-10 inline-block origin-left rounded-full border-2 border-encre bg-carte px-3 py-1 font-display text-[13px] font-extrabold uppercase tracking-[0.08em] text-encre shadow-[2px_2px_0_0_var(--color-encre)]"
@@ -300,7 +317,7 @@ function MaxCele({
             {spec.kicker}
           </motion.span>
           <motion.span
-            style={{ ...big, ...(spec.numeric ? {} : { fontSize: fitFont(spec.big, 60, 150) }) }}
+            style={{ ...big, ...(spec.numeric ? {} : { fontSize: fitFont(spec.big, 60, 150 + HEAD_ROOM) }) }}
             className={
               spec.numeric
                 ? "relative z-10 mt-2 block origin-left font-num text-[120px] font-black leading-[0.9]"
