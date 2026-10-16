@@ -227,3 +227,17 @@
   .board-stick, .board-zone, .key-glow { animation: none !important; }
   .pad-key { transition: none !important; }
 }
+
+/* --- Accueil : confettis en bordure (décor, derrière le contenu) --- */
+@keyframes confetti-bob {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -8px; }
+}
+@keyframes confetti-spin {
+  to { rotate: 360deg; }
+}
+.confetti-bob { animation: confetti-bob var(--t, 5s) ease-in-out infinite; }
+.confetti-spin { animation: confetti-spin var(--t, 16s) linear infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .confetti-bob, .confetti-spin { animation: none !important; }
+}

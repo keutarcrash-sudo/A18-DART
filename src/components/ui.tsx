@@ -1,6 +1,6 @@
 "use client";
-/** Briques d'interface communes, dans la direction « 18° ». */
-import type { ReactNode } from "react";
+/** Briques d'interface communes, direction « Pop » (voir .claude/skills/a18-design/SKILL.md). */
+import type { CSSProperties, ReactNode } from "react";
 import { useT } from "@/lib/i18n";
 
 export function Screen({ children }: { children: ReactNode }) {
@@ -14,10 +14,15 @@ export function Screen({ children }: { children: ReactNode }) {
 export function TopBar({ onBack, left, right }: { onBack?: () => void; left: ReactNode; right?: ReactNode }) {
   const t = useT();
   return (
-    <div className="flex min-h-6 items-center justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-gris">
+    <div className="flex min-h-11 items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-[0.08em] text-attenue">
       <span className="flex items-center">
         {onBack && (
-          <button type="button" onClick={onBack} aria-label={t("Retour")} className="-ml-1 mr-1 px-1.5 py-1 text-xl font-black leading-none text-blanc">
+          <button
+            type="button"
+            onClick={onBack}
+            aria-label={t("Retour")}
+            className="pop-shadow-sm pop-press mr-2 grid h-11 w-11 place-items-center rounded-full border-2 border-encre bg-carte text-xl font-black leading-none text-encre"
+          >
             ←
           </button>
         )}
@@ -30,9 +35,41 @@ export function TopBar({ onBack, left, right }: { onBack?: () => void; left: Rea
 
 export function Title({ children, numeric }: { children: ReactNode; numeric?: boolean }) {
   return numeric ? (
-    <h1 className="mt-4 font-num text-[64px] leading-none">{children}</h1>
+    <h1 className="mt-4 font-num text-[64px] font-black leading-none">{children}</h1>
   ) : (
-    <h1 className="mt-4 text-[40px] font-black uppercase italic leading-[0.95] tracking-tight text-balance">{children}</h1>
+    <h1 className="mt-4 font-display text-[34px] font-extrabold leading-[1] tracking-tight text-balance">{children}</h1>
+  );
+}
+
+type PillTone = "blanc" | "violet" | "ambre" | "menthe" | "rose";
+const PILL_TONE: Record<PillTone, string> = {
+  blanc: "bg-carte text-encre",
+  violet: "bg-violet text-white",
+  ambre: "bg-ambre text-encre",
+  menthe: "bg-menthe text-encre",
+  rose: "bg-rose text-encre",
+};
+
+/** Pastille / bouton arrondi avec contour encre et ombre dure. Sans onClick : simple étiquette. */
+export function Pill({
+  children,
+  onClick,
+  tone = "blanc",
+  small,
+}: {
+  children: ReactNode;
+  onClick?: () => void;
+  tone?: PillTone;
+  small?: boolean;
+}) {
+  const base = `inline-flex items-center justify-center gap-2 rounded-full border-2 border-encre font-bold ${PILL_TONE[tone]} ${
+    small ? "min-h-9 px-3.5 text-[13px]" : "min-h-12 px-5 text-base"
+  }`;
+  if (!onClick) return <span className={base}>{children}</span>;
+  return (
+    <button type="button" onClick={onClick} className={`${base} pop-shadow-sm pop-press`}>
+      {children}
+    </button>
   );
 }
 
@@ -45,16 +82,17 @@ export function Cta({
   children: ReactNode;
   onClick: () => void;
   disabled?: boolean;
-  tone?: "blanc" | "cyan";
+  /** « cyan » : ancien nom du violet, gardé jusqu'à la tâche 15. */
+  tone?: "blanc" | "violet" | "cyan";
 }) {
+  const violet = tone !== "blanc";
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
-      style={{ "--h": "58px" } as React.CSSProperties}
-      className={`btn-18 h-[58px] w-full shrink-0 text-[17px] font-black uppercase italic text-noir disabled:bg-case disabled:text-gris-2 ${
-        tone === "cyan" ? "bg-cyan active:bg-blanc" : "bg-blanc active:bg-cyan"
+      className={`pop-shadow pop-press h-14 w-full shrink-0 rounded-full border-2 font-display text-lg font-extrabold disabled:border-bord disabled:bg-muted disabled:text-attenue disabled:shadow-none ${
+        violet ? "border-encre bg-violet text-white" : "border-encre bg-carte text-encre"
       }`}
     >
       {children}
@@ -62,7 +100,7 @@ export function Cta({
   );
 }
 
-/** Choix exclusif (réglages) : boutons inclinés, le choix actif en cyan. */
+/** Choix exclusif (réglages) : pastilles arrondies, le choix actif en violet. */
 export function Seg<T extends string | number | boolean>({
   label,
   value,
@@ -78,24 +116,24 @@ export function Seg<T extends string | number | boolean>({
 }) {
   return (
     <div className="mt-5">
-      <h2 className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-gris">{label}</h2>
-      <div className="flex gap-1.5">
+      <h2 className="mb-2 text-[11px] font-bold uppercase tracking-[0.08em] text-attenue">{label}</h2>
+      <div className="flex gap-2">
         {options.map((o) => (
           <button
             key={String(o.value)}
             type="button"
             onClick={() => onChange(o.value)}
             aria-pressed={o.value === value}
-            style={{ "--h": "50px" } as React.CSSProperties}
-            className={`btn-18 h-[50px] flex-1 text-[13px] font-black uppercase italic ${
-              o.value === value ? "bg-cyan text-noir" : "bg-case text-[#cfcfcf]"
+            style={{ minHeight: 50 } as CSSProperties}
+            className={`pop-shadow-sm pop-press flex-1 rounded-2xl border-2 border-encre px-1 font-display text-[15px] font-extrabold ${
+              o.value === value ? "bg-violet text-white" : "bg-carte text-encre"
             }`}
           >
             {o.label}
           </button>
         ))}
       </div>
-      <p className="mt-2 min-h-9 text-xs leading-normal text-[#a8a8a8]">{help}</p>
+      <p className="mt-2 min-h-9 text-xs leading-normal text-attenue">{help}</p>
     </div>
   );
 }
