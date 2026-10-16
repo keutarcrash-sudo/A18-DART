@@ -19,6 +19,15 @@ export function boardDartsOf(actions: { type: string }[], volley: Dart[]) {
   return volley.map((dart, k) => ({ dart, seed: seeds[k] ?? k }));
 }
 
+/** Case vide de la rangée des 3 fléchettes : contour et numéro en attenue (contraste >= 3:1 sur la crème). */
+export function EmptySlot({ n }: { n: number }) {
+  return (
+    <div className="grid h-11 place-items-center rounded-[14px] border-2 border-dashed border-attenue font-display text-[18px] font-extrabold text-attenue [@media(max-height:700px)]:h-10">
+      {n}
+    </div>
+  );
+}
+
 /** Les 3 fléchettes de la volée : Simple blanc, Double ambre, Triple rose ; cases vides en pointillés. */
 export function DartRow({ volley, points }: { volley: Dart[]; points: number }) {
   const t = useT();
@@ -26,16 +35,7 @@ export function DartRow({ volley, points }: { volley: Dart[]; points: number }) 
     <div className="grid h-11 [@media(max-height:700px)]:h-10 grid-cols-[1fr_1fr_1fr_54px] items-center gap-2">
       {[0, 1, 2].map((k) => {
         const dt = volley[k];
-        if (!dt) {
-          return (
-            <div
-              key={`${k}-x`}
-              className="grid h-11 [@media(max-height:700px)]:h-10 place-items-center rounded-[14px] border-2 border-dashed border-attenue/40 font-display text-[18px] font-extrabold text-attenue/60"
-            >
-              {k + 1}
-            </div>
-          );
-        }
+        if (!dt) return <EmptySlot key={`${k}-x`} n={k + 1} />;
         const tone = dt.m === 3 ? "bg-rose" : dt.m === 2 && dt.n !== 0 ? "bg-ambre" : "bg-carte";
         return (
           <motion.div

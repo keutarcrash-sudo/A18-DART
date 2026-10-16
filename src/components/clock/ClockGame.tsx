@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Celebration, type CeleSpec, Wink, celeDuration } from "@/components/Celebration";
 import { GameMenu } from "@/components/GameMenu";
-import { POP_PILL } from "@/components/x01/Volley";
+import { EmptySlot, POP_PILL } from "@/components/x01/Volley";
 import { type Action, type Dart, type Mult, dartLabel } from "@/engine/types";
 import {
   type ClockEvent,
@@ -246,13 +246,7 @@ export function ClockGame() {
           <div className="grid h-11 grid-cols-3 gap-2 [@media(max-height:700px)]:h-10">
             {[0, 1, 2].map((k) => {
               const dt = state.volley[k];
-              if (!dt) {
-                return (
-                  <div key={`${k}-x`} className="grid h-11 place-items-center rounded-[14px] border-2 border-dashed border-attenue/40 font-display text-[18px] font-extrabold text-attenue/60 [@media(max-height:700px)]:h-10">
-                    {k + 1}
-                  </div>
-                );
-              }
+              if (!dt) return <EmptySlot key={`${k}-x`} n={k + 1} />;
               const ok = dt.n > 0;
               const tone = dt.m === 3 && ok ? "bg-rose" : dt.m === 2 && ok ? "bg-ambre" : "bg-carte";
               return (
