@@ -122,6 +122,8 @@ export const EN: Record<string, string> = {
   "RATÉ / AUTRE": "MISS / OTHER",
   ANNULER: "UNDO",
   "Valider la volée": "Confirm round",
+  Cible: "Board",
+  "Cible : {list}": "Board: {list}",
   "Touche pour continuer": "Tap to continue",
   Perso: "Char",
   "À toi": "Your turn",

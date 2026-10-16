@@ -203,3 +203,27 @@
     animation: none !important;
   }
 }
+
+/* --- Cible et pavé lumineux (src/components/x01/Board.tsx, Pad.tsx) --- */
+@keyframes board-stick {
+  0% { transform: translate(26px, -34px) scale(1.6); opacity: 0; }
+  60% { transform: translate(0, 0) scale(0.92); opacity: 1; }
+  100% { transform: translate(0, 0) scale(1); }
+}
+@keyframes board-glowz {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+@keyframes key-glow {
+  0%, 100% { box-shadow: 0 0 0 0 #fbbf24, 2px 2px 0 0 #1e293b; }
+  50% { box-shadow: 0 0 0 5px #fbbf24, 2px 2px 0 0 #1e293b; }
+}
+.board-stick { animation: board-stick 420ms var(--ease-pop) both; }
+.board-zone { animation: board-glowz 1.1s ease-in-out infinite; }
+.key-glow { background-color: #fef3c7; animation: key-glow 1.1s ease-in-out infinite; }
+
+/* Mouvement réduit : pas de rebond, pas de pulsation (ambre fixe), appui instantané. */
+@media (prefers-reduced-motion: reduce) {
+  .board-stick, .board-zone, .key-glow { animation: none !important; }
+  .pad-key { transition: none !important; }
+}
