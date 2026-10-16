@@ -1,6 +1,6 @@
 # 08 — Refonte visuelle « Pop » (Playful Geometric)
 
-Statut : **à valider par le client** (octobre 2026). Une fois validé, ce document fait foi.
+Statut : **faite (en attente de validation client sur captures)** (octobre 2026). Toute l'app est passée en Pop sur la branche de travail ; la mise en ligne attend l'accord du client sur les captures. Une fois validé, ce document fait foi.
 Maquettes cliquables : [`docs/refonte-pop/maquettes.html`](refonte-pop/maquettes.html) (copie de la page partagée au client).
 
 Ce document remplace, pour tout ce qui se voit, la direction « 18° » (`04-direction-18.md`) et les règles visuelles de la skill `a18-design`. Les règles des jeux (`05-jeux.md`), les choix techniques (`06-technique.md`) et le fonctionnement de la saisie ne changent pas.

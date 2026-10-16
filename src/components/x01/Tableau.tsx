@@ -54,7 +54,8 @@ export function Tableau({ title, who, current, rows, onClose }: Props) {
         </span>
       </div>
 
-      <div className="mt-3 flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto pb-1 pr-1">
+      {/* pt / pr : place pour le Frimeur posé en coin sur la carte du meneur (la liste défile, elle coupe ce qui dépasse). */}
+      <div className="mt-1 flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto pb-1 pr-2.5 pt-3">
         {rows.map(({ side, name, value, fill, sub }, rank) => {
           const filled = Math.round(Math.min(1, Math.max(0, fill)) * 12);
           const first = rank === 0;
@@ -65,7 +66,7 @@ export function Tableau({ title, who, current, rows, onClose }: Props) {
               transition={{ type: "spring", stiffness: 260, damping: 30 }}
               key={side}
               style={{ minHeight: rh, gap: 10 }}
-              className={`flex shrink-0 items-center rounded-3xl border-2 border-encre px-3 ${
+              className={`relative flex shrink-0 items-center rounded-3xl border-2 border-encre px-3 ${
                 first ? "bg-violet text-white shadow-[4px_4px_0_0_var(--color-encre)]" : "bg-carte text-encre shadow-[3px_3px_0_0_var(--color-bord)]"
               }`}
             >
@@ -94,7 +95,8 @@ export function Tableau({ title, who, current, rows, onClose }: Props) {
                 </div>
                 {!small && <div className={`mt-1 truncate text-[11px] font-bold ${first ? "text-white" : "text-attenue"}`}>{sub}</div>}
               </div>
-              {first && n > 1 && <Head kind="frimeur" size={Math.min(64, Math.round(rh * 0.6))} className="-mr-1 shrink-0 rotate-6" />}
+              {/* Le Frimeur en coin, comme un sticker : il ne prend plus la place du prénom. */}
+              {first && n > 1 && <Head kind="frimeur" size={Math.min(52, Math.round(rh * 0.5))} className="pointer-events-none absolute -right-2 -top-3 rotate-12" />}
               <div className="shrink-0 text-right font-num font-black leading-none" style={{ fontSize: Math.min(48, rh * 0.42) }}>
                 {value}
               </div>
