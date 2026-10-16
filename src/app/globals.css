@@ -184,6 +184,8 @@
 /* Mouvement réduit : pas de rebond, pas de pulsation (ambre fixe), appui instantané. */
 @media (prefers-reduced-motion: reduce) {
   .board-stick, .board-zone, .key-glow { animation: none !important; }
+  /* Sans pulsation, une touche allumée se voit par un contour ambre fixe (en plus du fond pâle). */
+  .key-glow { outline: 2px solid #fbbf24; outline-offset: -2px; }
   .pad-key { transition: none !important; }
 }
 

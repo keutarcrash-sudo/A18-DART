@@ -45,7 +45,7 @@ export function EmptySlot({ n }: { n: number }) {
 export function DartRow({ volley, points }: { volley: Dart[]; points: number }) {
   const t = useT();
   return (
-    <div className="grid h-11 [@media(max-height:700px)]:h-10 [@media(min-height:820px)]:h-14 grid-cols-[1fr_1fr_1fr_54px] items-center gap-2">
+    <div data-dart-row className="grid h-11 [@media(max-height:700px)]:h-10 [@media(min-height:820px)]:h-14 grid-cols-[1fr_1fr_1fr_54px] items-center gap-2">
       {[0, 1, 2].map((k) => {
         const dt = volley[k];
         if (!dt) return <EmptySlot key={`${k}-x`} n={k + 1} />;

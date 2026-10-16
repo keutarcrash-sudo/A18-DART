@@ -35,7 +35,7 @@ async function warm() {
     try {
       const res = await fetch(url);
       if (!res.ok) return;
-      // Les polices (Montserrat, chiffres A18) sont citées dans les feuilles de style : on les prend aussi.
+      // Les polices (Outfit, Plus Jakarta Sans) sont citées dans les feuilles de style : on les prend aussi.
       if (url.endsWith(".css")) {
         const css = await res.clone().text();
         for (const m of css.matchAll(/\/_next\/static\/media\/[^"'\s)]+/g)) statics.add(m[0]);

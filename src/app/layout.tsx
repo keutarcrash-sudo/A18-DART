@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Pwa } from "@/components/Pwa";
+import { MotionProvider } from "@/components/MotionProvider";
 
 /* Refonte pop : Outfit pour les titres et les chiffres, Plus Jakarta Sans pour le texte. */
 const outfit = Outfit({
@@ -35,7 +36,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="fr" className={`${outfit.variable} ${jakarta.variable} h-full`}>
       <body className="min-h-full bg-creme font-text text-encre">
-        {children}
+        <MotionProvider>{children}</MotionProvider>
         <Pwa />
       </body>
     </html>

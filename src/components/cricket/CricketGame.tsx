@@ -278,7 +278,7 @@ export function CricketGame() {
 
         <div className="mt-auto pt-2 [@media(max-height:700px)]:pt-1">
           {/* Les 3 fléchettes de la volée (Double / Triple viennent s'afficher par-dessus) */}
-          <div className="grid h-11 grid-cols-3 gap-2 [@media(max-height:700px)]:h-10">
+          <div data-dart-row className="grid h-11 grid-cols-3 gap-2 [@media(max-height:700px)]:h-10">
             {[0, 1, 2].map((k) => {
               const dt = state.volley[k];
               if (!dt) return <EmptySlot key={`${k}-x`} n={k + 1} />;

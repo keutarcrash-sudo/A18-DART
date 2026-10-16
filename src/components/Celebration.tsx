@@ -7,6 +7,7 @@
  * - wink : bulle de la tête, ne bloque pas la saisie (26, passe devant, chambrage…).
  * Sans animation (« réduire les animations ») : tout s'affiche directement dans son état final, têtes immobiles.
  */
+import { useLayoutEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useT } from "@/lib/i18n";
 import { fitFont } from "@/lib/fit";
@@ -227,25 +228,51 @@ function MidCele({ spec, onDone }: { spec: Extract<CeleSpec, { level: "mid" }>; 
   );
 }
 
-/** La bulle de la tête : elle chambre sans bloquer la saisie (une tape ailleurs continue la partie). */
+/**
+ * La bulle de la tête : elle chambre sans bloquer la saisie. Elle se pose juste au-dessus de la rangée des 3 fléchettes
+ * (repérée par `data-dart-row`, donc quelle que soit la hauteur du pavé) : aucune touche, ni la zone Double / Triple, n'est couverte.
+ * Une tape sur la bulle la fait disparaître ; une tape ailleurs continue la partie.
+ */
 export function Wink({ text, head = WINK_HEAD }: { text: string | null; head?: HeadKind }) {
   const reduce = useReducedMotion();
+  const box = useRef<HTMLDivElement>(null);
+  const [bottom, setBottom] = useState(352);
+  const [gone, setGone] = useState<string | null>(null);
+
+  if (text === null && gone !== null) setGone(null); // la bulle repart de zéro à la prochaine apparition
+
+  useLayoutEffect(() => {
+    if (!text) return;
+    const place = () => {
+      const row = document.querySelector("[data-dart-row]");
+      const host = box.current?.offsetParent;
+      if (!row || !host) return;
+      setBottom(Math.max(0, Math.round(host.getBoundingClientRect().bottom - row.getBoundingClientRect().top + 8)));
+    };
+    place();
+    window.addEventListener("resize", place);
+    return () => window.removeEventListener("resize", place);
+  }, [text]);
+
   return (
     <AnimatePresence>
-      {text && (
+      {text && gone !== text && (
         <motion.div
+          ref={box}
           key={text}
           initial={reduce ? false : { opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0 }}
           transition={{ type: "spring", stiffness: 420, damping: 24 }}
-          className="pointer-events-none absolute inset-x-3.5 bottom-[352px] z-30 flex items-end gap-1.5"
+          style={{ bottom }}
+          className="pointer-events-none absolute inset-x-3.5 z-30 flex items-end gap-1.5"
         >
           <PopIn rotate={-8} className="shrink-0">
             <Head kind={head} size={64} />
           </PopIn>
           <p
-            className="relative mb-3 rounded-[18px] rounded-bl-[4px] border-2 border-encre bg-carte px-4 py-2.5 font-text text-[15px] font-bold leading-snug text-encre"
+            onClick={() => setGone(text)}
+            className="pointer-events-auto relative mb-3 cursor-pointer rounded-[18px] rounded-bl-[4px] border-2 border-encre bg-carte px-4 py-2.5 font-text text-[15px] font-bold leading-snug text-encre"
             style={{ boxShadow: `4px 4px 0 ${POP.ink}` }}
           >
             {text}
