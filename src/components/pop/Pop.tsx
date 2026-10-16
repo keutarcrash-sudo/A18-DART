@@ -1,25 +1,25 @@
 "use client";
 /**
- * Kit pop art des célébrations (docs/04-direction-18.md, « Évolution pop art » ; références dans docs/pop-art/).
- * Stickers à contour noir épais et ombre noire décalée, couleurs vives en aplat, et la mascotte smiley
- * qui remplace les personnages 3D. Réservé aux célébrations : l'écran de saisie reste « 18° ».
+ * Kit « Pop » des célébrations et des scènes (docs/08-refonte-pop.md) : stickers à contour encre épais et
+ * ombre dure décalée (sans flou), couleurs de la palette en aplat. Les personnages sont les têtes de
+ * components/pop/Heads.tsx.
  */
 import { motion, useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
 
+/** Palette Pop (mêmes valeurs que les jetons de globals.css), pour les dessins SVG. */
 export const POP = {
-  pink: "#FF3D7F",
-  blue: "#2D6BFF",
-  yellow: "#FFD23F",
-  orange: "#FF8A1F",
-  cyan: "#0CC0DF",
-  lime: "#C7D530",
+  violet: "#8B5CF6",
+  rose: "#F472B6",
+  ambre: "#FBBF24",
+  menthe: "#34D399",
+  ink: "#1E293B",
+  cream: "#FFFDF5",
   white: "#FFFFFF",
-  ink: "#111111",
 } as const;
 
 const STROKE = 6;
-const SHADOW = 6;
+const SHADOW = 7;
 
 type Draw = (fill: string, stroke: string) => ReactNode;
 
@@ -65,7 +65,7 @@ export const SHAPES = {
       {[0, 60, 120, 180, 240, 300].map((a) => (
         <circle key={a} cx={50 + 28 * Math.cos((a * Math.PI) / 180)} cy={50 + 28 * Math.sin((a * Math.PI) / 180)} r={20} fill={f} />
       ))}
-      <circle cx={50} cy={50} r={20} fill={f === POP.ink ? POP.ink : POP.yellow} />
+      <circle cx={50} cy={50} r={20} fill={f === POP.ink ? POP.ink : f === POP.ambre ? POP.rose : POP.ambre} />
     </g>
   )) as Draw,
   wave: ((f, s) => (
@@ -73,6 +73,13 @@ export const SHAPES = {
       <path d="M6 54 Q 20 26 34 54 T 62 54 T 94 54" stroke={s} strokeWidth={26} />
       <path d="M6 54 Q 20 26 34 54 T 62 54 T 94 54" stroke={f} strokeWidth={14} />
     </g>
+  )) as Draw,
+  // Confettis géométriques (comme sur l'accueil et le podium).
+  dot: ((f, s) => <circle cx={50} cy={50} r={40} fill={f} stroke={s} strokeWidth={STROKE * 1.4} />) as Draw,
+  square: ((f, s) => <rect x={14} y={14} width={72} height={72} rx={12} fill={f} stroke={s} strokeWidth={STROKE * 1.4} />) as Draw,
+  triangle: ((f, s) => <polygon points="50,8 94,88 6,88" fill={f} stroke={s} strokeWidth={STROKE * 1.4} strokeLinejoin="round" />) as Draw,
+  plus: ((f, s) => (
+    <path d="M36 6 H64 V36 H94 V64 H64 V94 H36 V64 H6 V36 H36 Z" fill={f} stroke={s} strokeWidth={STROKE * 1.4} strokeLinejoin="round" />
   )) as Draw,
   asterisk: ((f, s) => (
     <g>
@@ -89,70 +96,6 @@ export type ShapeName = keyof typeof SHAPES;
 /** `flat` : forme pleine sans contour ni ombre (pour un fond derrière un texte). */
 export function Shape({ name, fill, size, flat }: { name: ShapeName; fill: string; size: number; flat?: boolean }) {
   return <Sticker draw={SHAPES[name]} fill={fill} size={size} flat={flat} />;
-}
-
-/* ---------- La mascotte : un smiley aux gros yeux de cartoon ---------- */
-
-export type Mood = "joy" | "wow" | "wink" | "dizzy" | "smug" | "hide";
-
-export function Mascot({ mood = "joy", size = 120, hat = false }: { mood?: Mood; size?: number; hat?: boolean }) {
-  const eye = (cx: number, closed: boolean, dizzy: boolean) =>
-    mood === "hide" ? (
-      // Yeux plissés « > < » : il ne veut pas voir ça.
-      <path
-        d={cx < 50 ? `M${cx - 10} 36 L${cx + 8} 44 L${cx - 10} 52` : `M${cx + 10} 36 L${cx - 8} 44 L${cx + 10} 52`}
-        fill="none"
-        stroke={POP.ink}
-        strokeWidth={5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    ) : dizzy ? (
-      <g stroke={POP.ink} strokeWidth={5} strokeLinecap="round">
-        <line x1={cx - 9} y1={34} x2={cx + 9} y2={52} />
-        <line x1={cx + 9} y1={34} x2={cx - 9} y2={52} />
-      </g>
-    ) : closed ? (
-      <path d={`M${cx - 11} 46 Q ${cx} 34 ${cx + 11} 46`} fill="none" stroke={POP.ink} strokeWidth={5} strokeLinecap="round" />
-    ) : (
-      <g>
-        <ellipse cx={cx} cy={43} rx={11} ry={14} fill={POP.white} stroke={POP.ink} strokeWidth={4} />
-        <ellipse cx={cx + 3} cy={46} rx={5} ry={7} fill={POP.ink} />
-        <circle cx={cx + 5} cy={42} r={2} fill={POP.white} />
-      </g>
-    );
-  const mouth = {
-    joy: <path d="M30 64 Q 50 86 70 64 Z" fill={POP.ink} stroke={POP.ink} strokeWidth={4} strokeLinejoin="round" />,
-    wow: <ellipse cx={50} cy={72} rx={9} ry={11} fill={POP.ink} />,
-    wink: <path d="M32 66 Q 50 80 68 66" fill="none" stroke={POP.ink} strokeWidth={5} strokeLinecap="round" />,
-    dizzy: <path d="M34 74 Q 42 66 50 74 T 66 74" fill="none" stroke={POP.ink} strokeWidth={5} strokeLinecap="round" />,
-    smug: <path d="M36 70 Q 56 78 68 64" fill="none" stroke={POP.ink} strokeWidth={5} strokeLinecap="round" />,
-    hide: <path d="M36 74 Q 43 66 50 72 T 64 70" fill="none" stroke={POP.ink} strokeWidth={5} strokeLinecap="round" />,
-  }[mood];
-  return (
-    <svg viewBox="-8 -8 124 124" width={size} height={size} aria-hidden>
-      <circle cx={50 + SHADOW} cy={50 + SHADOW} r={46} fill={POP.ink} />
-      <circle cx={50} cy={50} r={46} fill={POP.yellow} stroke={POP.ink} strokeWidth={STROKE} />
-      {mood !== "dizzy" && (
-        <g fill={POP.pink} opacity={0.85}>
-          <ellipse cx={22} cy={62} rx={8} ry={5} />
-          <ellipse cx={78} cy={62} rx={8} ry={5} />
-        </g>
-      )}
-      {hat && (
-        // Chapeau de fête, de travers.
-        <g transform="rotate(-22 50 6)" stroke={POP.ink} strokeWidth={4} strokeLinejoin="round">
-          <path d="M28 14 L50 -40 L72 14 Z" fill={POP.pink} />
-          <path d="M36 -6 L64 -6 L68 4 L32 4 Z" fill={POP.yellow} stroke="none" />
-          <path d="M28 14 L50 -40 L72 14 Z" fill="none" />
-          <circle cx={50} cy={-42} r={7} fill={POP.yellow} />
-        </g>
-      )}
-      {eye(36, false, mood === "dizzy")}
-      {eye(64, mood === "wink", mood === "dizzy")}
-      {mouth}
-    </svg>
-  );
 }
 
 /* ---------- Animation commune : le sticker « claque » à l'écran ---------- */

@@ -8,7 +8,8 @@
  */
 import { type MotionValue, motion, useTransform } from "motion/react";
 import type { ReactNode } from "react";
-import { Mascot, POP, Shape, halftone } from "./Pop";
+import { Head } from "./Heads";
+import { POP, Shape, halftone } from "./Pop";
 import { Boom, C, Dart, FlyingDart, MG, WholeBoard, easeIn, easeOut, lerp, pop, seg, useTimeline } from "./Scene";
 
 export type MiniKind = "misses" | "ton" | "closed";
@@ -111,7 +112,7 @@ function Misses({ time, spec }: { time: MotionValue<number>; spec: MiniSpec }) {
       ))}
       <div className="absolute inset-x-4 bottom-[calc(60px+env(safe-area-inset-bottom))] flex items-end gap-2">
         <motion.div style={useIn(time, 1.1)} className="shrink-0">
-          <Mascot mood="hide" size={92} />
+          <Head kind="tournis" size={92} />
         </motion.div>
         <Bubble time={time} t0={1.2}>
           {spec.text}
@@ -127,9 +128,9 @@ function Flame({ time }: { time: MotionValue<number> }) {
   const flicker = useTransform(time, (t) => `translate(0 150) scale(${1 + 0.12 * Math.sin(t * 60)} ${1 + 0.25 * Math.sin(t * 47)}) translate(0 -150)`);
   return (
     <MG transform={flicker}>
-      <path d="M0 140 C -40 190 -26 250 0 330 C 26 250 40 190 0 140 Z" fill={POP.pink} stroke={POP.ink} strokeWidth={4} />
-      <path d="M0 150 C -26 190 -16 240 0 290 C 16 240 26 190 0 150 Z" fill={POP.orange} />
-      <path d="M0 158 C -12 185 -8 220 0 250 C 8 220 12 185 0 158 Z" fill={POP.yellow} />
+      <path d="M0 140 C -40 190 -26 250 0 330 C 26 250 40 190 0 140 Z" fill={POP.rose} stroke={POP.ink} strokeWidth={4} />
+      <path d="M0 150 C -26 190 -16 240 0 290 C 16 240 26 190 0 150 Z" fill={POP.ambre} />
+      <path d="M0 158 C -12 185 -8 220 0 250 C 8 220 12 185 0 158 Z" fill={POP.cream} />
     </MG>
   );
 }
@@ -143,10 +144,10 @@ function Ton({ time, spec }: { time: MotionValue<number>; spec: MiniSpec }) {
   const word = useIn(time, 0.55);
   const num = useIn(time, 0.62);
   return (
-    <div className="absolute inset-0" style={{ background: POP.orange, ...halftone("rgb(0 0 0 / 0.14)") }}>
+    <div className="absolute inset-0" style={{ background: POP.rose, ...halftone("rgb(0 0 0 / 0.14)") }}>
       <motion.div style={burst} className="pointer-events-none absolute left-1/2 top-[38%] -ml-[170px] -mt-[170px]">
         <motion.div animate={{ rotate: 360 }} transition={{ duration: 14, repeat: Infinity, ease: "linear" }}>
-          <Shape name="burst" fill={POP.yellow} size={340} flat />
+          <Shape name="burst" fill={POP.ambre} size={340} flat />
         </motion.div>
       </motion.div>
       <svg viewBox="0 0 400 860" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 h-full w-full overflow-visible" aria-hidden>
@@ -183,7 +184,7 @@ function Padlock({ time }: { time: MotionValue<number> }) {
         <path d="M50 78 V30 A50 50 0 0 1 150 30 V78" fill="none" stroke={POP.ink} strokeWidth={30} strokeLinecap="round" />
         <path d="M50 78 V30 A50 50 0 0 1 150 30 V78" fill="none" stroke="#D9D9D9" strokeWidth={16} strokeLinecap="round" />
       </MG>
-      <rect x={10} y={70} width={180} height={130} rx={18} fill={POP.yellow} stroke={POP.ink} strokeWidth={7} />
+      <rect x={10} y={70} width={180} height={130} rx={18} fill={POP.ambre} stroke={POP.ink} strokeWidth={7} />
       <circle cx={100} cy={122} r={15} fill={POP.ink} />
       <path d="M92 128 L108 128 L104 166 L96 166 Z" fill={POP.ink} />
     </svg>

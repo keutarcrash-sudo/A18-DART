@@ -7,6 +7,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Celebration, type CeleSpec, Wink, celeDuration } from "@/components/Celebration";
+import type { HeadKind } from "@/components/pop/Heads";
 import { GameMenu } from "@/components/GameMenu";
 import { Board } from "@/components/x01/Board";
 import { Pad } from "@/components/x01/Pad";
@@ -35,7 +36,7 @@ export function HighGame() {
   const [animScore, setAnimScore] = useState<number | null>(null);
   const [plus, setPlus] = useState<{ id: number; text: string } | null>(null);
   const [cele, setCele] = useState<CeleSpec | null>(null);
-  const [wink, setWink] = useState<string | null>(null);
+  const [wink, setWink] = useState<{ text: string; head?: HeadKind } | null>(null);
   const [multFor, setMultFor] = useState<number | null>(null);
   const [view, setView] = useState<"saisie" | "tableau">("saisie");
   const [menu, setMenu] = useState(false);
@@ -70,8 +71,8 @@ export function HighGame() {
     [],
   );
 
-  const showWink = useCallback((text: string) => {
-    setWink(text);
+  const showWink = useCallback((text: string, head?: HeadKind) => {
+    setWink({ text, head });
     if (winkTimer.current) clearTimeout(winkTimer.current);
     winkTimer.current = setTimeout(() => setWink(null), 2400);
   }, []);
@@ -100,10 +101,10 @@ export function HighGame() {
       if (record) {
         beatDay(points);
         sounds.oneEighty();
-        await celebrate({ level: "max", tone: "chartreuse", kicker: t("Record du jour à l'Arena18"), big: String(points), numeric: true, sub: who, slot: "record" });
+        await celebrate({ level: "max", tone: "ambre", kicker: t("Record du jour à l'Arena18"), big: String(points), numeric: true, sub: who, slot: "record" });
       } else if (find("oneEighty")) {
         sounds.oneEighty();
-        await celebrate({ level: "max", tone: "cyan", kicker: who, big: "180", numeric: true, sub: t("Le maximum. Rien que ça."), slot: "180" });
+        await celebrate({ level: "max", tone: "violet", kicker: who, big: "180", numeric: true, sub: t("Le maximum. Rien que ça."), slot: "180" });
       } else if (find("ton")) {
         sounds.ton();
         await celebrate({ level: "scene", kind: "ton", kicker: "Ton-up", num: String(points) });
@@ -111,7 +112,7 @@ export function HighGame() {
       else if (find("threeMisses")) {
         await celebrate({ level: "scene", kind: "misses", text: t("Trois à côté. Ça arrive aux meilleurs.") });
       }
-      else if (find("takesLead") && st.status !== "match") showWink(t("{name} passe devant.", { name: st.setup.sides[side].name }));
+      else if (find("takesLead") && st.status !== "match") showWink(t("{name} passe devant.", { name: st.setup.sides[side].name }), "frimeur");
 
       const won = find("matchWon");
       if (won) {
@@ -119,8 +120,8 @@ export function HighGame() {
         const names = won.sides.map((i) => st.setup.sides[i].name);
         await celebrate(
           names.length > 1
-            ? { level: "max", tone: "cyan", kicker: t("{n} points chacun", { n: st.scores[won.sides[0]] }), big: t("Égalité"), numeric: false, sub: names.join(" · "), slot: "victoire" }
-            : { level: "max", tone: "cyan", kicker: `${t("Plus gros score")} · ${st.scores[won.sides[0]]}`, big: names[0], numeric: false, slot: "victoire" },
+            ? { level: "max", tone: "violet", kicker: t("{n} points chacun", { n: st.scores[won.sides[0]] }), big: t("Égalité"), numeric: false, sub: names.join(" · "), slot: "victoire" }
+            : { level: "max", tone: "violet", kicker: `${t("Plus gros score")} · ${st.scores[won.sides[0]]}`, big: names[0], numeric: false, slot: "victoire" },
         );
       }
 
@@ -370,7 +371,7 @@ export function HighGame() {
       </AnimatePresence>
 
       <GameMenu open={menu} onClose={() => setMenu(false)} onRestart={() => restart(state.setup.firstSide)} label="Plus gros score" />
-      <Wink text={wink} />
+      <Wink text={wink?.text ?? null} head={wink?.head} />
       <Celebration spec={cele} onDone={() => celeDone.current?.()} />
 
       {over && <FinDePartie data={podiumHigh(state, t)} onRevanche={() => restart(order[order.length - 1])} />}

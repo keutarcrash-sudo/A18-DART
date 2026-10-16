@@ -99,7 +99,7 @@ export function KillerGame() {
     setBusy(true);
     void celebrate({
       level: "max",
-      tone: "cyan",
+      tone: "violet",
       kicker: t("Dernier debout"),
       big: state.setup.sides[w].members.length > 1 ? state.setup.sides[w].name : currentMemberKiller(state, w),
       numeric: false,

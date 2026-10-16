@@ -72,7 +72,7 @@ export function Sector({ i, fill }: { i: number; fill?: string }) {
   const a0 = i * 18 - 9;
   const a1 = i * 18 + 9;
   const dark = i % 2 === 0;
-  const ring = i % 2 === 0 ? POP.pink : POP.cyan;
+  const ring = i % 2 === 0 ? POP.rose : POP.violet;
   const line = { stroke: POP.ink, strokeWidth: 2.5, strokeLinejoin: "round" as const };
   return (
     <g>
@@ -86,8 +86,8 @@ export function Sector({ i, fill }: { i: number; fill?: string }) {
 export function Bull() {
   return (
     <g stroke={POP.ink} strokeWidth={2.5}>
-      <circle cx={C} cy={C} r={18} fill={POP.cyan} />
-      <circle cx={C} cy={C} r={8} fill={POP.pink} />
+      <circle cx={C} cy={C} r={18} fill={POP.violet} />
+      <circle cx={C} cy={C} r={8} fill={POP.rose} />
     </g>
   );
 }
@@ -100,12 +100,12 @@ export function Dart() {
     <g>
       <path d="M0 0 L-2.5 22 L2.5 22 Z" fill="#D9D9D9" {...line} />
       <rect x={-8} y={22} width={16} height={46} rx={4} fill={POP.white} {...line} />
-      <rect x={-8} y={34} width={16} height={7} fill={POP.pink} />
-      <rect x={-8} y={50} width={16} height={7} fill={POP.pink} />
+      <rect x={-8} y={34} width={16} height={7} fill={POP.rose} />
+      <rect x={-8} y={50} width={16} height={7} fill={POP.rose} />
       <rect x={-8} y={22} width={16} height={46} rx={4} fill="none" {...line} />
-      <rect x={-3.5} y={68} width={7} height={46} fill={POP.cyan} {...line} />
-      <path d="M0 92 L-30 132 L-8 150 L0 128 Z" fill={POP.pink} {...line} />
-      <path d="M0 92 L30 132 L8 150 L0 128 Z" fill={POP.yellow} {...line} />
+      <rect x={-3.5} y={68} width={7} height={46} fill={POP.violet} {...line} />
+      <path d="M0 92 L-30 132 L-8 150 L0 128 Z" fill={POP.rose} {...line} />
+      <path d="M0 92 L30 132 L8 150 L0 128 Z" fill={POP.ambre} {...line} />
     </g>
   );
 }
@@ -222,7 +222,7 @@ export function SceneBoard({ kind, time, boom }: { kind: SceneKind; time: Motion
         {kind === "bull" && (
           <>
             <Shock time={time} x={C} y={C} t0={0.85} />
-            <Shock time={time} x={C} y={C} t0={0.98} color={POP.yellow} />
+            <Shock time={time} x={C} y={C} t0={0.98} color={POP.ambre} />
             <FlyingDart time={time} tx={C} ty={C} t0={0.45} t1={0.85} />
           </>
         )}

@@ -102,7 +102,7 @@ export function ClockGame() {
     setBusy(true);
     void celebrate({
       level: "max",
-      tone: "cyan",
+      tone: "violet",
       kicker: t("Le tour complet · tour {n}", { n: state.winTurn ?? 0 }),
       big: state.setup.sides[w].members.length > 1 ? state.setup.sides[w].name : currentMemberClock(state, w),
       numeric: false,

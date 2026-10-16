@@ -113,10 +113,10 @@ export function X01Game() {
       if (record) {
         beatDay(points);
         sounds.oneEighty();
-        await celebrate({ level: "max", tone: "chartreuse", kicker: t("Record du jour à l'Arena18"), big: String(points), numeric: true, sub: who, slot: "record" });
+        await celebrate({ level: "max", tone: "ambre", kicker: t("Record du jour à l'Arena18"), big: String(points), numeric: true, sub: who, slot: "record" });
       } else if (ev.has("oneEighty")) {
         sounds.oneEighty();
-        await celebrate({ level: "max", tone: "cyan", kicker: who, big: "180", numeric: true, sub: t("Le maximum. Rien que ça."), slot: "180" });
+        await celebrate({ level: "max", tone: "violet", kicker: who, big: "180", numeric: true, sub: t("Le maximum. Rien que ça."), slot: "180" });
       } else if (ev.has("ton")) {
         sounds.ton();
         await celebrate({ level: "scene", kind: "ton", kicker: "Ton-up", num: String(points) });
@@ -129,7 +129,7 @@ export function X01Game() {
         sounds.win();
         await celebrate({
           level: "max",
-          tone: "cyan",
+          tone: "violet",
           kicker: from >= 100 ? `Game shot · checkout ${from}` : "Game shot",
           big: who,
           numeric: false,

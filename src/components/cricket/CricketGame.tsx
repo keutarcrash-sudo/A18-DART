@@ -93,7 +93,7 @@ export function CricketGame() {
       sounds.validate();
       if (has("nineMarks")) {
         sounds.oneEighty();
-        await celebrate({ level: "max", tone: "cyan", kicker: who, big: "9", numeric: true, sub: t("Neuf touches. Le maximum."), slot: "exploit" });
+        await celebrate({ level: "max", tone: "violet", kicker: who, big: "9", numeric: true, sub: t("Neuf touches. Le maximum."), slot: "exploit" });
       } else if (has("manyMarks")) {
         sounds.ton();
         await celebrate({ level: "mid", word: t("Touches"), num: String(marks) });
@@ -112,7 +112,7 @@ export function CricketGame() {
         sounds.win();
         await celebrate({
           level: "max",
-          tone: "cyan",
+          tone: "violet",
           kicker: t("Victoire"),
           big: who,
           numeric: false,
