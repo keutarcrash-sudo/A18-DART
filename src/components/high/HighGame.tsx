@@ -11,7 +11,7 @@ import { GameMenu } from "@/components/GameMenu";
 import { Board } from "@/components/x01/Board";
 import { Pad } from "@/components/x01/Pad";
 import { Tableau } from "@/components/x01/Tableau";
-import { DartRow, POP_PILL, boardDartsOf } from "@/components/x01/Volley";
+import { DartRow, OthersGrid, POP_PILL, boardDartsOf } from "@/components/x01/Volley";
 import type { Dart, Mult } from "@/engine/types";
 import { type HighEvent, type HighState, bestHighVolley, currentMemberHigh, highRounds, rankingHigh } from "@/engine/high";
 import { useFlatPhone, useWakeLock } from "@/lib/device";
@@ -240,8 +240,8 @@ export function HighGame() {
         </div>
 
         {/* Piste : qui mène (le meilleur score tout à droite) */}
-        <div className="relative mt-2 h-[34px] shrink-0 px-[11px] [@media(max-height:700px)]:mt-1 [@media(max-height:700px)]:h-[30px]" aria-hidden="true">
-          <div className="absolute left-[11px] right-[11px] top-[13px] h-1 rounded-full bg-bord" />
+        <div className="relative mt-2 h-[34px] shrink-0 px-[11px] [@media(max-height:700px)]:mt-0.5 [@media(max-height:700px)]:h-[26px]" aria-hidden="true">
+          <div className="absolute left-[11px] right-[11px] top-[11px] h-1 rounded-full bg-bord" />
           <div className="relative h-full">
             {sides.map((sd, i) => {
               const isLeader = top > 0 && i === order[0];
@@ -255,7 +255,7 @@ export function HighGame() {
                 <motion.div
                   key={i}
                   className={`absolute grid h-[22px] w-[22px] -translate-x-1/2 place-items-center rounded-full border-2 border-encre font-display text-[10px] font-black ${tone} ${isLeader && i === side ? "shadow-[0_0_0_3px_var(--color-ambre)]" : ""}`}
-                  style={{ top: i % 2 ? 8 : 0 }}
+                  style={{ top: i % 2 ? 6 : 0 }}
                   animate={{ left: `${top > 0 ? (state.scores[i] / top) * 100 : 0}%` }}
                   transition={{ type: "spring", stiffness: 160, damping: 24 }}
                 >
@@ -267,7 +267,7 @@ export function HighGame() {
         </div>
 
         {/* Carte du joueur actif : nom, score géant, point de la volée ; cible à droite ; les autres en bas */}
-        <div className="mt-3 grid shrink-0 grid-cols-[minmax(0,1fr)_128px] items-center gap-x-2 rounded-3xl border-2 border-encre bg-carte px-3.5 pb-2.5 pt-3 shadow-[6px_6px_0_0_var(--color-rose)] [@media(max-height:700px)]:mt-2 [@media(max-height:700px)]:pb-1.5 [@media(max-height:700px)]:pt-2">
+        <div className="mt-3 grid shrink-0 grid-cols-[minmax(0,1fr)_128px] items-center gap-x-2 rounded-3xl border-2 border-encre bg-carte px-3.5 pb-2.5 pt-3 shadow-[6px_6px_0_0_var(--color-rose)] [@media(max-height:700px)]:mt-1 [@media(max-height:700px)]:pb-1.5 [@media(max-height:700px)]:pt-2">
           <div className="min-w-0">
             <motion.div
               key={`${side}-${who}`}
@@ -309,16 +309,7 @@ export function HighGame() {
           <div className="pointer-events-none">
             <Board darts={boardDarts} zones={[]} size={128} />
           </div>
-          {others.length > 0 && (
-            <div className="col-span-2 mt-2.5 [@media(max-height:700px)]:mt-1.5 flex h-[34px] flex-nowrap items-end gap-x-3.5 overflow-x-auto overflow-y-hidden border-t-2 border-dashed border-bord pt-1.5 text-[12px] text-attenue">
-              {others.map((i) => (
-                <span key={i} className="shrink-0 whitespace-nowrap">
-                  {sides[i].name}
-                  <b className={`ml-1 font-num text-[15px] font-extrabold ${i === order[0] && top > 0 ? "text-violet" : "text-encre"}`}>{state.scores[i]}</b>
-                </span>
-              ))}
-            </div>
-          )}
+          <OthersGrid items={others.map((i) => ({ key: i, name: sides[i].name, score: state.scores[i], lead: i === order[0] && top > 0 }))} />
         </div>
 
         <div className="mt-auto pt-3 [@media(max-height:700px)]:pt-1.5">

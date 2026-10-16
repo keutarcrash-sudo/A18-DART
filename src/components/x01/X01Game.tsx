@@ -30,7 +30,7 @@ import { GameMenu } from "@/components/GameMenu";
 import { Board } from "./Board";
 import { Pad } from "./Pad";
 import { Tableau } from "./Tableau";
-import { DartRow, POP_PILL, boardDartsOf } from "./Volley";
+import { DartRow, OthersGrid, POP_PILL, boardDartsOf } from "./Volley";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -234,7 +234,7 @@ export function X01Game() {
   const team = state.setup.sides[side].members.length > 1 ? state.setup.sides[side].name : null;
   return (
     <main className="relative mx-auto h-dvh max-w-[460px] overflow-hidden bg-creme text-encre">
-      <div className="flex h-full flex-col px-4 pb-[calc(12px+env(safe-area-inset-bottom))] pt-[calc(12px+env(safe-area-inset-top))] [@media(max-height:660px)]:pt-[calc(8px+env(safe-area-inset-top))]">
+      <div className="flex h-full flex-col px-4 pb-[calc(12px+env(safe-area-inset-bottom))] pt-[calc(12px+env(safe-area-inset-top))] [@media(max-height:700px)]:pt-[calc(8px+env(safe-area-inset-top))]">
         {/* Barre du haut : jeu, volée, Tableau / Menu */}
         <div className="flex shrink-0 items-center justify-between gap-2">
           <div className="min-w-0 leading-tight">
@@ -258,7 +258,7 @@ export function X01Game() {
         </div>
 
         {/* Carte du joueur actif : nom, score géant, pour finir ; cible à droite ; les autres en bas */}
-        <div className="mt-3 grid shrink-0 grid-cols-[minmax(0,1fr)_128px] items-center gap-x-2 rounded-3xl border-2 border-encre bg-carte px-3.5 pb-2.5 pt-3 shadow-[6px_6px_0_0_var(--color-rose)] [@media(max-height:660px)]:mt-2 [@media(max-height:660px)]:pb-1.5 [@media(max-height:660px)]:pt-2">
+        <div className="mt-3 grid shrink-0 grid-cols-[minmax(0,1fr)_128px] items-center gap-x-2 rounded-3xl border-2 border-encre bg-carte px-3.5 pb-2.5 pt-3 shadow-[6px_6px_0_0_var(--color-rose)] [@media(max-height:700px)]:mt-1 [@media(max-height:700px)]:pb-1.5 [@media(max-height:700px)]:pt-2">
           <div className="min-w-0">
             <motion.div
               key={`${side}-${who}`}
@@ -304,16 +304,7 @@ export function X01Game() {
           <div className="pointer-events-none">
             <Board darts={boardDarts} zones={zones} size={128} />
           </div>
-          {others.length > 0 && (
-            <div className="col-span-2 mt-2.5 [@media(max-height:660px)]:mt-1.5 flex h-[34px] flex-nowrap items-end gap-x-3.5 overflow-x-auto overflow-y-hidden border-t-2 border-dashed border-bord pt-1.5 text-[12px] text-attenue">
-              {others.map((i) => (
-                <span key={i} className="shrink-0 whitespace-nowrap">
-                  {state.setup.sides[i].name}
-                  <b className={`ml-1 font-num text-[15px] font-extrabold ${i === leader ? "text-violet" : "text-encre"}`}>{state.scores[i]}</b>
-                </span>
-              ))}
-            </div>
-          )}
+          <OthersGrid items={others.map((i) => ({ key: i, name: state.setup.sides[i].name, score: state.scores[i], lead: i === leader }))} />
         </div>
 
         <div className="mt-auto pt-3">
