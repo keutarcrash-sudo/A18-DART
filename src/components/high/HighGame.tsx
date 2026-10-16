@@ -7,10 +7,12 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Celebration, type CeleSpec, Wink, celeDuration } from "@/components/Celebration";
-import { GameMenu, MenuButton } from "@/components/GameMenu";
+import { GameMenu } from "@/components/GameMenu";
+import { Board } from "@/components/x01/Board";
 import { Pad } from "@/components/x01/Pad";
 import { Tableau } from "@/components/x01/Tableau";
-import { type Dart, type Mult, dartLabel } from "@/engine/types";
+import { DartRow, POP_PILL, boardDartsOf } from "@/components/x01/Volley";
+import type { Dart, Mult } from "@/engine/types";
 import { type HighEvent, type HighState, bestHighVolley, currentMemberHigh, highRounds, rankingHigh } from "@/engine/high";
 import { useFlatPhone, useWakeLock } from "@/lib/device";
 import { fitFont } from "@/lib/fit";
@@ -25,7 +27,7 @@ import type { PodiumData } from "@/components/podium/PodiumScene";
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export function HighGame() {
-  const { state, push, setLastMult, undo, restart } = useHighPartie();
+  const { partie, state, push, setLastMult, undo, restart } = useHighPartie();
   const t = useT();
   const [busy, setBusy] = useState(false);
   // L'écran de fin n'apparaît qu'après la célébration de la victoire.
@@ -148,7 +150,7 @@ export function HighGame() {
 
   // Rien ne se termine tout seul : victoire et bust attendent « Valider la volée » (on peut corriger avant).
 
-  if (!state) return <div className="h-dvh bg-noir" />;
+  if (!state || !partie) return <div className="h-dvh bg-creme" />;
 
   const sides = state.setup.sides;
   const side = state.current;
@@ -182,7 +184,7 @@ export function HighGame() {
     if (state.volley.length) {
       return (
         <>
-          {t("Total après la volée :")} <b className="text-blanc">{state.volleyStart + points}</b>
+          {t("Total après la volée :")} <b>{state.volleyStart + points}</b>
         </>
       );
     }
@@ -193,125 +195,115 @@ export function HighGame() {
     if (mine > others)
       return (
         <>
-          {t("Tu mènes de")} <b className="text-cyan">{mine - others}</b>
+          {t("Tu mènes de")} <b>{mine - others}</b>
         </>
       );
     return (
       <>
-        {t("Pour passer devant :")} <b className="text-cyan">{others - mine + 1}</b>
+        {t("Pour passer devant :")} <b>{others - mine + 1}</b>
       </>
     );
   })();
 
+  const boardDarts = boardDartsOf(partie.actions, state.volley);
+  const nSides = sides.length;
+  // Les autres joueurs, dans l'ordre où ils vont jouer.
+  const others = Array.from({ length: nSides - 1 }, (_, k) => (side + 1 + k) % nSides);
+  const scoreSize =
+    String(shownScore).length >= 3
+      ? "text-[70px] [@media(min-height:740px)]:text-[82px] [@media(max-width:379px)]:text-[62px]"
+      : "text-[92px] [@media(min-height:740px)]:text-[104px]";
+  const team = sides[side].members.length > 1 ? sides[side].name : null;
+
   return (
-    <main className="relative mx-auto h-dvh max-w-[460px] overflow-hidden bg-noir">
-      <div className="flex h-full flex-col px-3.5 pb-[calc(14px+env(safe-area-inset-bottom))] pt-[calc(18px+env(safe-area-inset-top))]">
-        {/* Barre du haut */}
-        <div className="flex min-h-6 items-center justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-gris">
-          <span>
-            <b className="text-blanc">{t("Plus gros score")}</b>
-            <br />
-            {t("Volée")} <b className="text-blanc">{state.turn}</b>/{rounds}
-          </span>
-          <span className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setView("tableau")}
-              className="h-[30px] border-[1.5px] border-[#3a3a3a] px-2.5 text-[10px] font-bold tracking-[0.14em] text-[#cfcfcf]"
-            >
+    <main className="relative mx-auto h-dvh max-w-[460px] overflow-hidden bg-creme text-encre">
+      <div className="flex h-full flex-col px-4 pb-[calc(12px+env(safe-area-inset-bottom))] pt-[calc(12px+env(safe-area-inset-top))] [@media(max-height:660px)]:pt-[calc(8px+env(safe-area-inset-top))]">
+        {/* Barre du haut : jeu, volée, Tableau / Menu */}
+        <div className="flex shrink-0 items-center justify-between gap-2">
+          <div className="min-w-0 leading-tight">
+            <div className="flex min-w-0 items-baseline gap-2">
+              <span className="truncate font-display text-[20px] font-black">{t("Plus gros score")}</span>
+              {team && <span className="truncate text-[12px] font-extrabold uppercase tracking-[0.1em] text-violet">{team}</span>}
+            </div>
+            <div className="truncate text-[11px] font-bold uppercase tracking-[0.08em] text-attenue">
+              {t("Volée")} {state.turn}/{rounds}
+            </div>
+          </div>
+          <div className="flex shrink-0 gap-2">
+            <button type="button" onClick={() => setView("tableau")} className={POP_PILL}>
               {t("TABLEAU")}
             </button>
-            <MenuButton onClick={() => setMenu(true)} />
-          </span>
+            <button type="button" onClick={() => setMenu(true)} className={POP_PILL}>
+              {t("MENU")}
+            </button>
+          </div>
         </div>
 
-        {/* Mini-piste : qui mène (le meilleur score tout à droite) */}
-        <div className="relative mt-1.5 h-[30px] shrink-0">
-          <div className="absolute left-0 right-3.5 top-3.5 h-0.5 bg-filet" />
-          {sides.map((s, i) => (
-            <motion.div
-              key={i}
-              className={`skew-18 absolute top-[5px] -ml-[11px] grid h-5 w-[22px] place-items-center text-[10px] font-black italic ${
-                i === side ? "z-10 bg-cyan text-noir" : i === order[0] && top > 0 ? "bg-blanc text-noir" : "bg-[#3a3a3a] text-blanc"
-              }`}
-              animate={{ left: `calc(${top > 0 ? (state.scores[i] / top) * 92 : 0}% + 11px)` }}
-              transition={{ type: "spring", stiffness: 160, damping: 24 }}
-            >
-              <span className="unskew-18">{s.members.length > 1 ? s.name.slice(-1) : s.name.charAt(0)}</span>
-            </motion.div>
-          ))}
-        </div>
-
-        {sides[side].members.length > 1 && <div className="mt-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-cyan">{sides[side].name}</div>}
-
-        {/* Joueur actif */}
-        <div className="relative mt-2 h-11 shrink-0">
-          <AnimatePresence mode="popLayout" initial={false}>
+        {/* Carte du joueur actif : nom, score géant, point de la volée ; cible à droite ; les autres en bas */}
+        <div className="mt-3 grid shrink-0 grid-cols-[minmax(0,1fr)_128px] items-center gap-x-2 rounded-3xl border-2 border-encre bg-carte px-3.5 pb-2.5 pt-3 shadow-[6px_6px_0_0_var(--color-rose)] [@media(max-height:660px)]:mt-2 [@media(max-height:660px)]:pb-1.5 [@media(max-height:660px)]:pt-2">
+          <div className="min-w-0">
             <motion.div
               key={`${side}-${who}`}
-              initial={{ x: 60, opacity: 0 }}
+              initial={{ x: 24, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -60, opacity: 0 }}
-              transition={{ duration: 0.3, ease: [0.2, 0.8, 0.2, 1] }}
-              className="absolute bottom-0 left-0 z-10 whitespace-nowrap font-black uppercase italic leading-none tracking-tight"
-              style={{ fontSize: fitFont(who, 40, 34) }}
+              transition={{ duration: 0.3, ease: [0.34, 1.56, 0.64, 1] }}
+              className="flex min-w-0 items-center gap-2"
             >
-              {who}
+              <i className="h-3.5 w-3.5 shrink-0 rounded-full border-2 border-encre bg-rose" aria-hidden="true" />
+              <span
+                className="truncate font-display font-black uppercase leading-none tracking-tight"
+                style={{ fontSize: fitFont(who, 26, 250) }}
+              >
+                {who}
+              </span>
             </motion.div>
-          </AnimatePresence>
+            <div className="mt-1 flex items-start gap-1">
+              <span className={`font-num font-black leading-[0.9] tracking-[-0.04em] ${scoreSize}`}>{shownScore}</span>
+              <AnimatePresence>
+                {plus && (
+                  <motion.span
+                    key={plus.id}
+                    className="mt-1 shrink-0 font-num text-[22px] font-black text-violet"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.45, ease: [0.34, 1.56, 0.64, 1] }}
+                  >
+                    {plus.text}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </div>
+            <div className="mt-1.5 inline-block max-w-full rounded-2xl border-2 border-encre bg-menthe px-2.5 py-[3px] text-[12px] font-bold leading-snug">
+              {hint}
+            </div>
+          </div>
+          {/* La cible est un affichage : la fléchette qui dépasse ne doit jamais capter une tape (Menu juste au-dessus). */}
+          <div className="pointer-events-none">
+            <Board darts={boardDarts} zones={[]} size={128} />
+          </div>
+          {others.length > 0 && (
+            <div className="col-span-2 mt-2.5 [@media(max-height:660px)]:mt-1.5 flex h-[26px] flex-wrap items-end gap-x-3.5 overflow-hidden border-t-2 border-dashed border-bord pt-1.5 text-[12px] text-attenue">
+              {others.map((i) => (
+                <span key={i} className="whitespace-nowrap">
+                  {sides[i].name}
+                  <b className={`ml-1 font-num text-[15px] font-extrabold ${i === order[0] && top > 0 ? "text-violet" : "text-encre"}`}>{state.scores[i]}</b>
+                </span>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Bandeau du score : il monte */}
-        <div className="relative z-10 ml-1.5 mt-2 h-[104px] shrink-0">
-          <div className="skew-18 absolute left-0 right-5 top-5 h-[66px] bg-cyan" />
-          <div className="absolute left-[18px] top-0 font-num text-[96px] leading-none text-noir">{shownScore}</div>
-          <AnimatePresence>
-            {plus && (
-              <motion.div
-                key={plus.id}
-                className="absolute right-[30px] top-9 font-num text-[34px] text-noir"
-                initial={{ opacity: 0, y: -30 }}
-                animate={{ opacity: [0, 1, 1, 0], y: [-30, 0, 0, 0], x: [0, 0, -90, -140], scale: [1, 1, 0.9, 0.6] }}
-                transition={{ duration: 0.7, times: [0, 0.35, 0.75, 1], ease: [0.2, 0.8, 0.2, 1] }}
-              >
-                {plus.text}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+        <div className="mt-auto pt-3">
+          {/* Les 3 fléchettes de la volée (Double / Triple viennent s'afficher par-dessus) */}
+          <DartRow volley={state.volley} points={points} />
 
-        <div className="ml-1 mt-1 h-4 shrink-0 text-[11px] font-bold uppercase tracking-[0.14em] text-gris">{hint}</div>
-
-        {/* Les 3 fléchettes de la volée */}
-        <div className="ml-2 mr-1 mt-2.5 grid h-[42px] shrink-0 grid-cols-[1fr_1fr_1fr_60px] gap-2">
-          {[0, 1, 2].map((k) => {
-            const dt = state.volley[k];
-            const tone = !dt ? "border-[#3a3a3a]" : dt.m === 3 ? "border-chartreuse bg-chartreuse" : dt.m === 2 && dt.n !== 0 ? "border-cyan bg-cyan" : "border-blanc";
-            const txt = !dt ? "text-gris-2" : dt.m >= 2 && dt.n !== 0 ? "text-noir" : "text-blanc";
-            return (
-              <motion.div
-                key={`${k}-${dt ? dartLabel(dt) : "x"}`}
-                initial={dt ? { scale: 0.8 } : false}
-                animate={{ scale: 1 }}
-                transition={{ duration: 0.2 }}
-                className="grid"
-              >
-                {/* L'inclinaison est sur un élément à part : l'animation d'échelle ne doit pas l'écraser. */}
-                <div className={`skew-18 grid place-items-center border-[1.5px] ${tone}`}>
-                  <span className={`unskew-18 font-num text-[19px] ${txt}`}>{dt ? dartLabel(dt) : "—"}</span>
-                </div>
-              </motion.div>
-            );
-          })}
-          <div className="grid place-items-center font-num text-2xl">{points}</div>
-        </div>
-
-        <div className="mt-auto">
           <Pad
             disabled={busy || state.status !== "open"}
             multFor={!busy ? multFor : null}
             canValidate={(state.status === "full" || state.status === "match") && !busy && !wonShown}
             canUndo={!busy && state.history.length + state.volley.length > 0}
+            glow={[]}
             onNumber={onNumber}
             onMult={onMult}
             onUndo={() => {

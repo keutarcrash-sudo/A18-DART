@@ -30,6 +30,7 @@ import { GameMenu } from "@/components/GameMenu";
 import { Board } from "./Board";
 import { Pad } from "./Pad";
 import { Tableau } from "./Tableau";
+import { DartRow, POP_PILL, boardDartsOf } from "./Volley";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -176,11 +177,7 @@ export function X01Game() {
   // Cases « pour finir » (cible + pavé) : rien sur un bust, ni une fois la volée gagnante (en attente de « Valider »).
   const zones = finishZones(rest, opts.finish, dartsLeft, opened, state.status !== "open");
 
-  // Graine de chaque fléchette = sa place dans la liste des actions sauvegardées : position stable, même après rechargement.
-  const dartIdx: number[] = [];
-  for (let i = partie.actions.length - 1; i >= 0 && partie.actions[i].type === "dart"; i--) dartIdx.unshift(i);
-  const seeds = dartIdx.slice(-state.volley.length);
-  const boardDarts = state.volley.map((dart, k) => ({ dart, seed: seeds[k] ?? k }));
+  const boardDarts = boardDartsOf(partie.actions, state.volley);
 
   const onNumber = (n: number, m: Mult = 1) => {
     if (busy || state.status !== "open") return;
@@ -235,8 +232,7 @@ export function X01Game() {
       ? "text-[70px] [@media(min-height:740px)]:text-[82px] [@media(max-width:379px)]:text-[62px]"
       : "text-[92px] [@media(min-height:740px)]:text-[104px]";
   const team = state.setup.sides[side].members.length > 1 ? state.setup.sides[side].name : null;
-  const pill =
-    "relative h-10 rounded-full border-2 border-encre bg-carte px-3.5 font-display text-[13px] font-extrabold tracking-wide text-encre pop-shadow-sm pop-press after:absolute after:-inset-1 after:content-['']";
+  const pill = POP_PILL;
 
   return (
     <main className="relative mx-auto h-dvh max-w-[460px] overflow-hidden bg-creme text-encre">
@@ -324,34 +320,7 @@ export function X01Game() {
 
         <div className="mt-auto pt-3">
           {/* Les 3 fléchettes de la volée (Double / Triple viennent s'afficher par-dessus) */}
-          <div className="grid h-11 grid-cols-[1fr_1fr_1fr_54px] items-center gap-2">
-            {[0, 1, 2].map((k) => {
-              const dt = state.volley[k];
-              if (!dt) {
-                return (
-                  <div
-                    key={`${k}-x`}
-                    className="grid h-11 place-items-center rounded-[14px] border-2 border-dashed border-attenue/40 font-display text-[18px] font-extrabold text-attenue/60"
-                  >
-                    {k + 1}
-                  </div>
-                );
-              }
-              const tone = dt.m === 3 ? "bg-rose" : dt.m === 2 && dt.n !== 0 ? "bg-ambre" : "bg-carte";
-              return (
-                <motion.div
-                  key={`${k}-${dartLabel(dt)}`}
-                  initial={{ scale: 0.8 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 0.25, ease: [0.34, 1.56, 0.64, 1] }}
-                  className={`grid h-11 place-items-center rounded-[14px] border-2 border-encre font-display text-[18px] font-extrabold shadow-[3px_3px_0_0_var(--color-encre)] ${tone}`}
-                >
-                  {dt.n === 0 ? t("Raté") : dartLabel(dt)}
-                </motion.div>
-              );
-            })}
-            <div className="text-right font-num text-[26px] font-black">{points}</div>
-          </div>
+          <DartRow volley={state.volley} points={points} />
 
           <Pad
             disabled={busy || state.status !== "open"}
