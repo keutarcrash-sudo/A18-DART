@@ -236,27 +236,38 @@ function MidCele({ spec, onDone }: { spec: Extract<CeleSpec, { level: "mid" }>; 
 export function Wink({ text, head = WINK_HEAD }: { text: string | null; head?: HeadKind }) {
   const reduce = useReducedMotion();
   const box = useRef<HTMLDivElement>(null);
-  const [bottom, setBottom] = useState(352);
+  // null tant que la rangée des fléchettes n'est pas mesurée : jamais de position par défaut qui pourrait couvrir une touche.
+  const [bottom, setBottom] = useState<number | null>(null);
   const [gone, setGone] = useState<string | null>(null);
 
   if (text === null && gone !== null) setGone(null); // la bulle repart de zéro à la prochaine apparition
+  if (text === null && bottom !== null) setBottom(null);
 
   useLayoutEffect(() => {
     if (!text) return;
+    let frame = 0;
+    let tries = 0;
     const place = () => {
       const row = document.querySelector("[data-dart-row]");
-      const host = box.current?.offsetParent;
-      if (!row || !host) return;
+      const host = row?.closest("main");
+      if (!row || !host) {
+        // La rangée n'est pas encore affichée (ex. juste après l'attribution des numéros au Killer) : on réessaie à l'image suivante.
+        if (tries++ < 30) frame = requestAnimationFrame(place);
+        return;
+      }
       setBottom(Math.max(0, Math.round(host.getBoundingClientRect().bottom - row.getBoundingClientRect().top + 8)));
     };
     place();
     window.addEventListener("resize", place);
-    return () => window.removeEventListener("resize", place);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", place);
+    };
   }, [text]);
 
   return (
     <AnimatePresence>
-      {text && gone !== text && (
+      {text && gone !== text && bottom !== null && (
         <motion.div
           ref={box}
           key={text}
