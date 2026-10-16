@@ -1,109 +1,152 @@
 ---
-name: a18-design
-description: Direction « 18° » d'A18 Darts (app de fléchettes d'Arena18). À charger AVANT toute création ou modification d'interface, d'écran, de composant, de style, d'animation, de son ou de texte affiché dans ce dépôt — même pour un petit ajustement visuel. Fixe l'angle unique de 18°, les couleurs qui ont un sens, les chiffres A18 « Élan gras », les patterns de saisie par jeu, le ton (tutoiement) et les interdits. Ces règles priment sur toute skill de design générique.
+name: design-system
+description: "Section-by-section GDD authoring for one system — walks through each required section, cross-references dependencies."
+argument-hint: "<system-name> [--review full|lean|solo]"
+user-invocable: true
+allowed-tools: Read, Glob, Grep, Write, Edit, Agent, AskUserQuestion, TaskCreate, TaskGet, TaskList, TaskUpdate, Bash(bash "*/.claude/skills/design-system/../../hooks/yaml-helper.sh" resolve_config *)
+model: sonnet
 ---
 
-# A18 Darts — direction « 18° »
+!`bash "${CLAUDE_SKILL_DIR}/../../hooks/yaml-helper.sh" resolve_config --keys review_mode,automation,workflow,docs.density,system_overrides`
 
-App web de fléchettes d'Arena18 (complexe padel / soccer / bar), ouverte par QR code. Public : **des groupes de potes au bar**, debout, un verre à la main, qui ne connaissent pas forcément les règles. Objectif n°1 : **rendre le moment plus fun**.
+Resolved above — use as-is; `--review` overrides `review_mode`. No block →
+defaults in `.claude/docs/config-resolution.md`.
 
-## Priorité des règles
+# Design System
 
-1. Ce que le client dit dans la conversation.
-2. Cette skill et les documents `docs/` (décisions validées par le client).
-3. Les skills génériques (frontend-design, animation, bonnes pratiques React…) : elles s'appliquent **seulement** là où cette skill ne dit rien. En cas de conflit (arrondis, ombres, dégradés, police, palette…), **cette skill gagne**.
+When this skill is invoked:
 
-Avant de proposer quelque chose qui contredit une décision ci-dessous, demande au client. Ne « corrige » jamais une décision validée de ta propre initiative.
+## 1. Parse Arguments & Validate
 
-## Les 6 règles
+**Read `references/1-parse-arguments.md` now and follow it** — this phase's steps are in that file, not here. Read it again if the conversation was compacted or resumed during this phase.
 
-1. **Un seul angle : 18°** (360° / 20 secteurs = l'angle d'un secteur de cible). Tout ce qui penche penche de 18°, rien d'autre ne penche.
-   - Bandeaux, cases de fléchettes, barres de progression, marches du podium, interrupteurs : `transform: skewX(-18deg)` (contre-incliner le contenu texte : `skewX(18deg)`).
-   - Grands boutons d'action : parallélogrammes inclinés **des deux côtés**. Décalage = hauteur × 0,325 (tan 18°) : `clip-path: polygon(19px 0, 100% 0, calc(100% - 19px) 100%, 0 100%)` pour 58 px de haut.
-   - Aucun arrondi (`border-radius: 0`), aucune ombre portée. Seul le cadre de téléphone des maquettes est arrondi.
-2. **Le chiffre est le héros.** Les scores utilisent la police **« A18 Elan Gras »** (`docs/chiffres/A18-Elan-Bold.woff2`) : chiffres penchés de 18°, gras, tous de même largeur, capitales assorties pour T20 / D16 / BULL. Le score déborde de son bandeau cyan. Déclarer la police en `font-style: normal` ET `italic` (même fichier) pour éviter toute fausse inclinaison du navigateur.
-3. **Le prénom en géant** : Montserrat Black italique, capitales, très grand (≈ 40 px), comme le nom au dos d'un maillot.
-4. **Couleur = sens, jamais décor.** Aplats uniquement.
-5. **Le personnage 3D aux moments clés** (généré par le client) : cadres réservés pour « à toi », 180, bust, victoire, podium, chambrage. Hors de ces moments, l'écran de saisie reste un outil.
-6. **L'animation raconte un chiffre** : la soustraction (« −60 » qui tombe dans le score), le changement de joueur (glissement), le dépassement au classement (les lignes échangent leur place). 150 à 600 ms. Respecter `prefers-reduced-motion`. Sans animation, l'écran doit rester beau.
+## 2. Gather Context (Read Phase)
 
-## Jetons
+**Read `references/2-gather-context.md` now and follow it** — this phase's steps are in that file, not here. Read it again if the conversation was compacted or resumed during this phase.
 
-```css
-:root {
-  --noir: #171717;      /* fond (charte Arena18) */
-  --noir-deep: #0d0d0d;
-  --blanc: #ffffff;     /* texte, fléchettes saisies, bouton Valider */
-  --gris: #8a8a8a;      /* libellés secondaires */
-  --filet: #2a2a2a;     /* séparateurs */
-  --case: #232323;      /* touches du pavé */
-  --cyan: #0CC0DF;      /* joueur actif, meneur, action principale, DOUBLE */
-  --chartreuse: #C7D530;/* TRIPLE et RECORDS uniquement */
-  --skew: -18deg;
-  --f-text: 'Montserrat', system-ui, sans-serif;
-  --f-num: 'A18 Elan Gras', 'Montserrat', system-ui, sans-serif;
-}
-```
+## 3. Create File Skeleton
 
-- Fond toujours noir. Texte blanc ou cyan (charte Arena18).
-- **Bust : pas de rouge.** Le score est barré et l'écran s'inverse (fond blanc, texte noir) un instant.
-- Montserrat pour tout le texte (charte), « A18 Elan Gras » pour les chiffres seulement.
+**Read `references/3-file-skeleton.md` now and follow it** — this phase's steps are in that file, not here. Read it again if the conversation was compacted or resumed during this phase.
 
-## Patterns validés
+## 4. Section-by-Section Design
 
-| Écran / jeu | Pattern |
+**Read `references/4-section-design.md` now and follow it** — this phase's steps are in that file, not here. Read it again if the conversation was compacted or resumed during this phase.
+
+## 5. Post-Design Validation
+
+**Read `references/5-post-design.md` now and follow it** — this phase's steps are in that file, not here. Read it again if the conversation was compacted or resumed during this phase.
+
+## 6. Specialist Agent Routing
+
+This skill delegates to specialist agents for domain expertise. The main session
+orchestrates the overall flow; agents provide expert content.
+
+**Rows here are finer-grained than the nine `Category` values on purpose** — the
+right specialist for combat is not the right specialist for pathfinding, and both
+are `Gameplay`. Resolve in two steps: take the system's `Category` from
+`systems-index.md`, then pick the row within it that matches what the system
+actually does. Every category has at least one row, so nothing falls through.
+
+| `Category` | Rows below to choose from |
 |---|---|
-| Accueil | Un énorme bouton **JOUER** (bloc cyan incliné). Records du jour dessous. Devient « Reprendre » si une partie est en cours. |
-| Joueurs | Prénoms au clavier, un par un. Chips **« Récents sur ce téléphone »**. Équipes formées par le groupe (A/B). |
-| Choix du jeu | Durée estimée selon le nombre de joueurs, en cyan si 10–30 min. |
-| Réglages | Les règles se choisissent **avant** la partie, jamais modifiées par l'app ensuite. Une phrase d'explication par option. |
-| Qui commence | Écran **« Au bull ! »** : on touche le prénom du plus proche du centre. |
-| 301 / 501 / Plus gros score | Pavé **« numéro d'abord »** : une tape = simple ; Double (cyan) / Triple (chartreuse) apparaissent juste au-dessus du pavé (par-dessus la rangée des 3 fléchettes, jamais sur un bouton de saisie) **sans chrono**, jusqu'à la fléchette suivante. « Valider la volée » après 3 fléchettes. **Rien ne se termine tout seul** (décision client) : victoire et bust attendent aussi « Valider la volée », pour pouvoir corriger (Double / Triple, Annuler) avant. |
-| Cricket | **Le tableau est le pavé** : on touche la ligne du numéro (20→15, B), puis Double / Triple. 3 barres à 18° par numéro, cyan quand fermé. |
-| Tour de l'horloge | Deux énormes boutons **TOUCHÉ n / RATÉ** (en mode Bonus : Simple / Double / Triple). Numéro visé en géant. La volée passe seule après 3 fléchettes. |
-| Killer | Numéros attribués au **lancer main faible**. **Les joueurs sont le pavé** : une tape = double touché sur ce joueur. Vies en barres à 18°, badge « TUEUR ». |
-| Vue Tableau | Téléphone posé à plat (bascule auto + bouton) : classement en géant, **qui mène** en premier. |
-| Fin | Podium + **Revanche** et **Partager** (image story 9:16) à égalité. Le dernier commence la revanche. |
+| `Gameplay` | Combat/damage/health · AI/pathfinding/behavior · Animation/character movement · Character systems · Camera/input/controls |
+| `Core` | Foundation/Infrastructure · Camera/input/controls |
+| `Persistence` | Foundation/Infrastructure |
+| `Economy` | Economy/loot/crafting |
+| `Progression` | Progression/XP/skills |
+| `UI` | UI systems · Visual effects (when the system is HUD-adjacent VFX) |
+| `Audio` | Audio systems |
+| `Narrative` | Dialogue/quests/lore |
+| `Meta` | Foundation/Infrastructure (analytics, tutorial plumbing) · UI systems (accessibility options screens) |
 
-Célébrations sur 3 niveaux, toujours passables d'une tape : **Max** (180, victoire, record Arena18) plein écran ~2 s ; **Moyen** (volée ≥ 100, checkout > 100) bandeau ~1 s ; **Clin d'œil** (bust, 3 ratés, le « 26 ») bulle du personnage, sans bloquer la saisie.
+If two rows fit, spawn the union of their Primary agents and say why.
 
-## Ton et textes
+| System type | Primary Agent | Supporting Agent(s) |
+|----------------|---------------|---------------------|
+| **Foundation/Infrastructure** (event bus, save/load, scene mgmt, service locator) | `systems-designer` | `gameplay-programmer` (feasibility), `engine-programmer` (engine integration) |
+| Combat, damage, health | `game-designer` | `systems-designer` (formulas), `ai-programmer` (enemy AI), `art-director` (hit feedback visual direction, VFX intent) |
+| Economy, loot, crafting | `economy-designer` | `systems-designer` (curves), `game-designer` (loops) |
+| Progression, XP, skills | `game-designer` | `systems-designer` (curves), `economy-designer` (sinks) |
+| Dialogue, quests, lore | `game-designer` | `narrative-director` (story), `writer` (content), `art-director` (character visual profiles, cinematic tone) |
+| UI systems (HUD, menus) | `game-designer` | `ux-designer` (flows), `ui-programmer` (feasibility), `art-director` (visual style direction), `technical-artist` (render/shader constraints) |
+| Audio systems | `game-designer` | `audio-director` (direction), `sound-designer` (specs) |
+| AI, pathfinding, behavior | `game-designer` | `ai-programmer` (implementation), `systems-designer` (scoring) |
+| Level/world systems | `game-designer` | `level-designer` (spatial), `world-builder` (lore) |
+| Camera, input, controls | `game-designer` | `ux-designer` (feel), `gameplay-programmer` (feasibility) |
+| Animation, character movement | `game-designer` | `art-director` (animation style, pose language), `technical-artist` (rig/blend constraints), `gameplay-programmer` (feel) |
+| Visual effects, particles, shaders | `game-designer` | `art-director` (VFX visual direction), `technical-artist` (performance budget, shader complexity), `systems-designer` (trigger/state integration) |
+| Character systems (stats, archetypes) | `game-designer` | `art-director` (character visual archetype), `narrative-director` (character arc alignment), `systems-designer` (stat formulas) |
 
-- **Tutoiement**, chaleureux, simple, comme un pote. Chambrer **gentiment** : « 26… le classique. », « Trois à côté. Ça arrive aux meilleurs. »
-- Français + anglais (langue du téléphone).
-- Tagline Arena18 : « À vous de jouer ».
-- Pas de jargon technique à l'écran.
+**When delegating via the `Agent` tool**:
+- Provide: system name, game concept summary, dependency GDD excerpts, the specific
+  section being worked on, and what question needs expert input
+- The agent returns analysis/proposals to the main session
+- The main session presents the agent's output to the user via `AskUserQuestion`
+- The user decides; the main session writes to file
+- Agents do NOT write to files directly — the main session owns all file writes
 
-## Son
+---
 
-- **Pas de voix en V1** (le client préfère rien à une voix médiocre ; voix pro = option future VIP). Prévoir un emplacement « annonce » par événement.
-- Effets sonores **sobres** : petit son par fléchette, sons marqués pour les célébrations. Bouton muet toujours accessible.
+## 7. Recovery & Resume
 
-## Évolution pop art (décision client, en cours)
+If the session is interrupted (compaction, crash, new session):
 
-- **Écran de saisie inchangé** : les règles ci-dessus restent la base.
-- **Célébrations et animations : touches pop art, fun et colorées.** Pendant ces moments seulement, des couleurs vives au-delà du cyan et du chartreuse sont permises (palette exacte à fixer d'après le visuel pop art de Pierre : smileys, couleurs vives). Toujours en aplats, sans néon ni dégradé.
-- **Les emplacements « Perso 3D » seront probablement remplacés** par cet univers pop art : demander au client avant de dessiner un personnage.
-- **Icône de l'app** : jamais le logo A18 (c'est celui de l'app de réservation d'Arena18). Piste retenue : une fléchette plantée dans le 18.
-- Voir `docs/04-direction-18.md`, section « Évolution pop art ».
+1. Read `production/session-state/active.md` — it records the current system and
+   which sections are complete
+2. Read `design/gdd/[system-name].md` — sections with real content are done;
+   sections with `[To be designed]` still need work
+3. Resume from the next incomplete section — no need to re-discuss completed ones
 
-## Interdits
+This is why incremental writing matters: every approved section survives any
+disruption.
 
-Néons, glow, glassmorphism, dégradés décoratifs (surtout bleu/violet), esthétique cyberpunk ou crypto, interfaces « gaming » génériques, cartes arrondies partout, ombres, **emojis**, cliparts, illustrations 3D génériques, dashboards SaaS, tout angle autre que 18°, rouge pour l'erreur, textes colorés autres que blanc / cyan (hors chartreuse pour Triple et records), timers qui pressent l'utilisateur.
+---
 
-## Contraintes d'usage
+## Collaborative Protocol
 
-- Mobile d'abord, utilisation à une main, debout. Zones tactiles ≥ 46 px (≥ 56 px pour les actions principales), actions de jeu dans le tiers inférieur.
-- Score du joueur actif lisible à 2 m.
-- Tout est réversible (« Annuler » toujours visible pendant la partie), pas de « Êtes-vous sûr ? » en jeu.
-- La partie survit à un onglet fermé (sauvegarde locale après chaque fléchette).
-- Moteur de jeu séparé de l'interface (règles → moteur → interface) : l'interface affiche l'état et joue les événements.
+**In `collaborative` mode (the default).** For `guided` and `autonomous`
+modes, see the per-mode rules in `.claude/docs/automation-modes.md` — the
+"Never" lines below describe what collaborative mode requires, not what
+applies universally.
 
-## Références
+This skill follows the collaborative design principle at every step:
 
-- `docs/04-direction-18.md` — la direction en détail
-- `docs/05-jeux.md` — règles de chaque jeu
-- `docs/00-cadrage.md` — toutes les décisions du client
-- `docs/06-technique.md` — pile technique (Next.js + TypeScript, Motion, Supabase, Vercel, PWA)
-- `docs/parcours.html` — maquette cliquable de référence (tous les écrans, tous les jeux)
-- `docs/chiffres/` — police A18 Elan Gras et son script de génération
+1. **Question -> Options -> Decision -> Draft -> Approval** for every section
+2. **AskUserQuestion** at every decision point (Explain -> Capture pattern):
+   - Phase 2: "Ready to start, or need more context?"
+   - Phase 3: "May I create the skeleton?"
+   - Phase 4 (each section): Design questions, approach options, draft approval
+   - Phase 5: "May I update the entity registry? May I update the systems
+     index? What's next?" — **not** "Run design review?": §5c forbids offering
+     `/design-review` inline, because the reviewing agent must not inherit this
+     session's design history. Phase 5c presents the hand-off; it never asks.
+3. **"May I write to [filepath]?"** before the skeleton and before each section write
+4. **Incremental writing**: Each section is written to file immediately after approval
+5. **Session state updates**: After every section write
+6. **Cross-referencing**: Every section checks existing GDDs for conflicts
+7. **Specialist routing**: Complex sections get expert agent input, presented to
+   the user for decision — never written silently
+
+**Never** auto-generate the full GDD and present it as a fait accompli.
+**Never** write a section without user approval.
+**Never** contradict an existing approved GDD without flagging the conflict.
+**Always** show where decisions come from (dependency GDDs, pillars, user choices).
+
+## Context Window Awareness
+
+This is a long-running skill. After writing each section, check if the status line
+shows context at or above 70%. If so, append this notice to the response:
+
+> **Context is approaching the limit (≥70%).** Your progress is saved — all approved
+> sections are written to `design/gdd/[system-name].md`. When you're ready to continue,
+> open a fresh Claude Code session and run `/design-system [system-name]` — it will
+> detect which sections are complete and resume from the next one.
+
+---
+
+## Recommended Next Steps
+
+- Run `/design-review design/gdd/[system-name].md` in a **fresh session** to validate the completed GDD independently
+- Run `/consistency-check` to verify this GDD's values don't conflict with other GDDs
+- Run `/map-systems next` to move to the next highest-priority undesigned system
+- Run `/gate-check technical-setup` when all MVP GDDs are authored and reviewed
