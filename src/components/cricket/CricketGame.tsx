@@ -157,7 +157,7 @@ export function CricketGame() {
   const shortName = (s: string) => (n > 4 ? s.slice(0, 3) : s);
   const team = state.setup.sides[side].members.length > 1;
   // Taille des pastilles selon le nombre de colonnes (8 joueurs : elles restent lisibles).
-  const dot = n > 4 ? "h-[8px] w-[8px] border-[1.5px]" : n > 2 ? "h-[13px] w-[13px] border-2" : "h-[16px] w-[16px] border-2";
+  const dot = n > 4 ? "h-[10px] w-[10px] border-[1.5px]" : n > 2 ? "h-[13px] w-[13px] border-2" : "h-[16px] w-[16px] border-2";
 
   const hit = (num: number) => {
     if (busy || state.status !== "open") return;
@@ -243,17 +243,21 @@ export function CricketGame() {
                 disabled={busy || state.status !== "open"}
                 onClick={() => hit(num)}
                 aria-label={num === 25 ? t("Touché le bull") : t("Touché le {n}", { n: num })}
-                className={`pop-press pop-shadow-sm grid h-[46px] items-stretch gap-1 rounded-xl border-2 border-encre pr-0.5 text-center ${mineShut ? "bg-violet text-white" : "bg-carte text-encre"} ${dead ? "opacity-40" : ""}`}
+                className={`pop-press pop-shadow-sm grid h-[46px] items-stretch gap-1 rounded-xl border-2 border-encre pr-0.5 text-center ${dead ? "bg-muted text-attenue" : mineShut ? "bg-violet text-white" : "bg-carte text-encre"}`}
                 style={{ gridTemplateColumns: cols }}
               >
                 <span className="grid place-items-center font-num text-[24px] font-black leading-none">{label(num)}</span>
                 {state.marks.map((m, i) => {
                   const shut = m[num] >= 3;
                   return (
-                    <span key={i} className={`flex min-w-0 items-center justify-center rounded-lg ${n > 4 ? "gap-[2px]" : "gap-[3px]"} ${i === side && !mineShut ? "bg-muted" : ""}`}>
+                    <span key={i} className={`flex min-w-0 items-center justify-center rounded-lg ${n > 4 ? "gap-[2px]" : "gap-[3px]"} ${i === side && !mineShut && !dead ? "bg-violet/10" : ""}`}>
                       {[0, 1, 2].map((q) => {
                         const on = q < m[num];
-                        const tone = on
+                        const tone = dead
+                          ? on
+                            ? "border-attenue bg-attenue"
+                            : "border-slate-400 bg-transparent"
+                          : on
                           ? mineShut
                             ? "border-encre bg-white"
                             : shut
@@ -261,7 +265,7 @@ export function CricketGame() {
                               : "border-encre bg-encre"
                           : mineShut
                             ? "border-white/60 bg-transparent"
-                            : "border-bord bg-transparent";
+                            : "border-slate-400 bg-transparent";
                         return <i key={q} className={`block shrink-0 rounded-full transition-[background-color] duration-200 ${dot} ${tone}`} />;
                       })}
                     </span>
@@ -332,7 +336,7 @@ export function CricketGame() {
               type="button"
               disabled={(state.status !== "full" && state.status !== "match") || busy || wonShown}
               onClick={() => void finishVolley(state)}
-              className="pad-key pop-press pop-shadow h-14 rounded-2xl border-2 border-encre bg-violet font-display text-[17px] font-black uppercase text-blanc disabled:bg-muted disabled:text-attenue disabled:opacity-100 disabled:shadow-none"
+              className="pad-key pop-press pop-shadow h-14 rounded-2xl border-2 border-encre bg-violet font-display text-[17px] font-black uppercase text-white disabled:bg-muted disabled:text-attenue disabled:opacity-100 disabled:shadow-none"
             >
               {t("Valider la volée")}
             </button>
