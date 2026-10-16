@@ -30,5 +30,5 @@ export function PartieRouter() {
   if (kind === "clock") return <ClockGame />;
   if (kind === "high") return <HighGame />;
   if (kind === "x01") return <X01Game />;
-  return <div className="h-dvh bg-noir" />;
+  return <div className="h-dvh bg-creme" />;
 }
