@@ -7,7 +7,8 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Celebration, type CeleSpec, Wink, celeDuration } from "@/components/Celebration";
-import { GameMenu, MenuButton } from "@/components/GameMenu";
+import { GameMenu } from "@/components/GameMenu";
+import { POP_PILL } from "@/components/x01/Volley";
 import { type Action, type Dart, type Mult, dartLabel } from "@/engine/types";
 import {
   type ClockEvent,
@@ -113,7 +114,7 @@ export function ClockGame() {
     });
   };
 
-  if (!state) return <div className="h-dvh bg-noir" />;
+  if (!state) return <div className="h-dvh bg-creme" />;
 
   const sides = state.setup.sides;
   const side = state.current;
@@ -152,135 +153,140 @@ export function ClockGame() {
 
   const hit = (m: Mult) => void play({ n: target, m });
 
+  const bullTarget = target === 25;
+  const huge = "pad-key pop-press pop-shadow h-[84px] [@media(max-height:700px)]:h-[72px] rounded-3xl border-2 border-encre font-display font-black uppercase leading-tight text-encre disabled:opacity-40";
+
   return (
-    <main className="relative mx-auto h-dvh max-w-[460px] overflow-hidden bg-noir">
-      <div className="flex h-full flex-col px-3.5 pb-[calc(8px+env(safe-area-inset-bottom))] pt-[calc(18px+env(safe-area-inset-top))]">
-        <div className="flex min-h-6 items-center justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-gris">
-          <span>
-            <b className="text-blanc">{t("Horloge")}</b>
-            {bonus && ` · ${t("Bonus")}`} · {bullFinish ? t("Fin au bull") : t("Fin au 20")}
-          </span>
-          <span className="flex items-center gap-2">
-            {t("Tour")} <b className="text-blanc">{state.turn}</b>
-            <MenuButton onClick={() => setMenu(true)} />
-          </span>
+    <main className="relative mx-auto h-dvh max-w-[460px] overflow-hidden bg-creme text-encre">
+      <div className="flex h-full flex-col px-4 pb-[calc(12px+env(safe-area-inset-bottom))] pt-[calc(12px+env(safe-area-inset-top))] [@media(max-height:700px)]:pb-[calc(8px+env(safe-area-inset-bottom))] [@media(max-height:700px)]:pt-[calc(8px+env(safe-area-inset-top))]">
+        {/* Barre du haut : jeu, réglages, tour, Menu */}
+        <div className="flex shrink-0 items-center justify-between gap-2">
+          <div className="min-w-0 leading-tight">
+            <div className="flex min-w-0 items-baseline gap-2">
+              <span className="truncate font-display text-[20px] font-black">{t("Horloge")}</span>
+              {team && <span className="truncate text-[12px] font-extrabold uppercase tracking-[0.1em] text-violet">{sides[side].name}</span>}
+            </div>
+            <div className="truncate text-[11px] font-bold uppercase tracking-[0.08em] text-attenue">
+              {bonus && `${t("Bonus")} · `}
+              {bullFinish ? t("Fin au bull") : t("Fin au 20")} · {t("Tour")} {state.turn}
+            </div>
+          </div>
+          <button type="button" onClick={() => setMenu(true)} className={POP_PILL}>
+            {t("MENU")}
+          </button>
         </div>
 
-        {team && <div className="mt-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-cyan">{sides[side].name}</div>}
-
-        <div className="mt-2 h-10 shrink-0">
+        {/* Joueur actif */}
+        <div className="mt-2.5 flex h-[46px] shrink-0 items-center rounded-3xl border-2 border-encre bg-carte px-3.5 shadow-[4px_4px_0_0_var(--color-rose)] [@media(max-height:700px)]:mt-1.5 [@media(max-height:700px)]:h-[40px]">
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
               key={`${side}-${who}`}
-              initial={{ x: 50, opacity: 0 }}
+              initial={{ x: 24, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -50, opacity: 0 }}
-              transition={{ duration: 0.3, ease: [0.2, 0.8, 0.2, 1] }}
-              className="whitespace-nowrap font-black uppercase italic leading-[40px] tracking-tight"
-              style={{ fontSize: fitFont(who, 40, 30) }}
+              exit={{ x: -24, opacity: 0 }}
+              transition={{ duration: 0.3, ease: [0.34, 1.56, 0.64, 1] }}
+              className="flex min-w-0 items-center gap-2"
             >
-              {who}
+              <i className="h-3.5 w-3.5 shrink-0 rounded-full border-2 border-encre bg-rose" aria-hidden="true" />
+              <span className="truncate whitespace-nowrap font-display font-black uppercase leading-none tracking-tight" style={{ fontSize: fitFont(who, 26, 90) }}>
+                {who}
+              </span>
             </motion.div>
           </AnimatePresence>
         </div>
 
-        {/* Le numéro visé, en géant */}
-        <div className="relative -mx-3.5 mt-3 h-[150px] shrink-0 overflow-hidden">
-          <div className="skew-18 absolute inset-y-0 -left-6 right-6 bg-cyan" />
-          <span className="absolute left-7 top-3 text-[11px] font-black uppercase tracking-[0.22em] text-noir">{t("Vise le")}</span>
-          <AnimatePresence mode="popLayout" initial={false}>
-            <motion.span
-              key={`${side}-${target}`}
-              initial={{ y: 60, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -60, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 380, damping: 28 }}
-              className={`absolute bottom-1 right-12 font-num leading-none text-noir ${target === 25 ? "text-[96px]" : "text-[140px]"}`}
-            >
-              {targetText(target)}
-            </motion.span>
-          </AnimatePresence>
+        {/* Le numéro visé, en géant dans un cercle */}
+        <div className="mt-2.5 flex shrink-0 flex-col items-center [@media(max-height:700px)]:mt-1">
+          <span className="text-[11px] font-black uppercase tracking-[0.18em] text-attenue">{t("Vise le")}</span>
+          <div className="pop-shadow relative mt-1 h-[168px] w-[168px] overflow-hidden rounded-full border-2 border-encre bg-ambre [@media(max-height:700px)]:h-[124px] [@media(max-height:700px)]:w-[124px]">
+            <AnimatePresence mode="popLayout" initial={false}>
+              <motion.span
+                key={`${side}-${target}`}
+                initial={{ y: 60, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -60, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 380, damping: 28 }}
+                className={`absolute inset-0 grid place-items-center font-num font-black leading-none tracking-[-0.03em] text-encre ${
+                  bullTarget ? "text-[56px] [@media(max-height:700px)]:text-[42px]" : "text-[104px] [@media(max-height:700px)]:text-[76px]"
+                }`}
+              >
+                {targetText(target)}
+              </motion.span>
+            </AnimatePresence>
+          </div>
         </div>
 
-        {/* La course : une case par numéro */}
-        <div className="mt-3 flex shrink-0 flex-col gap-1.5">
+        {/* La course : une pastille par numéro */}
+        <div className="mt-3 flex shrink-0 flex-col gap-1 [@media(max-height:700px)]:mt-2" style={{ paddingRight: 3 }}>
           {sides.map((s, i) => {
             const me = i === side;
             return (
               <div key={i} className="flex items-center gap-2" aria-label={t("{name} : vise le {n}", { name: s.name, n: targetText(targetAt(state.pos[i])) })}>
-                <span className={`w-[78px] shrink-0 truncate text-[11px] font-black uppercase italic ${me ? "text-cyan" : "text-[#cfcfcf]"}`}>{s.name}</span>
+                <span className={`w-[78px] shrink-0 truncate font-display text-[12px] font-black uppercase ${me ? "text-violet" : "text-encre"}`}>{s.name}</span>
                 <span className="flex flex-1 gap-[2px]">
-                  {Array.from({ length: end }, (_, q) => (
-                    <i
-                      key={q}
-                      className={`skew-18 block h-2.5 flex-1 transition-colors duration-300 ${
-                        q < state.pos[i] ? (me ? "bg-cyan" : "bg-blanc") : q === 20 ? "bg-[#3a3a3a]" : "bg-[#2c2c2c]"
-                      }`}
-                    />
-                  ))}
+                  {Array.from({ length: end }, (_, q) => {
+                    const on = q < state.pos[i];
+                    const tone = on
+                      ? q === 20
+                        ? "border-encre bg-ambre"
+                        : me
+                          ? "border-encre bg-violet"
+                          : "border-encre bg-encre"
+                      : "border-attenue bg-transparent";
+                    return <i key={q} className={`block aspect-square min-w-0 flex-1 rounded-full border-[1.5px] transition-colors duration-300 ${tone}`} />;
+                  })}
                 </span>
               </div>
             );
           })}
         </div>
 
-        {/* Les 3 fléchettes de la volée */}
-        <div className="mx-1 mt-3 grid h-[40px] shrink-0 grid-cols-3 gap-2">
-          {[0, 1, 2].map((k) => {
-            const dt = state.volley[k];
-            const ok = dt && dt.n > 0;
-            const tone = !dt ? "border-[#3a3a3a]" : dt.m === 3 ? "border-chartreuse bg-chartreuse" : ok ? "border-cyan bg-cyan" : "border-blanc";
-            return (
-              <div key={k} className={`skew-18 grid place-items-center border-[1.5px] ${tone}`}>
-                <span className={`unskew-18 font-num text-[19px] ${!dt ? "text-gris-2" : ok ? "text-noir" : "text-blanc"}`}>
-                  {!dt ? "—" : ok ? dartLabel(dt) : "✕"}
-                </span>
-              </div>
-            );
-          })}
-        </div>
+        <div className="mt-auto flex shrink-0 flex-col gap-2 pt-2 [@media(max-height:700px)]:gap-1.5 [@media(max-height:700px)]:pt-1.5">
+          {/* Les 3 fléchettes de la volée */}
+          <div className="grid h-11 grid-cols-3 gap-2 [@media(max-height:700px)]:h-10">
+            {[0, 1, 2].map((k) => {
+              const dt = state.volley[k];
+              if (!dt) {
+                return (
+                  <div key={`${k}-x`} className="grid h-11 place-items-center rounded-[14px] border-2 border-dashed border-attenue/40 font-display text-[18px] font-extrabold text-attenue/60 [@media(max-height:700px)]:h-10">
+                    {k + 1}
+                  </div>
+                );
+              }
+              const ok = dt.n > 0;
+              const tone = dt.m === 3 && ok ? "bg-rose" : dt.m === 2 && ok ? "bg-ambre" : "bg-carte";
+              return (
+                <div key={k} className={`grid h-11 place-items-center rounded-[14px] border-2 border-encre font-display text-[18px] font-extrabold shadow-[3px_3px_0_0_var(--color-encre)] [@media(max-height:700px)]:h-10 ${tone} ${ok ? "" : "text-attenue"}`}>
+                  {ok ? dartLabel(dt) : "✕"}
+                </div>
+              );
+            })}
+          </div>
 
-        {/* Deux énormes boutons */}
-        <div className="mt-auto flex shrink-0 flex-col gap-2 pt-3">
+          {/* Deux énormes boutons */}
           {state.status === "match" ? (
             <button
               type="button"
               disabled={busy}
               onClick={confirmWin}
-              style={{ "--h": "84px" } as React.CSSProperties}
-              className="btn-18 h-[84px] bg-blanc text-[24px] font-black uppercase italic text-noir active:bg-cyan disabled:opacity-40"
+              className="pad-key pop-press pop-shadow h-[84px] rounded-3xl border-2 border-encre bg-violet font-display text-[24px] font-black uppercase text-white disabled:bg-muted disabled:text-attenue disabled:opacity-100 disabled:shadow-none [@media(max-height:700px)]:h-[72px]"
             >
               {t("Valider la volée")}
             </button>
           ) : bonus ? (
-            <div className={`grid gap-2 ${target === 25 ? "grid-cols-2" : "grid-cols-3"}`} style={{ "--h": "84px" } as React.CSSProperties}>
-              <button
-                type="button"
-                disabled={!canThrow}
-                onClick={() => hit(1)}
-                className="btn-18 h-[84px] bg-blanc text-[15px] font-black uppercase italic leading-tight text-noir active:bg-cyan disabled:opacity-40"
-              >
+            <div className={`grid gap-2 ${bullTarget ? "grid-cols-2" : "grid-cols-3"}`}>
+              <button type="button" disabled={!canThrow} onClick={() => hit(1)} className={`${huge} bg-carte text-[15px]`}>
                 {t("Simple")}
                 <br />
-                {target === 25 ? "25" : target}
+                {bullTarget ? "25" : target}
               </button>
-              <button
-                type="button"
-                disabled={!canThrow}
-                onClick={() => hit(2)}
-                className="btn-18 h-[84px] bg-cyan text-[15px] font-black uppercase italic leading-tight text-noir active:bg-blanc disabled:opacity-40"
-              >
+              <button type="button" disabled={!canThrow} onClick={() => hit(2)} className={`${huge} bg-ambre text-[15px]`}>
                 {t("Double")}
                 <br />
-                {target === 25 ? "Bull" : target}
+                {bullTarget ? "Bull" : target}
               </button>
-              {target !== 25 && (
-                <button
-                  type="button"
-                  disabled={!canThrow}
-                  onClick={() => hit(3)}
-                  className="btn-18 h-[84px] bg-chartreuse text-[15px] font-black uppercase italic leading-tight text-noir active:bg-blanc disabled:opacity-40"
-                >
+              {!bullTarget && (
+                <button type="button" disabled={!canThrow} onClick={() => hit(3)} className={`${huge} bg-rose text-[15px]`}>
                   {t("Triple")}
                   <br />
                   {target}
@@ -292,18 +298,16 @@ export function ClockGame() {
               type="button"
               disabled={!canThrow}
               onClick={() => hit(1)}
-              style={{ "--h": "84px" } as React.CSSProperties}
-              className="btn-18 h-[84px] bg-cyan text-[28px] font-black uppercase italic text-noir active:bg-blanc disabled:opacity-40"
+              className="pad-key pop-press pop-shadow h-[84px] rounded-3xl border-2 border-encre bg-violet font-display text-[28px] font-black uppercase text-white disabled:opacity-40 [@media(max-height:700px)]:h-[72px]"
             >
-              {target === 25 ? t("Touché le bull") : t("Touché {n}", { n: target })}
+              {bullTarget ? t("Touché le bull") : t("Touché {n}", { n: target })}
             </button>
           )}
           <button
             type="button"
             disabled={!canThrow}
             onClick={() => void play({ n: 0, m: 1 })}
-            style={{ "--h": "64px" } as React.CSSProperties}
-            className="btn-18 h-16 bg-blanc text-[22px] font-black uppercase italic text-noir active:bg-cyan disabled:opacity-40"
+            className="pad-key pop-press pop-shadow-sm h-16 rounded-full border-2 border-encre bg-carte font-display text-[22px] font-black uppercase text-encre disabled:opacity-40 [@media(max-height:700px)]:h-[56px]"
           >
             {t("Raté")}
           </button>
@@ -311,7 +315,7 @@ export function ClockGame() {
             type="button"
             disabled={busy || !partie?.actions.length}
             onClick={undo}
-            className="h-11 text-[11px] font-bold uppercase tracking-[0.16em] text-[#a8a8a8] active:text-cyan disabled:opacity-30"
+            className="pad-key pop-press h-[46px] rounded-xl border-2 border-dashed border-encre bg-transparent font-display text-[12px] font-black uppercase tracking-[0.08em] text-encre disabled:opacity-40"
           >
             {t("Annuler la dernière fléchette")}
           </button>
