@@ -28,7 +28,8 @@ import { submitRecords } from "@/lib/records";
 import { gameEntry } from "@/lib/recordEntries";
 import { FinDePartie } from "@/components/podium/FinDePartie";
 import type { PodiumData } from "@/components/podium/PodiumScene";
-import { GameMenu, MenuButton } from "@/components/GameMenu";
+import { GameMenu } from "@/components/GameMenu";
+import { POP_PILL } from "@/components/x01/Volley";
 
 const MODE_LABEL = { classic: "Classique", none: "Sans points", cut: "Cut-throat" } as const;
 const label = (n: number) => (n === 25 ? "B" : String(n));
@@ -144,17 +145,19 @@ export function CricketGame() {
 
   // Rien ne se termine tout seul : victoire et bust attendent « Valider la volée » (on peut corriger avant).
 
-  if (!state) return <div className="h-dvh bg-noir" />;
+  if (!state) return <div className="h-dvh bg-creme" />;
 
   const n = state.setup.sides.length;
   const side = state.current;
   const who = currentMemberCricket(state);
   const mode = state.setup.options.mode;
   const showPoints = mode !== "none";
-  const cols = `52px repeat(${n}, minmax(0, 1fr))`;
+  const cols = `${n > 4 ? 38 : 44}px repeat(${n}, minmax(0, 1fr))`;
   const over = state.status === "match" && wonShown && !busy && !cele;
   const shortName = (s: string) => (n > 4 ? s.slice(0, 3) : s);
   const team = state.setup.sides[side].members.length > 1;
+  // Taille des pastilles selon le nombre de colonnes (8 joueurs : elles restent lisibles).
+  const dot = n > 4 ? "h-[8px] w-[8px] border-[1.5px]" : n > 2 ? "h-[13px] w-[13px] border-2" : "h-[16px] w-[16px] border-2";
 
   const hit = (num: number) => {
     if (busy || state.status !== "open") return;
@@ -172,63 +175,67 @@ export function CricketGame() {
   };
 
   return (
-    <main className="relative mx-auto h-dvh max-w-[460px] overflow-hidden bg-noir">
-      <div className="flex h-full flex-col px-3.5 pb-[calc(14px+env(safe-area-inset-bottom))] pt-[calc(18px+env(safe-area-inset-top))]">
-        <div className="flex min-h-6 items-center justify-between text-[10px] font-bold uppercase tracking-[0.2em] text-gris">
-          <span>
-            <b className="text-blanc">Cricket</b> · {t(MODE_LABEL[mode])}
-          </span>
-          <span className="flex items-center gap-2">
-            {t("Tour")} <b className="text-blanc">{state.turn}</b>
-            <MenuButton onClick={() => setMenu(true)} />
-          </span>
+    <main className="relative mx-auto h-dvh max-w-[460px] overflow-hidden bg-creme text-encre">
+      <div className="flex h-full flex-col px-4 pb-[calc(12px+env(safe-area-inset-bottom))] pt-[calc(12px+env(safe-area-inset-top))] [@media(max-height:700px)]:pb-[calc(8px+env(safe-area-inset-bottom))] [@media(max-height:700px)]:pt-[calc(8px+env(safe-area-inset-top))]">
+        {/* Barre du haut : jeu, tour, Menu */}
+        <div className="flex shrink-0 items-center justify-between gap-2">
+          <div className="min-w-0 leading-tight">
+            <div className="flex min-w-0 items-baseline gap-2">
+              <span className="truncate font-display text-[20px] font-black">Cricket</span>
+              {team && <span className="truncate text-[12px] font-extrabold uppercase tracking-[0.1em] text-violet">{state.setup.sides[side].name}</span>}
+            </div>
+            <div className="truncate text-[11px] font-bold uppercase tracking-[0.08em] text-attenue">
+              {t(MODE_LABEL[mode])} · {t("Tour")} {state.turn}
+            </div>
+          </div>
+          <button type="button" onClick={() => setMenu(true)} className={POP_PILL}>
+            {t("MENU")}
+          </button>
         </div>
 
-        {team && <div className="mt-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-cyan">{state.setup.sides[side].name}</div>}
-
         {/* Joueur actif + ses points */}
-        <div className="mt-2 flex h-10 shrink-0 items-end justify-between gap-3">
+        <div className="mt-2.5 flex h-[52px] shrink-0 items-center justify-between gap-3 rounded-3xl border-2 border-encre bg-carte px-3.5 shadow-[4px_4px_0_0_var(--color-rose)] [@media(max-height:700px)]:mt-1.5 [@media(max-height:700px)]:h-[46px]">
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
               key={`${side}-${who}`}
-              initial={{ x: 50, opacity: 0 }}
+              initial={{ x: 24, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -50, opacity: 0 }}
-              transition={{ duration: 0.3, ease: [0.2, 0.8, 0.2, 1] }}
-              className="whitespace-nowrap font-black uppercase italic leading-none tracking-tight"
-              style={{ fontSize: fitFont(who, 34, showPoints ? 110 : 30) }}
+              exit={{ x: -24, opacity: 0 }}
+              transition={{ duration: 0.3, ease: [0.34, 1.56, 0.64, 1] }}
+              className="flex min-w-0 items-center gap-2"
             >
-              {who}
+              <i className="h-3.5 w-3.5 shrink-0 rounded-full border-2 border-encre bg-rose" aria-hidden="true" />
+              <span className="truncate whitespace-nowrap font-display font-black uppercase leading-none tracking-tight" style={{ fontSize: fitFont(who, 24, showPoints ? 200 : 300) }}>
+                {who}
+              </span>
             </motion.div>
           </AnimatePresence>
           {showPoints && (
-            <div className="shrink-0 text-right">
-              <small className="block text-[9px] font-bold uppercase tracking-[0.18em] text-gris">{t("Points")}</small>
-              <span className="font-num text-[32px] leading-none text-cyan">{state.points[side]}</span>
+            <div className="flex shrink-0 items-baseline gap-1.5">
+              <small className="text-[10px] font-bold uppercase tracking-[0.1em] text-attenue">{t("Points")}</small>
+              <span className="font-num text-[34px] font-black leading-none tracking-[-0.03em] text-encre [@media(max-height:700px)]:text-[30px]">{state.points[side]}</span>
             </div>
           )}
         </div>
 
         {/* Le tableau = le pavé */}
-        <div className="mt-2.5 flex shrink-0 flex-col gap-1">
-          <div className="grid h-[30px] items-end gap-1 pr-1.5" style={{ gridTemplateColumns: cols }}>
+        <div className="mt-2.5 flex shrink-0 flex-col gap-[5px] [@media(max-height:700px)]:mt-1.5 [@media(max-height:700px)]:gap-[3px]">
+          <div className="grid h-[28px] items-end gap-1 pr-0.5" style={{ gridTemplateColumns: cols }}>
             <div />
             {state.setup.sides.map((s, i) => (
-              <div
-                key={i}
-                className={`truncate text-center text-[10px] font-black uppercase italic leading-tight ${i === side ? "text-cyan" : "text-gris"}`}
-              >
-                {shortName(s.name)}
-                {showPoints && (
-                  <b className={`block font-num text-[13px] font-normal not-italic ${i === side ? "text-cyan" : "text-[#cfcfcf]"}`}>
-                    {state.points[i]}
-                  </b>
-                )}
+              <div key={i} className="flex min-w-0 flex-col items-center leading-tight">
+                <span
+                  className={`max-w-full truncate rounded-full text-center ${n > 4 ? "px-1" : "px-1.5"} font-display text-[10px] font-extrabold uppercase ${i === side ? "bg-violet text-white" : "text-attenue"}`}
+                >
+                  {shortName(s.name)}
+                </span>
+                {showPoints && <b className={`font-num text-[12px] font-extrabold ${i === side ? "text-encre" : "text-attenue"}`}>{state.points[i]}</b>}
               </div>
             ))}
           </div>
           {CRICKET_NUMBERS.map((num: CricketNumber) => {
             const dead = isDead(state, num);
+            const mineShut = state.marks[side][num] >= 3;
             return (
               <button
                 key={num}
@@ -236,22 +243,27 @@ export function CricketGame() {
                 disabled={busy || state.status !== "open"}
                 onClick={() => hit(num)}
                 aria-label={num === 25 ? t("Touché le bull") : t("Touché le {n}", { n: num })}
-                className={`grid h-[46px] items-stretch gap-1 bg-case pr-1.5 text-center active:bg-[#303030] ${dead ? "opacity-30" : ""}`}
+                className={`pop-press pop-shadow-sm grid h-[46px] items-stretch gap-1 rounded-xl border-2 border-encre pr-0.5 text-center ${mineShut ? "bg-violet text-white" : "bg-carte text-encre"} ${dead ? "opacity-40" : ""}`}
                 style={{ gridTemplateColumns: cols }}
               >
-                <span className="font-num text-[26px] leading-[46px]">{label(num)}</span>
+                <span className="grid place-items-center font-num text-[24px] font-black leading-none">{label(num)}</span>
                 {state.marks.map((m, i) => {
                   const shut = m[num] >= 3;
                   return (
-                    <span key={i} className={`flex items-center justify-center gap-[3px] px-0.5 ${i === side ? "bg-cyan/15" : ""}`}>
-                      {[0, 1, 2].map((q) => (
-                        <i
-                          key={q}
-                          className={`skew-18 block w-[9px] max-w-[28%] transition-[height,background-color] duration-200 ${
-                            q < m[num] ? `h-[22px] ${shut ? "bg-cyan" : "bg-blanc"}` : "h-3 bg-[#3a3a3a]"
-                          }`}
-                        />
-                      ))}
+                    <span key={i} className={`flex min-w-0 items-center justify-center rounded-lg ${n > 4 ? "gap-[2px]" : "gap-[3px]"} ${i === side && !mineShut ? "bg-muted" : ""}`}>
+                      {[0, 1, 2].map((q) => {
+                        const on = q < m[num];
+                        const tone = on
+                          ? mineShut
+                            ? "border-encre bg-white"
+                            : shut
+                              ? "border-encre bg-violet"
+                              : "border-encre bg-encre"
+                          : mineShut
+                            ? "border-white/60 bg-transparent"
+                            : "border-bord bg-transparent";
+                        return <i key={q} className={`block shrink-0 rounded-full transition-[background-color] duration-200 ${dot} ${tone}`} />;
+                      })}
                     </span>
                   );
                 })}
@@ -260,64 +272,71 @@ export function CricketGame() {
           })}
         </div>
 
-        {/* Les 3 fléchettes de la volée */}
-        <div className="mx-1 mt-2 grid h-[40px] shrink-0 grid-cols-3 gap-2">
-          {[0, 1, 2].map((k) => {
-            const dt = state.volley[k];
-            const tone = !dt ? "border-[#3a3a3a]" : dt.m === 3 ? "border-chartreuse bg-chartreuse" : dt.m === 2 && dt.n ? "border-cyan bg-cyan" : "border-blanc";
-            const txt = !dt ? "text-gris-2" : dt.m >= 2 && dt.n ? "text-noir" : "text-blanc";
-            return (
-              <div key={k} className={`skew-18 grid place-items-center border-[1.5px] ${tone}`}>
-                <span className={`unskew-18 font-num text-[19px] ${txt}`}>{dt ? dartText(dt) : "—"}</span>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="mt-auto flex flex-col gap-[5px] pt-2.5">
-          <div className="relative grid grid-cols-[2fr_1fr] gap-[5px]">
-            <button
-              type="button"
-              disabled={busy || state.status !== "open"}
-              onClick={() => hit(0)}
-              className="h-[46px] bg-case text-[12px] font-black tracking-wide active:bg-blanc active:text-noir disabled:opacity-40"
-            >
-              {t("RATÉ / AUTRE")}
-            </button>
-            <button
-              type="button"
-              disabled={busy || state.history.length + state.volley.length === 0}
-              onClick={() => {
-                undo();
-                setMultFor(null);
-              }}
-              className="h-[46px] border-[1.5px] border-[#3a3a3a] text-[12px] font-black tracking-wide text-[#cfcfcf] active:bg-case disabled:opacity-30"
-            >
-              {t("ANNULER")}
-            </button>
-            {multFor !== null && !busy && (
-              // Au-dessus des boutons, par-dessus la rangée des 3 fléchettes : RATÉ / AUTRE et ANNULER restent accessibles.
-              <div className={`absolute inset-x-0 bottom-[calc(100%+5px)] grid h-[50px] gap-[5px] bg-noir ${multFor === 25 ? "grid-cols-1" : "grid-cols-2"}`}>
-                <button type="button" onClick={() => onMult(2)} className="h-[50px] bg-cyan text-[15px] font-black italic text-noir active:bg-blanc">
-                  {multFor === 25 ? "DOUBLE BULL" : `DOUBLE ${multFor}`}
-                </button>
-                {multFor !== 25 && (
-                  <button type="button" onClick={() => onMult(3)} className="h-[50px] bg-chartreuse text-[15px] font-black italic text-noir active:bg-blanc">
-                    TRIPLE {multFor}
-                  </button>
-                )}
-              </div>
-            )}
+        <div className="mt-auto pt-2 [@media(max-height:700px)]:pt-1">
+          {/* Les 3 fléchettes de la volée (Double / Triple viennent s'afficher par-dessus) */}
+          <div className="grid h-11 grid-cols-3 gap-2 [@media(max-height:700px)]:h-10">
+            {[0, 1, 2].map((k) => {
+              const dt = state.volley[k];
+              if (!dt) {
+                return (
+                  <div key={`${k}-x`} className="grid h-11 place-items-center rounded-[14px] border-2 border-dashed border-attenue/40 font-display text-[18px] font-extrabold text-attenue/60 [@media(max-height:700px)]:h-10">
+                    {k + 1}
+                  </div>
+                );
+              }
+              const tone = dt.m === 3 ? "bg-rose" : dt.m === 2 && dt.n ? "bg-ambre" : "bg-carte";
+              return (
+                <div key={k} className={`grid h-11 place-items-center rounded-[14px] border-2 border-encre font-display text-[18px] font-extrabold shadow-[3px_3px_0_0_var(--color-encre)] [@media(max-height:700px)]:h-10 ${tone}`}>
+                  {dartText(dt)}
+                </div>
+              );
+            })}
           </div>
-          <button
-            type="button"
-            disabled={(state.status !== "full" && state.status !== "match") || busy || wonShown}
-            onClick={() => void finishVolley(state)}
-            style={{ "--h": "56px" } as React.CSSProperties}
-            className="btn-18 h-14 bg-blanc text-[17px] font-black uppercase italic text-noir active:bg-cyan disabled:bg-case disabled:text-gris-2"
-          >
-            {t("Valider la volée")}
-          </button>
+
+          <div className="mt-2.5 flex flex-col gap-[6px]">
+            <div className="relative grid grid-cols-[2fr_1fr] gap-[6px]">
+              <button
+                type="button"
+                disabled={busy || state.status !== "open"}
+                onClick={() => hit(0)}
+                className="pad-key pop-press pop-shadow-sm h-[46px] rounded-xl border-2 border-encre bg-muted font-display text-[12px] font-black tracking-wide text-encre disabled:opacity-40"
+              >
+                {t("RATÉ / AUTRE")}
+              </button>
+              <button
+                type="button"
+                disabled={busy || state.history.length + state.volley.length === 0}
+                onClick={() => {
+                  undo();
+                  setMultFor(null);
+                }}
+                className="pad-key pop-press h-[46px] rounded-xl border-2 border-dashed border-encre bg-transparent font-display text-[12px] font-black tracking-wide text-encre disabled:opacity-40"
+              >
+                {t("ANNULER")}
+              </button>
+              {multFor !== null && !busy && (
+                // Au-dessus des boutons, par-dessus la rangée des 3 fléchettes : RATÉ / AUTRE et ANNULER restent accessibles.
+                <div className={`absolute inset-x-0 bottom-[calc(100%+5px)] z-10 grid h-[50px] gap-[6px] bg-creme ${multFor === 25 ? "grid-cols-1" : "grid-cols-2"}`}>
+                  <button type="button" onClick={() => onMult(2)} className="pad-key pop-press pop-shadow-sm h-[46px] rounded-xl border-2 border-encre bg-ambre font-display text-[15px] font-black text-encre">
+                    {multFor === 25 ? "DOUBLE BULL" : `DOUBLE ${multFor}`}
+                  </button>
+                  {multFor !== 25 && (
+                    <button type="button" onClick={() => onMult(3)} className="pad-key pop-press pop-shadow-sm h-[46px] rounded-xl border-2 border-encre bg-rose font-display text-[15px] font-black text-encre">
+                      TRIPLE {multFor}
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+            <button
+              type="button"
+              disabled={(state.status !== "full" && state.status !== "match") || busy || wonShown}
+              onClick={() => void finishVolley(state)}
+              className="pad-key pop-press pop-shadow h-14 rounded-2xl border-2 border-encre bg-violet font-display text-[17px] font-black uppercase text-blanc disabled:bg-muted disabled:text-attenue disabled:opacity-100 disabled:shadow-none"
+            >
+              {t("Valider la volée")}
+            </button>
+          </div>
         </div>
       </div>
 
