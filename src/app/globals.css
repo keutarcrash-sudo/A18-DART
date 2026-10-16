@@ -142,3 +142,64 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* --- Têtes déjantées (src/components/pop/Heads.tsx) --- */
+.head-svg {
+  display: block;
+  overflow: visible;
+}
+@keyframes head-eyespin {
+  to { rotate: 360deg; }
+}
+@keyframes head-spin {
+  to { rotate: 360deg; }
+}
+@keyframes head-wiggle {
+  0%, 100% { rotate: 0deg; }
+  33% { rotate: 4deg; }
+  66% { rotate: -4deg; }
+}
+@keyframes head-pulse {
+  0%, 100% { scale: 1; }
+  50% { scale: 1.18; }
+}
+@keyframes head-melt {
+  0%, 100% { scale: 1 1; }
+  50% { scale: 1 1.06; }
+}
+@keyframes head-laugh {
+  0%, 100% { translate: 0 0; }
+  25% { translate: 0 -3px; }
+  75% { translate: 0 2px; }
+}
+@keyframes head-shake {
+  0%, 100% { rotate: 0deg; }
+  25% { rotate: -6deg; }
+  75% { rotate: 6deg; }
+}
+@keyframes head-tongue {
+  0%, 100% { scale: 1 1; }
+  50% { scale: 1 1.15; }
+}
+@keyframes head-sweat {
+  0% { translate: 0 0; opacity: 1; }
+  80% { translate: 0 10px; opacity: 1; }
+  100% { translate: 0 12px; opacity: 0; }
+}
+.head-eyespin { transform-box: fill-box; transform-origin: center; animation: head-eyespin 1.6s linear infinite; }
+.head-pulse { transform-box: fill-box; transform-origin: center; animation: head-pulse 0.9s ease-in-out infinite; }
+.head-melt { transform-origin: 60px 20px; animation: head-melt 2.4s ease-in-out infinite; }
+.head-laugh { animation: head-laugh 0.35s ease-in-out infinite; }
+.head-shake { transform-origin: 60px 70px; animation: head-shake 0.5s ease-in-out infinite; }
+.head-tongue { transform-box: fill-box; transform-origin: top center; animation: head-tongue 1s ease-in-out infinite; }
+.head-sweat { animation: head-sweat 1.4s ease-in infinite; }
+.head-burstspin { transform-origin: 60px 60px; animation: head-spin 10s linear infinite; }
+.head-wig { transform-origin: 50% 80%; animation: head-wiggle 2.6s ease-in-out infinite; }
+
+/* Têtes totalement figées si le téléphone demande moins d'animations. */
+@media (prefers-reduced-motion: reduce) {
+  .head-svg *,
+  .head-svg {
+    animation: none !important;
+  }
+}
