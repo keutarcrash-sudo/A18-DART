@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8">
+<style>
+@font-face { font-family: Outfit; src: url(outfit.woff2) format("woff2"); font-weight: 100 900; }
+@font-face { font-family: Jakarta; src: url(jakarta.woff2) format("woff2"); font-weight: 200 800; }
+:root { --creme:#FFFDF5; --encre:#1E293B; --violet:#8B5CF6; --rose:#F472B6; --ambre:#FBBF24; --menthe:#34D399; }
+* { box-sizing: border-box; margin: 0; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--creme); }
+body { font-family: Jakarta, sans-serif; color: var(--encre); }
+.stage { position: absolute; inset: 0; overflow: hidden; }
+.scene { position: absolute; inset: 0; opacity: 0; background-color: var(--creme); }
+.dots { background-image: radial-gradient(rgba(30,41,59,.13) 3px, transparent 3.5px); background-size: 44px 44px; }
+.dots-w { background-image: radial-gradient(rgba(255,255,255,.18) 3px, transparent 3.5px); background-size: 44px 44px; }
+.abs { position: absolute; }
+.title { font-family: Outfit; font-weight: 900; letter-spacing: -0.03em; line-height: .95; }
+.pill { display: inline-flex; align-items: center; gap: 14px; padding: 16px 30px; border: 5px solid var(--encre); border-radius: 999px; font-family: Outfit; font-weight: 800; font-size: 40px; box-shadow: 8px 8px 0 var(--encre); background: #fff; white-space: nowrap; }
+.mark { background: linear-gradient(transparent 58%, var(--ambre) 58% 92%, transparent 92%); padding: 0 .06em; }
+.phone { position: absolute; width: 552px; border: 16px solid var(--encre); border-radius: 76px; overflow: hidden; background: var(--encre); box-shadow: 18px 18px 0 var(--encre); }
+.phone img { display: block; width: 100%; border-radius: 58px; }
+.card { border: 8px solid var(--encre); border-radius: 36px; overflow: hidden; box-shadow: 18px 18px 0 var(--encre); background: var(--encre); }
+.card img { display: block; width: 100%; }
+.sticker { position: absolute; font-family: Outfit; font-weight: 900; font-size: 54px; padding: 14px 28px; border: 6px solid var(--encre); border-radius: 22px; box-shadow: 9px 9px 0 var(--encre); background: #fff; white-space: nowrap; }
+.ring { position: absolute; border: 10px solid var(--ambre); border-radius: 28px; box-shadow: 0 0 0 6px var(--encre); }
+svg.head { position: absolute; overflow: visible; }
+</style></head>
+<body>
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="h-langue" viewBox="0 0 120 120"><g class="wig"><circle cx="65" cy="65" r="46" fill="#1E293B"/><circle cx="60" cy="60" r="46" fill="#FBBF24" stroke="#1E293B" stroke-width="5"/>
+  <path d="M33 54 q9 -9 18 0" fill="none" stroke="#1E293B" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="79" cy="50" r="12" fill="#fff" stroke="#1E293B" stroke-width="4"/><circle cx="82" cy="52" r="5" fill="#1E293B"/>
+  <path d="M36 72 q24 26 48 0 z" fill="#1E293B" stroke="#1E293B" stroke-width="4" stroke-linejoin="round"/>
+  <g class="tongue"><path d="M52 80 v12 q0 12 11 12 q11 0 11 -12 v-12 z" fill="#F472B6" stroke="#1E293B" stroke-width="4" stroke-linejoin="round"/><path d="M63 84 v10" stroke="#1E293B" stroke-width="3" stroke-linecap="round"/></g></g></symbol>
+<symbol id="h-explosee" viewBox="0 0 120 120">
+  <polygon class="burstspin" points="60,0 69,22 90,8 86,32 112,30 96,50 120,62 96,72 110,94 86,90 88,116 68,100 58,120 50,98 28,112 32,88 6,92 22,72 0,60 22,48 8,28 32,32 30,8 52,22" fill="#FBBF24" stroke="#1E293B" stroke-width="4" stroke-linejoin="round"/>
+  <g class="laugh"><circle cx="63" cy="63" r="36" fill="#1E293B"/><circle cx="60" cy="60" r="36" fill="#8B5CF6" stroke="#1E293B" stroke-width="5"/>
+  <circle cx="46" cy="52" r="13" fill="#fff" stroke="#1E293B" stroke-width="4"/><circle class="pulse" cx="46" cy="52" r="4" fill="#1E293B"/>
+  <circle cx="75" cy="52" r="13" fill="#fff" stroke="#1E293B" stroke-width="4"/><circle class="pulse" cx="75" cy="52" r="4" fill="#1E293B"/>
+  <ellipse cx="60" cy="80" rx="11" ry="9" fill="#1E293B"/><ellipse cx="60" cy="84" rx="6" ry="3.5" fill="#F472B6"/></g></symbol>
+<symbol id="h-frimeur" viewBox="0 0 120 120"><g class="wig"><circle cx="65" cy="65" r="46" fill="#1E293B"/><circle cx="60" cy="60" r="46" fill="#FBBF24" stroke="#1E293B" stroke-width="5"/>
+  <path d="M26 48 h30 v8 q0 14 -15 14 q-15 0 -15 -14 z" fill="#1E293B"/><path d="M64 48 h30 v8 q0 14 -15 14 q-15 0 -15 -14 z" fill="#1E293B"/>
+  <path d="M54 52 h12 M20 50 h8 M92 50 h8" stroke="#1E293B" stroke-width="5" stroke-linecap="round"/>
+  <path d="M33 54 l7 -4 M71 54 l7 -4" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  <path d="M44 84 q16 10 32 -8" fill="none" stroke="#1E293B" stroke-width="5" stroke-linecap="round"/><path d="M74 72 l4 6" stroke="#1E293B" stroke-width="4" stroke-linecap="round"/></g></symbol>
+<symbol id="h-mdr" viewBox="0 0 120 120"><g class="laugh"><g transform="rotate(-14 60 60)">
+  <circle cx="65" cy="65" r="46" fill="#1E293B"/><circle cx="60" cy="60" r="46" fill="#FBBF24" stroke="#1E293B" stroke-width="5"/>
+  <path d="M30 40 l14 8 l-14 8 M90 40 l-14 8 l14 8" fill="none" stroke="#1E293B" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M28 64 h64 q0 34 -32 34 q-32 0 -32 -34 z" fill="#1E293B" stroke="#1E293B" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M38 66 h44 v6 h-44 z" fill="#fff"/>
+  <path d="M44 90 q16 -12 32 0 q-6 7 -16 7 q-10 0 -16 -7 z" fill="#F472B6"/>
+  <g class="pulse"><path d="M30 54 q-14 -2 -22 14 q-4 10 4 12 q8 0 10 -10 q2 -10 8 -16 z" fill="#7DD3FC" stroke="#1E293B" stroke-width="4" stroke-linejoin="round"/></g>
+  <g class="pulse" style="animation-delay:-.45s"><path d="M90 54 q14 -2 22 14 q4 10 -4 12 q-8 0 -10 -10 q-2 -10 -8 -16 z" fill="#7DD3FC" stroke="#1E293B" stroke-width="4" stroke-linejoin="round"/></g>
+</g></g></symbol>
+
+</defs></svg>
+
+<div class="stage" id="stage">
+
+  <!-- 1. Le panneau -->
+  <div class="scene dots" id="s1">
+    <div class="abs" style="left:70px;top:270px" id="s1-tag"><span class="pill" style="background:var(--violet);color:#fff">● Nouveau à l'Arena18</span></div>
+    <div class="abs card" id="s1-photo" style="left:70px;top:420px;width:940px;transform:rotate(-2.5deg)"><img src="panneau.png"></div>
+    <div class="sticker" id="s1-scan" style="left:600px;top:1150px;background:var(--ambre);transform:rotate(6deg)">Scanne&nbsp;&amp;&nbsp;joue&nbsp;!</div>
+    <div class="abs title" id="s1-title" style="left:70px;top:1330px;font-size:124px;width:960px">Les fléchettes ont leur <span class="mark">app</span>.</div>
+  </div>
+
+  <!-- 2. Scanne, entre vos prénoms -->
+  <div class="scene dots-w" id="s2" style="background-color:var(--violet)">
+    <div class="abs title" id="s2-title" style="left:70px;top:270px;font-size:90px;color:#fff;width:940px">Scanne.<br>Entre vos prénoms.</div>
+    <div class="phone" id="s2-phone" style="left:264px;top:560px"><img src="01-accueil.png"></div>
+    <svg class="head" id="s2-head" width="220" height="220" viewBox="0 0 120 120" style="left:720px;top:500px"><use href="#h-langue"/></svg>
+  </div>
+
+  <!-- 3. 5 jeux -->
+  <div class="scene dots" id="s3">
+    <div class="abs title" id="s3-title" style="left:70px;top:260px;font-size:118px;width:940px"><span class="mark">5 jeux</span>,<br>zéro calcul.</div>
+    <div class="phone" id="s3-phone" style="left:264px;top:560px"><img src="04-choix-jeu.png"></div>
+    <div class="sticker" id="g1" style="left:50px;top:700px;background:var(--violet);color:#fff">501</div>
+    <div class="sticker" id="g2" style="left:760px;top:820px;background:var(--rose)">Cricket</div>
+    <div class="sticker" id="g3" style="left:40px;top:1060px;background:var(--ambre)">Killer</div>
+    <div class="sticker" id="g4" style="left:730px;top:1250px;background:var(--menthe)">Horloge</div>
+    <div class="sticker" id="g5" style="left:60px;top:1440px;background:#fff">Plus gros score</div>
+  </div>
+
+  <!-- 4. L'app compte et montre quoi viser -->
+  <div class="scene dots" id="s4" style="background-color:var(--ambre)">
+    <div class="abs title" id="s4-title" style="left:70px;top:270px;font-size:100px;width:960px">L'app compte.<br>Toi, tu vises.</div>
+    <div class="phone" id="s4-phone" style="left:264px;top:560px"><img src="08-501-reste2.png"></div>
+    <div class="ring" id="s4-ring" style="left:282px;top:1140px;width:228px;height:112px"></div>
+    <div class="sticker" id="s4-tip" style="left:520px;top:960px;transform:rotate(-4deg);font-size:44px;background:var(--rose)">Reste 2 ? Ça s'allume.</div>
+  </div>
+
+  <!-- 5. La fête -->
+  <div class="scene" id="s5" style="background:var(--violet)">
+    <div class="abs" id="s5-shot" style="left:0;top:0;width:1080px;height:1920px;overflow:hidden"><img src="15-celebration-180.png" style="height:1920px;width:auto;display:block;margin:0 auto"></div>
+    <div class="sticker" id="s5-tag" style="left:150px;top:1190px;background:var(--ambre);font-size:66px;transform:rotate(-3deg)">Chaque 180 se fête.</div>
+  </div>
+
+  <!-- 6. Fin -->
+  <div class="scene dots" id="s6">
+    <img id="s6-icon" class="abs" src="icone.png" style="left:290px;top:250px;width:500px;border-radius:112px;border:8px solid var(--encre);box-shadow:16px 16px 0 var(--encre)">
+    <div class="abs title" id="s6-title" style="left:0;right:0;top:880px;text-align:center;font-size:150px">Fléchettes</div>
+    <div class="abs title" id="s6-sub" style="left:0;right:0;top:1050px;text-align:center;font-size:96px"><span class="mark">À toi de jouer !</span></div>
+    <div class="abs" id="s6-cta" style="left:0;right:0;top:1300px;text-align:center;font-family:Outfit;font-weight:700;font-size:52px;line-height:1.3">Scanne le QR<br>à côté des cibles</div>
+    <div class="abs" id="s6-pill" style="left:0;right:0;top:1560px;text-align:center"><span class="pill" style="background:var(--violet);color:#fff;font-size:46px">Arena18</span></div>
+    <svg class="head" id="s6-h1" width="190" height="190" viewBox="0 0 120 120" style="left:70px;top:620px"><use href="#h-frimeur"/></svg>
+    <svg class="head" id="s6-h2" width="190" height="190" viewBox="0 0 120 120" style="left:820px;top:560px"><use href="#h-mdr"/></svg>
+  </div>
+
+  <!-- confettis communs -->
+  <div id="conf"></div>
+</div>
+
+<script>
+const POP = "cubic-bezier(0.34,1.56,0.64,1)";
+const $ = (id) => document.getElementById(id);
+const anims = [];
+// a(el, keyframes, début (s), durée (s), easing)
+function a(el, kf, t0, d, easing = "ease-out") {
+  const an = (typeof el === "string" ? $(el) : el).animate(kf, { delay: t0 * 1000, duration: d * 1000, fill: "both", easing });
+  an.pause(); anims.push(an); return an;
+}
+// fenêtre de scène
+function scene(id, t0, t1, from = "scale(1.04)") {
+  a(id, [{ opacity: 0, transform: from }, { opacity: 1, transform: "none" }], t0, 0.25);
+  // pas de fondu de sortie : la scène suivante, posée au-dessus, la recouvre
+  if (t1 < 90) a(id, [{ visibility: "visible" }, { visibility: "hidden" }], t1 + 0.4, 0.01).effect.updateTiming({ fill: "forwards" });
+}
+const popIn = (id, t, rot = 0) => a(id, [{ transform: `scale(0) rotate(${rot - 12}deg)`, opacity: 0 }, { transform: `scale(1) rotate(${rot}deg)`, opacity: 1 }], t, 0.55, POP);
+const up = (id, t, dist = 140) => a(id, [{ transform: `translateY(${dist}px)`, opacity: 0 }, { transform: "none", opacity: 1 }], t, 0.6, POP);
+
+// 1. Panneau (0 → 3.3)
+a("s1", [{ opacity: 1 }, { opacity: 1 }], 0, 0.01);
+  a("s1", [{ visibility: "visible" }, { visibility: "hidden" }], 3.7, 0.01).effect.updateTiming({ fill: "forwards" });
+popIn("s1-tag", 0.0);
+a("s1-photo", [{ transform: "rotate(-14deg) scale(.55)", opacity: 1 }, { transform: "rotate(-2.5deg) scale(1)", opacity: 1 }], 0.05, 0.7, POP);
+a("s1-photo", [{ scale: 1 }, { scale: 1.06 }], 0.95, 2.3, "linear");
+popIn("s1-scan", 1.5, 6);
+up("s1-title", 0.75);
+
+// 2. Accueil (3.3 → 6.4)
+scene("s2", 3.3, 6.4, "scale(1.15)");
+up("s2-title", 3.4);
+up("s2-phone", 3.55, 900);
+popIn("s2-head", 4.15, 14);
+a("s2-phone", [{ rotate: "0deg" }, { rotate: "-2deg" }], 4.2, 2.1, "ease-in-out");
+
+// 3. Choix du jeu (6.4 → 9.5)
+scene("s3", 6.4, 9.5, "translateX(120px)");
+up("s3-title", 6.5);
+up("s3-phone", 6.6, 900);
+["g1", "g2", "g3", "g4", "g5"].forEach((g, i) => popIn(g, 7.2 + i * 0.22, [-8, 7, -6, 9, -4][i]));
+
+// 4. Écran de jeu (9.5 → 12.6)
+scene("s4", 9.5, 12.6, "translateX(120px)");
+up("s4-title", 9.6);
+up("s4-phone", 9.7, 900);
+a("s4-ring", [{ opacity: 0, transform: "scale(1.6)" }, { opacity: 1, transform: "scale(1)" }], 10.55, 0.45, POP);
+a("s4-ring", [{ opacity: 1 }, { opacity: .35 }, { opacity: 1 }, { opacity: .35 }, { opacity: 1 }], 11.0, 1.5, "linear").effect.updateTiming({ fill: "forwards" });
+popIn("s4-tip", 10.9, -4);
+
+// 5. Célébration (12.6 → 14.9)
+scene("s5", 12.6, 14.9, "scale(1.3)");
+a("s5-shot", [{ transform: "scale(1.12)" }, { transform: "scale(1)" }], 12.6, 2.3, "ease-out");
+popIn("s5-tag", 13.2, -5);
+
+// 6. Fin (14.9 → 18)
+scene("s6", 14.9, 99, "scale(1.1)");
+a("s6-icon", [{ transform: "scale(0) rotate(-200deg)" }, { transform: "scale(1) rotate(0deg)" }], 15.0, 0.8, POP);
+up("s6-title", 15.45);
+up("s6-sub", 15.65);
+up("s6-cta", 15.95, 60);
+popIn("s6-pill", 16.2);
+popIn("s6-h1", 15.7, -12);
+popIn("s6-h2", 15.9, 10);
+
+// Confettis qui traversent tout le film
+const conf = $("conf"); const COL = ["#F472B6", "#FBBF24", "#34D399", "#8B5CF6", "#FFFFFF"];
+let seed = 18; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+for (let i = 0; i < 22; i++) {
+  const el = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  const s = 34 + rnd() * 36; el.setAttribute("width", s); el.setAttribute("height", s); el.setAttribute("viewBox", "0 0 40 40");
+  el.style.cssText = `position:absolute;left:${rnd() * 1040}px;top:-80px;overflow:visible`;
+  const k = i % 3, c = COL[i % COL.length];
+  el.innerHTML = k === 0 ? `<polygon points="20,3 37,35 3,35" fill="${c}" stroke="#1E293B" stroke-width="4" stroke-linejoin="round"/>`
+    : k === 1 ? `<circle cx="20" cy="20" r="15" fill="${c}" stroke="#1E293B" stroke-width="4"/>`
+    : `<path d="M14 2H26V14H38V26H26V38H14V26H2V14H14Z" fill="${c}" stroke="#1E293B" stroke-width="4" stroke-linejoin="round"/>`;
+  conf.appendChild(el);
+  const t0 = rnd() * 16, dur = 4 + rnd() * 3, rot = (rnd() - .5) * 720;
+  a(el, [{ transform: "translateY(0) rotate(0)" }, { transform: `translateY(2100px) rotate(${rot}deg)` }], t0, dur, "linear").effect.updateTiming({ fill: "none" });
+}
+
+// Têtes : leurs animations CSS (yeux, langue…) sont aussi pilotées par l'horloge.
+window.DURATION = 18;
+window.setTime = (t) => {
+  for (const an of document.getAnimations()) { an.pause(); an.currentTime = an.effect && anims.includes(an) ? t * 1000 : (t * 1000) % 100000; }
+};
+window.setTime(0);
+</script>
+<style>
+/* animations des têtes (reprises des maquettes) */
+@keyframes spin { to { rotate: 360deg; } }
+@keyframes pulse { 0%,100% { scale: 1; } 50% { scale: 1.18; } }
+@keyframes laugh { 0%,100% { translate: 0 0; } 25% { translate: 0 -3px; } 75% { translate: 0 2px; } }
+@keyframes wiggle { 0%,100% { rotate: 0deg; } 33% { rotate: 4deg; } 66% { rotate: -4deg; } }
+@keyframes tongue { 0%,100% { scale: 1 1; } 50% { scale: 1 1.15; } }
+.pulse { transform-box: fill-box; transform-origin: center; animation: pulse .9s ease-in-out infinite; }
+.laugh { animation: laugh .35s ease-in-out infinite; }
+.tongue { transform-box: fill-box; transform-origin: top center; animation: tongue 1s ease-in-out infinite; }
+.burstspin { transform-origin: 60px 60px; animation: spin 10s linear infinite; }
+.wig { animation: wiggle 2.6s ease-in-out infinite; transform-origin: 50% 80%; }
+</style>
+</body></html>
