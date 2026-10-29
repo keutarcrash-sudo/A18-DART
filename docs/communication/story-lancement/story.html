@@ -70,15 +70,16 @@ svg.head { position: absolute; overflow: visible; }
     <svg class="head" id="s2-head" width="220" height="220" viewBox="0 0 120 120" style="left:720px;top:500px"><use href="#h-langue"/></svg>
   </div>
 
-  <!-- 3. 5 jeux -->
+  <!-- 3. 6 jeux -->
   <div class="scene dots" id="s3">
-    <div class="abs title" id="s3-title" style="left:70px;top:260px;font-size:118px;width:940px"><span class="mark">5 jeux</span>,<br>zéro calcul.</div>
+    <div class="abs title" id="s3-title" style="left:70px;top:260px;font-size:118px;width:940px"><span class="mark">6 jeux</span>,<br>zéro calcul.</div>
     <div class="phone" id="s3-phone" style="left:264px;top:560px"><img src="04-choix-jeu.png"></div>
     <div class="sticker" id="g1" style="left:50px;top:700px;background:var(--violet);color:#fff">501</div>
     <div class="sticker" id="g2" style="left:760px;top:820px;background:var(--rose)">Cricket</div>
     <div class="sticker" id="g3" style="left:40px;top:1060px;background:var(--ambre)">Killer</div>
     <div class="sticker" id="g4" style="left:730px;top:1250px;background:var(--menthe)">Horloge</div>
     <div class="sticker" id="g5" style="left:60px;top:1440px;background:#fff">Plus gros score</div>
+    <div class="sticker" id="g6" style="left:800px;top:620px;background:var(--violet);color:#fff">301</div>
   </div>
 
   <!-- 4. L'app compte et montre quoi viser -->
@@ -148,7 +149,7 @@ a("s2-phone", [{ rotate: "0deg" }, { rotate: "-2deg" }], 4.2, 2.1, "ease-in-out"
 scene("s3", 6.4, 9.5, "translateX(120px)");
 up("s3-title", 6.5);
 up("s3-phone", 6.6, 900);
-["g1", "g2", "g3", "g4", "g5"].forEach((g, i) => popIn(g, 7.2 + i * 0.22, [-8, 7, -6, 9, -4][i]));
+["g1", "g6", "g2", "g3", "g4", "g5"].forEach((g, i) => popIn(g, 7.15 + i * 0.2, [-8, 8, 7, -6, 9, -4][i]));
 
 // 4. Écran de jeu (9.5 → 12.6)
 scene("s4", 9.5, 12.6, "translateX(120px)");
