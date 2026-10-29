@@ -57,10 +57,10 @@ svg.head { position: absolute; overflow: visible; }
 
   <!-- 1. Le panneau -->
   <div class="scene dots" id="s1">
+    <div class="abs" id="s1-photo" style="left:0;top:0;width:1080px;height:1920px;overflow:hidden"><img id="s1-img" src="panneau2.jpg" style="position:absolute;height:1920px;width:auto;left:-347px;top:0;transform-origin:887px 721px"></div>
     <div class="abs" style="left:70px;top:270px" id="s1-tag"><span class="pill" style="background:var(--violet);color:#fff">● Nouveau à l'Arena18</span></div>
-    <div class="abs card" id="s1-photo" style="left:70px;top:420px;width:940px;transform:rotate(-2.5deg)"><img src="panneau.png"></div>
-    <div class="sticker" id="s1-scan" style="left:600px;top:1150px;background:var(--ambre);transform:rotate(6deg)">Scanne&nbsp;&amp;&nbsp;joue&nbsp;!</div>
-    <div class="abs title" id="s1-title" style="left:70px;top:1330px;font-size:124px;width:960px">Les fléchettes ont leur <span class="mark">app</span>.</div>
+    <div class="sticker" id="s1-scan" style="left:560px;top:1010px;background:var(--ambre);transform:rotate(6deg)">Scanne&nbsp;&amp;&nbsp;joue&nbsp;!</div>
+    <div class="abs title" id="s1-title" style="left:60px;top:1250px;width:960px;font-size:112px;background:var(--creme);border:7px solid var(--encre);border-radius:40px;box-shadow:14px 14px 0 var(--encre);padding:34px 40px 40px">Les fléchettes ont leur <span class="mark">app</span>.</div>
   </div>
 
   <!-- 2. Scanne, entre vos prénoms -->
@@ -131,9 +131,9 @@ const up = (id, t, dist = 140) => a(id, [{ transform: `translateY(${dist}px)`, o
 // 1. Panneau (0 → 3.3)
 a("s1", [{ opacity: 1 }, { opacity: 1 }], 0, 0.01);
   a("s1", [{ visibility: "visible" }, { visibility: "hidden" }], 3.7, 0.01).effect.updateTiming({ fill: "forwards" });
-popIn("s1-tag", 0.0);
-a("s1-photo", [{ transform: "rotate(-14deg) scale(.55)", opacity: 1 }, { transform: "rotate(-2.5deg) scale(1)", opacity: 1 }], 0.05, 0.7, POP);
-a("s1-photo", [{ scale: 1 }, { scale: 1.06 }], 0.95, 2.3, "linear");
+popIn("s1-tag", 0.2);
+a("s1-img", [{ transform: "scale(1.25)" }, { transform: "scale(1)" }], 0, 0.9, "cubic-bezier(.2,.8,.2,1)");
+a("s1-img", [{ scale: 1 }, { scale: 1.07 }], 0.9, 2.8, "linear");
 popIn("s1-scan", 1.5, 6);
 up("s1-title", 0.75);
 
