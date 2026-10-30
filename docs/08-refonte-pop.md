@@ -54,9 +54,9 @@ Succès = en ouvrant l'app au bar, on a envie de sourire avant même de lancer u
 | Le Tire-langue | clin d'œil, langue tirée | chambrage, le 26 |
 | Le Tournis | yeux en spirale, bouche en zigzag | trois ratés |
 | La Fondue | tête qui coule | bust, éliminé (Killer) |
-| Le Crispé | dents serrées, goutte de sueur | « Au bull ! », dernier double |
+| Le Crispé | dents serrées, goutte de sueur | « À vous de jouer ! » (qui commence), dernier double |
 
-Elles remplacent **partout** la mascotte smiley actuelle (`Mascot` dans `src/components/pop/Pop.tsx`) : bulles de clin d'œil, écran « Au bull ! », célébrations de niveau moyen. Dessins de référence : symboles SVG `h-*` dans `docs/refonte-pop/maquettes.html`. Chaque tête bouge en boucle (yeux qui tournent, tête qui fond…) et s'arrête si le téléphone demande moins d'animations.
+Elles remplacent **partout** la mascotte smiley actuelle (`Mascot` dans `src/components/pop/Pop.tsx`) : bulles de clin d'œil, écran « À vous de jouer ! » (qui commence), célébrations de niveau moyen. Dessins de référence : symboles SVG `h-*` dans `docs/refonte-pop/maquettes.html`. Chaque tête bouge en boucle (yeux qui tournent, tête qui fond…) et s'arrête si le téléphone demande moins d'animations.
 
 ## Écrans (voir maquettes)
 
@@ -85,7 +85,7 @@ Elles remplacent **partout** la mascotte smiley actuelle (`Mascot` dans `src/com
 - Position exacte des fléchettes dans une zone : un peu au hasard dans la bonne case, pour faire vrai.
 - Ordre des travaux, découpage en étapes, composants à créer.
 - **Les 4 autres jeux** (Cricket, Killer, Tour de l'horloge, Plus gros score) gardent exactement leur façon de saisir (`05-jeux.md`) et sont seulement **repeints** avec les mêmes briques que le 501 : carte joueur, touches à ombre dure, couleurs Playful. Ce qui était « incliné à 18° » devient arrondi ; ce qui était « cyan » (fermé, meneur, actif) devient violet ; les marques de Cricket deviennent des pastilles rondes. **Plus gros score** reçoit aussi la cible (même pavé que le 501), sans surbrillance pour finir. Cricket, Killer et Horloge n'ont pas de cible : chez eux, le tableau ou les joueurs sont déjà le pavé.
-- **Déclencheurs des têtes** : on branche les têtes sur les célébrations qui existent déjà (`CeleSpec` dans `Celebration.tsx`) sans en créer de nouvelles. « Grosses volées » = le 180 ; « passer devant » = le clin d'œil existant ; « dernier double » = l'écran de pression existant s'il y en a un, sinon seulement « Au bull ! ». Si deux moments tombent ensemble, la priorité actuelle des célébrations décide.
+- **Déclencheurs des têtes** : on branche les têtes sur les célébrations qui existent déjà (`CeleSpec` dans `Celebration.tsx`) sans en créer de nouvelles. « Grosses volées » = le 180 ; « passer devant » = le clin d'œil existant ; « dernier double » = l'écran de pression existant s'il y en a un, sinon seulement « À vous de jouer ! ». Si deux moments tombent ensemble, la priorité actuelle des célébrations décide.
 - **La cible est un affichage**, on ne tape pas dessus : la saisie se fait uniquement au pavé, comme aujourd'hui.
 - **Pas de surbrillance** tant qu'un joueur en Double in n'est pas ouvert, ni quand la volée est en bust (en attente de « Valider »). Le moteur exposera une fonction « toutes les façons de finir en une fléchette » à côté de `suggestCheckout`, avec ses tests.
 

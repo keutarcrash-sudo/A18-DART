@@ -168,7 +168,7 @@ export function ClockGame() {
             </div>
             <div className="truncate text-[11px] font-bold uppercase tracking-[0.08em] text-attenue">
               {bonus && `${t("Bonus")} · `}
-              {bullFinish ? t("Fin au bull") : t("Fin au 20")} · {t("Tour")} {state.turn}
+              {bullFinish ? t("Fin au centre") : t("Fin au 20")} · {t("Tour")} {state.turn}
             </div>
           </div>
           <button type="button" onClick={() => setMenu(true)} className={POP_PILL}>

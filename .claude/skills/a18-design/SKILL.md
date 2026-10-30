@@ -65,7 +65,7 @@ Huit personnages dessinés en SVG (contours encre, aplats de la palette), qui bo
 | Le Tire-langue | clin d'œil, langue tirée | chambrage, le 26 |
 | Le Tournis | yeux en spirale, bouche en zigzag | trois ratés |
 | La Fondue | tête qui coule | bust, éliminé (Killer) |
-| Le Crispé | dents serrées, goutte de sueur | « Au bull ! », dernier double |
+| Le Crispé | dents serrées, goutte de sueur | « À vous de jouer ! » (qui commence), dernier double |
 
 - On les branche sur les célébrations qui existent déjà (`CeleSpec` dans `Celebration.tsx`), sans en inventer. Si deux moments tombent ensemble, la priorité actuelle des célébrations décide.
 - Sur le podium, les **initiales restent** dans leurs pastilles ; les têtes décorent autour.
@@ -90,7 +90,7 @@ Huit personnages dessinés en SVG (contours encre, aplats de la palette), qui bo
 | Joueurs | Prénoms au clavier, un par un. Chips **« Récents sur ce téléphone »**. Équipes formées par le groupe (A/B). |
 | Choix du jeu | Une carte par jeu, chacune avec sa forme et sa couleur. Durée estimée selon le nombre de joueurs, en pastille (menthe si 10–30 min). |
 | Réglages | Les règles se choisissent **avant** la partie, jamais modifiées par l'app ensuite. Une phrase d'explication par option. |
-| Qui commence | Écran **« Au bull ! »** (avec le Crispé) : on touche le prénom du plus proche du centre. |
+| Qui commence | Écran **« À vous de jouer ! »** (avec le Crispé) : on touche le prénom du plus proche du centre. |
 | 301 / 501 / Plus gros score | Carte joueur blanche (nom, score géant, « −60 » qui poppe, pastille « Pour finir »), cible à droite, autres joueurs en bas de la carte. Rangée des 3 fléchettes (Simple blanc, Double ambre, Triple rose). Pavé **« numéro d'abord »** en touches arrondies à ombre dure : une tape = simple ; Double / Triple apparaissent juste au-dessus du pavé (par-dessus la rangée des 3 fléchettes, jamais sur un bouton de saisie) **sans chrono**, jusqu'à la fléchette suivante. 25 / BULL / RATÉ / Annuler. « Valider la volée » en grand bouton violet. |
 | Cricket | **Le tableau est le pavé** : on touche la ligne du numéro (20→15, B), puis Double / Triple. Marques en pastilles rondes, violet quand fermé. Pas de cible. |
 | Tour de l'horloge | Deux énormes boutons **TOUCHÉ n / RATÉ** (en mode Bonus : Simple / Double / Triple). Numéro visé en géant. La volée passe seule après 3 fléchettes. Pas de cible. |

@@ -1,6 +1,6 @@
 "use client";
 /**
- * Création d'une partie : Joueurs → Jeu → Réglages → Au bull → Partie.
+ * Création d'une partie : Joueurs → Jeu → Réglages → Qui commence (« À vous de jouer ! ») → Partie.
  * Un écran = une question (docs/02-principes-ux.md).
  */
 import { useRouter } from "next/navigation";
@@ -471,7 +471,7 @@ function Options({
             value={clockOpts.bullFinish}
             options={[
               { value: false, label: t("Au 20") },
-              { value: true, label: t("Au bull") },
+              { value: true, label: t("Au centre") },
             ]}
             help={clockOpts.bullFinish ? t("Après le 20, il faut encore toucher le centre.") : t("Le premier qui touche le 20 gagne.")}
             onChange={(bullFinish) => setClockOpts({ ...clockOpts, bullFinish })}
@@ -506,7 +506,7 @@ function Options({
       )}
       <div className="min-h-4 flex-1" />
       <Cta tone="violet" onClick={onNext}>
-        {t("Au bull →")}
+        {t("À vous de jouer →")}
       </Cta>
     </Screen>
   );
@@ -555,7 +555,7 @@ function X01Settings({ opts, setOpts }: { opts: X01Options; setOpts: (o: X01Opti
   );
 }
 
-/* ---------- 4. Au bull ---------- */
+/* ---------- 4. Qui commence : « À vous de jouer ! » ---------- */
 
 function Bull({
   players,
@@ -575,10 +575,10 @@ function Bull({
     <Screen>
       <TopBar onBack={onBack} left={t("Qui commence ?")} />
       <div className="relative mt-4">
-        <h1 className="font-display text-[70px] font-black leading-[0.85] tracking-tighter">
-          {t("Au")}
+        <h1 className="font-display text-[60px] font-black leading-[0.9] tracking-tighter">
+          {t("À vous")}
           <br />
-          <span className="text-violet">{t("bull !")}</span>
+          <span className="text-violet">{t("de jouer !")}</span>
         </h1>
         <div className="absolute -top-1 right-0">
           <Head kind="crispe" size={104} />
